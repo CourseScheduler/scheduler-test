@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+	<!-- Artifact uniqueness is group id, artifact id, and version -->
+	<groupId>io.coursescheduler</groupId>
+	<artifactId>scheduler</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<!-- General details about the application -->
+	<name>Course Scheduler</name>
+	<inceptionYear>2008</inceptionYear>
+	<url>http://coursescheduler.io/</url>
+	
+	<!-- Project configuration properties -->
+	<properties>
+	
+		<!-- Source file encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+	</properties>
+	
+	<!-- Build process and configuration -->
+	<build>
+			
+		<!-- Build plugin definition -->
+		<plugins>
+		
+			<!-- Maven default compiler plugin -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+	
+	<!-- Basic dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>jnlp</artifactId>
+		</dependency>
+		
+		<!-- Unit Test suite -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Joda-time date/time/calendar library -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Logging facade for the application -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		
+	</dependencies>
+
+	<!-- Managed dependencies -->
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Required to support JNLP specific functions -->
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>jnlp</artifactId>
+				<version>1.6.0</version>
+			</dependency>
+
+			<!-- Unit Test suite -->
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>6.3</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- Joda-time date/time/calendar library -->
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.1</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<!-- Logging facade for the application -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			
+		</dependencies>
+		
+	</dependencyManagement>
+
+	<!-- List of repositories for retrieving artifacts -->
+	<repositories>
+
+		<!-- Maven Central Repo -->
+		<repository>
+			<id>Central Repository</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+
+		<!-- Java.net Repo -->
+		<repository>
+			<id>Java.net Repository for Maven 2</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		
+	</repositories>
+
+	<!-- List of repositories for resolving plugin artifacts -->
+	<pluginRepositories>
+
+		<!-- Maven Central Repo -->
+		<pluginRepository>
+			<id>Central Plugin Repository</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</pluginRepository>
+
+		<!-- Java.net Repo -->
+		<pluginRepository>
+			<id>Java.net Plugin Repository for Maven 2</id>
+			<url>http://download.java.net/maven/2/</url>
+		</pluginRepository>
+		
+	</pluginRepositories>
+
+</project>
