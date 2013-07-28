@@ -11,7 +11,7 @@
 	<!-- General details about the application -->
 	<name>Course Scheduler</name>
 	<inceptionYear>2008</inceptionYear>
-	<url>http://coursescheduler.io/</url>
+	<url>http://www.coursescheduler.io/</url>
 	
 	<!-- Project configuration properties -->
 	<properties>
@@ -43,10 +43,12 @@
 	
 	<!-- Basic dependencies -->
 	<dependencies>
+		<!-- 
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>jnlp</artifactId>
 		</dependency>
+		--> 
 		
 		<!-- Unit Test suite -->
 		<dependency>
@@ -107,39 +109,5 @@
 		</dependencies>
 		
 	</dependencyManagement>
-
-	<!-- List of repositories for retrieving artifacts -->
-	<repositories>
-
-		<!-- Maven Central Repo -->
-		<repository>
-			<id>Central Repository</id>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-
-		<!-- Java.net Repo -->
-		<repository>
-			<id>Java.net Repository for Maven 2</id>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-		
-	</repositories>
-
-	<!-- List of repositories for resolving plugin artifacts -->
-	<pluginRepositories>
-
-		<!-- Maven Central Repo -->
-		<pluginRepository>
-			<id>Central Plugin Repository</id>
-			<url>http://repo1.maven.org/maven2</url>
-		</pluginRepository>
-
-		<!-- Java.net Repo -->
-		<pluginRepository>
-			<id>Java.net Plugin Repository for Maven 2</id>
-			<url>http://download.java.net/maven/2/</url>
-		</pluginRepository>
-		
-	</pluginRepositories>
 
 </project>
