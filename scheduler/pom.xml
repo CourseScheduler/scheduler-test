@@ -10,8 +10,25 @@
 	
 	<!-- General details about the application -->
 	<name>Course Scheduler</name>
+	<description></description>
 	<inceptionYear>2008</inceptionYear>
 	<url>http://www.coursescheduler.io/</url>
+	
+	<!-- Organization information -->
+	<organization>
+		<url>http://www.coursescheduler.io</url>
+		<name>Course Scheduler</name>
+	</organization>
+	
+	<!-- Licensing information -->
+	<licenses>
+		<license>
+			<name>GNU General Public License v3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+			<distribution>repo</distribution>
+			<comments>The GNU General Public License is a free, copyleft license for software and other kinds of works</comments>
+		</license>
+	</licenses>
 	
 	<!-- Project configuration properties -->
 	<properties>
@@ -110,4 +127,24 @@
 		
 	</dependencyManagement>
 
+	<!-- Continuous Integration System -->
+	<ciManagement>
+		<url>https://coursescheduler.ci.cloudbees.com</url>
+		<system>Course Scheduler on CloudBees</system>
+	</ciManagement>
+	
+	<!--  Bugtracker System -->
+	<issueManagement>
+		<system>Course Scheduler GitHub Issues</system>
+		<url>https://github.com/CourseScheduler/coursescheduler/issues</url>
+	</issueManagement>
+	
+	<!-- Source Control System -->
+	<scm>
+		<connection>scm:git:https://github.com/CourseScheduler/coursescheduler.git</connection>
+		<tag>HEAD</tag>
+		<url>https://github.com/CourseScheduler/coursescheduler</url>
+		<developerConnection>scm:git:https://github.com/CourseScheduler/coursescheduler.git</developerConnection>
+	</scm>
+	
 </project>
