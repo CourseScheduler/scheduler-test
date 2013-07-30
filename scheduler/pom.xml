@@ -20,6 +20,24 @@
 		<name>Course Scheduler</name>
 	</organization>
 	
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<id>mike938</id>
+			<name>Mike Reinhold</name>
+			<email>mike@coursescheduler.io</email>
+			<url>https://github.com/mike938</url>
+			<roles>
+				<role>administrator</role>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-5</timezone>
+			<properties>
+			</properties>
+		</developer>
+	</developers>
+	
 	<!-- Licensing information -->
 	<licenses>
 		<license>
