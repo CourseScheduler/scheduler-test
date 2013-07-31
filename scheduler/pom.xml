@@ -22,6 +22,8 @@
 	
 	<!-- Developers -->
 	<developers>
+	
+		<!-- Mike Reinhold -->
 		<developer>
 			<id>mike938</id>
 			<name>Mike Reinhold</name>
@@ -36,6 +38,7 @@
 			<properties>
 			</properties>
 		</developer>
+		
 	</developers>
 	
 	<!-- Licensing information -->
