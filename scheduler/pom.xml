@@ -4,7 +4,7 @@
 
 	<!-- Artifact uniqueness is group id, artifact id, and version -->
 	<groupId>io.coursescheduler</groupId>
-	<artifactId>scheduler</artifactId>
+	<artifactId>scheduler-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
