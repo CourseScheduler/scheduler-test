@@ -7,17 +7,20 @@
 		<groupId>io.coursescheduler</groupId>
 		<artifactId>scheduler-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../scheduler-parent/pom.xml</relativePath>
+		<relativePath>scheduler-parent/pom.xml</relativePath>
     </parent>
 	
 	<!-- Artifact uniqueness is group id, artifact id, and version -->
-	<artifactId>scheduler-core</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>scheduler</artifactId>
+	<packaging>pom</packaging>
 	
 	<!-- General details about the application -->
-	<name>Course Scheduler Core</name>
-	<description></description>
-	<inceptionYear>2008</inceptionYear>
-	<url>http://www.coursescheduler.io/</url>
+	<name>Course Scheduler</name>
+	
+	<!-- Modules Definition -->
+	<modules>
+		<module>scheduler-parent</module>
+		<module>scheduler-core</module>
+	</modules>
 	
 </project>
