@@ -5,9 +5,8 @@
 	<!-- Parent Project Artifact -->
 	<parent>
 		<groupId>io.coursescheduler</groupId>
-		<artifactId>scheduler-parent</artifactId>
+		<artifactId>scheduler</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../scheduler-parent/pom.xml</relativePath>
     </parent>
 	
 	<!-- Artifact uniqueness is group id, artifact id, and version -->

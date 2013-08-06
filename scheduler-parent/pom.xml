@@ -16,7 +16,7 @@
 	
 	<!-- Organization information -->
 	<organization>
-		<url>http://www.coursescheduler.io</url>
+		<url>http://www.coursescheduler.io/</url>
 		<name>Course Scheduler</name>
 	</organization>
 	
@@ -96,7 +96,7 @@
 	    <site>
 	      <id>coursescheduler-release</id>
 	      <name>CourseScheduler Website</name>
-	      <url>scp://www.coursescheduler.io:48309/home/scheduler/website/${project.version}</url>
+	      <url>scp://www.coursescheduler.io:48309/home/scheduler/website/${project.version}/</url>
 	    </site>
     
 	</distributionManagement>
@@ -286,7 +286,7 @@
 								<artifactId>maven-project-info-reports-plugin</artifactId>
 								<version>2.4</version>
 								<configuration>
-									<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+									<dependencyDetailsEnabled>true</dependencyDetailsEnabled>
 									<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 								</configuration>
 								<reports>
