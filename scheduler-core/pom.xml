@@ -19,4 +19,21 @@
 	<inceptionYear>2008</inceptionYear>
 	<url>http://www.coursescheduler.io/</url>
 	
+	<dependencies>
+		<dependency>
+			<groupId>javax.jnlp</groupId>
+			<artifactId>jnlp-api</artifactId>
+			<systemPath>${java.home}/lib/javaws.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>javax.jnlp</groupId>
+				<artifactId>jnlp-api</artifactId>
+				<version>7.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
