@@ -34,8 +34,19 @@ package Scheduler;								//declare as member of scheduler package
 /*********************************************************
  * The following imports are necessary for operation
 ********************************************************/
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;					//to declare as serializeable
 import java.util.Calendar;						//to get date information
+import java.util.Date;
+import java.util.prefs.BackingStoreException;
+
+import org.omg.CORBA.BooleanSeqHelper;
 
 
 /*********************************************************
@@ -46,6 +57,7 @@ import java.util.Calendar;						//to get date information
 ********************************************************/
 public class Preferences implements Serializable {
 	
+	private static java.util.prefs.Preferences newPreferences;
 	
 	/*********************************************************
 	 * The following are versioning fields within the preferences
@@ -93,7 +105,7 @@ public class Preferences implements Serializable {
 	 * 
 	 * @purpose Create and initialize the preferences object
 	********************************************************/
-	public Preferences(){	
+	public Preferences(){		
 		dayOff = false;							//day off is initially false
 		daysOff = new boolean[Day.values().length];//days off are all specified to false
 		preferred = new Period("8:00 - 6:00pm");	//preferred period is 8 am to 6 pm
@@ -124,6 +136,51 @@ public class Preferences implements Serializable {
 		greyCodeLimit = 250;					//make the default limit 200
 	}
 
+	/**
+	 * Migrate from the custom Preferences class to the Java Preferences class
+	 *
+	 */
+	public void migrate(){
+		newPreferences = Main.prefFactory.getUserNode("legacy");
+		try {
+			if(!newPreferences.nodeExists("migrateDate")){
+				this.setRatingsEnabled(ratingsEnabled);
+				this.setRateMyProfessorEnabled(rateMyProfessorEnabled);
+				this.setPreferred(preferred);
+				this.setLongestBreakPer(longestBreakPer);
+				this.setShortestBreakPer(shortestBreakPer);
+				this.setDayOff(dayOff);
+				this.setDaysOff(daysOff);
+				this.setUpdateMin(updateMin);
+				this.setDownloadUGrad(downloadUGrad);
+				this.setURL(URL);
+				this.setDownloadGrad(downloadGrad);
+				this.setOverrideGrad(overrideGrad);
+				this.setGradURL(gradURL);
+				this.setDownloadGradDist(downloadGradDist);
+				this.setOverrideGradDist(overrideGradDist);
+				this.setGradDistURL(gradDistURL);
+				this.setOverRideURL(overRideURL);
+				this.setSID(SID);
+				this.setColors(colors);
+				this.setGreyCodeLimit(greyCodeLimit);
+				this.setCurrentTerm(currentTerm);
+				
+				newPreferences.put("migrateDate", new Date().toString());
+				
+				newPreferences.exportNode(new FileOutputStream("test.xml"));//TODO remove this - just for testing purposes
+			}
+		} catch (BackingStoreException e) {
+			// TODO CATCH STUB
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO CATCH STUB
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO CATCH STUB
+			e.printStackTrace();
+		}
+	}
 
 	/*********************************************************
 	 * @purpose returns if ratings are enabled
@@ -131,7 +188,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if the overall ratings are enabled
 	********************************************************/
 	public boolean isRatingsEnabled() {
-		return ratingsEnabled;					//return ratings status
+		return newPreferences.getBoolean("ratingsEnabled", true);					//return ratings status
 	}
 
 
@@ -141,7 +198,7 @@ public class Preferences implements Serializable {
 	 * @param boolean ratingsEnabled: if the ratings should be enabled
 	********************************************************/
 	public void setRatingsEnabled(boolean ratingsEnabled) {
-		this.ratingsEnabled = ratingsEnabled;	//set ratings status
+		newPreferences.putBoolean("ratingsEnabled", ratingsEnabled);
 	}
 
 
@@ -151,7 +208,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if RMP ratings are enabled
 	********************************************************/
 	public boolean isRateMyProfessorEnabled() {
-		return rateMyProfessorEnabled;			//return RMP ratings status
+		return newPreferences.getBoolean("rateMyProfessorEnabled", true);			//return RMP ratings status
 	}
 
 
@@ -161,7 +218,7 @@ public class Preferences implements Serializable {
 	 * @param boolean rateMyProfessorEnabled: if RMP ratings should be enabled
 	********************************************************/
 	public void setRateMyProfessorEnabled(boolean rateMyProfessorEnabled) {
-		this.rateMyProfessorEnabled = rateMyProfessorEnabled;//set RMP ratings status
+		newPreferences.putBoolean("rateMyProfessorEnabled", rateMyProfessorEnabled);//set RMP ratings status
 	}
 
 
@@ -171,7 +228,7 @@ public class Preferences implements Serializable {
 	 * @return Period: the preferred period in which to have class
 	********************************************************/
 	public Period getPreferred() {
-		return preferred;						//return the period
+		return new Period(newPreferences.get("preferred", null));
 	}
 
 
@@ -181,7 +238,7 @@ public class Preferences implements Serializable {
 	 * @param Period preferred: the preferred hours to have class
 	********************************************************/
 	public void setPreferred(Period preferred) {
-		this.preferred = preferred;				//set the period
+		newPreferences.put("preferred", preferred.toString());				//set the period
 	}
 
 
@@ -191,7 +248,7 @@ public class Preferences implements Serializable {
 	 * @return Period: the preferred longest break as a period
 	********************************************************/
 	public Period getLongestBreakPer() {
-		return longestBreakPer;					//return break as a period
+		return new Period(newPreferences.get("longestBreakPer", null));					//return break as a period
 	}
 
 
@@ -201,8 +258,8 @@ public class Preferences implements Serializable {
 	 * @param Period longestBreakPer: the longest break between classes
 	********************************************************/
 	public void setLongestBreakPer(Period longestBreakPer) {
-		this.longestBreakPer = longestBreakPer;//set the period
-		this.longestBreak = longestBreakPer.getDurationMin();//set the duration
+		newPreferences.put("longestBreakPer", longestBreakPer.toString());//set the period
+		newPreferences.putDouble("longestBreak",longestBreakPer.getDurationMin());//set the duration
 	}
 
 
@@ -212,7 +269,7 @@ public class Preferences implements Serializable {
 	 * @return Period: the shortest preferred break betweeen classes
 	********************************************************/
 	public Period getShortestBreakPer() {
-		return shortestBreakPer;				//return the period
+		return new Period(newPreferences.get("shortestBreakPer", null));				//return the period
 	}
 
 
@@ -222,8 +279,8 @@ public class Preferences implements Serializable {
 	 * @param Period shortestBreakPer: the shortest preferred break between classes
 	********************************************************/
 	public void setShortestBreakPer(Period shortestBreakPer) {
-		this.shortestBreakPer = shortestBreakPer;//set the period
-		this.shortestBreak = shortestBreakPer.getDurationMin();//set the duration
+		newPreferences.put("shortestBreakPer", shortestBreakPer.toString());//set the period
+		newPreferences.putDouble("shortestBreak",shortestBreakPer.getDurationMin());//set the duration
 	}
 
 	
@@ -233,7 +290,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if the day off rating should be used
 	********************************************************/
 	public boolean hasDayOff() {
-		return dayOff;						//return the day off status
+		return newPreferences.getBoolean("dayOff", false);						//return the day off status
 	}
 
 	
@@ -243,7 +300,7 @@ public class Preferences implements Serializable {
 	 * @param boolean dayOff: if the day off rating should be used
 	********************************************************/
 	public void setDayOff(boolean dayOff) {
-		this.dayOff = dayOff;				//set the day off ratings status
+		newPreferences.putBoolean("dayOff", dayOff);				//set the day off ratings status
 	}	
 
 
@@ -253,7 +310,7 @@ public class Preferences implements Serializable {
 	 * @return boolean[]: if a given day is a preferred days off
 	********************************************************/
 	public boolean[] getDaysOff() {
-		return daysOff;						//return the days off array
+		return daysOff;						//TODO return the days off array
 	}
 
 
@@ -264,7 +321,7 @@ public class Preferences implements Serializable {
 	 * 		preferred days off
 	********************************************************/
 	public void setDaysOff(boolean[] daysOff) {
-		this.daysOff = daysOff;				//set days off
+		this.daysOff = daysOff;				//TODO set days off
 	}
 
 
@@ -274,7 +331,7 @@ public class Preferences implements Serializable {
 	 * @return double: the longest preferred break between classes
 	********************************************************/
 	public double getLongestBreak() {
-		return longestBreak;				//return the break
+		return newPreferences.getDouble("longestBreak", 480);				//return the break
 	}
 
 
@@ -294,7 +351,7 @@ public class Preferences implements Serializable {
 	 * @return double: the minimum number of minutes preferred between classes
 	********************************************************/
 	public double getShortestBreak() {
-		return shortestBreak;				//return break
+		return newPreferences.getDouble("shortestBreak", 1);				//return break
 	}
 
 
@@ -314,7 +371,7 @@ public class Preferences implements Serializable {
 	 * @return String: the current term in query string form aka "summer08"
 	********************************************************/
 	public String getCurrentTerm() {
-		return currentTerm;					//return current term
+		return newPreferences.get("currentTerm", Term.nextTerm());					//return current term
 	}
 
 
@@ -324,7 +381,7 @@ public class Preferences implements Serializable {
 	 * @param String currentTerm: the term to set the term to
 	********************************************************/
 	public void setCurrentTerm(String currentTerm) {
-		this.currentTerm = currentTerm;		//set the current term
+		newPreferences.put("currentTerm", (currentTerm==null) ? Term.nextTerm() : currentTerm);		//set the current term
 	}
 
 
@@ -334,7 +391,7 @@ public class Preferences implements Serializable {
 	 * @return int: the min number of days between auto updates
 	********************************************************/
 	public int getUpdateMin() {
-		return updateMin;					//return the days
+		return newPreferences.getInt("updateMin", 2);					//return the days
 	}
 
 
@@ -344,7 +401,7 @@ public class Preferences implements Serializable {
 	 * @param int updateMin: the minimum number of days between updates
 	********************************************************/
 	public void setUpdateMin(int updateMin) {
-		this.updateMin = updateMin;			//set the days
+		newPreferences.putInt("updateMin", updateMin);			//set the days
 	}
 	
 	
@@ -385,9 +442,19 @@ public class Preferences implements Serializable {
 	 * @return String: the url to use for querying
 	********************************************************/
 	public String getURL() {
-		return (overRideURL) ? this.URL : Main.defURL;//return override url if enabled else default url
+		return (isOverRideURL()) ? getURLInternal() : Main.defURL;//return override url if enabled else default url
 	}
 
+	/*********************************************************
+	 * @purpose Returns the internal url to use for queries, either the
+	 * 		default url or the override url depending if overriding
+	 * 		is enabled
+	 * 
+	 * @return String: the internal url to use for querying
+	********************************************************/
+	private String getURLInternal(){
+		return newPreferences.get("URL", Main.defURL);
+	}
 	
 	/*********************************************************
 	 * @purpose Sets the override url
@@ -395,7 +462,7 @@ public class Preferences implements Serializable {
 	 * @param String url: the string to set the override url to
 	********************************************************/
 	public void setURL(String url) {
-		this.URL = url;						//set the url
+		newPreferences.put("URL", url);						//set the url
 	}
 
 	
@@ -406,7 +473,17 @@ public class Preferences implements Serializable {
 	 * 		sid overriding is enabled
 	********************************************************/
 	public String getSID() {
-		return (overRideSID) ? this.SID : Main.defSID;//return overrid sid if enabled, else default
+		return (isOverRideSID()) ? getSIDInternal() : Main.defSID;//return overrid sid if enabled, else default
+	}
+	
+	/*********************************************************
+	 * @prupose return the stored SID to use for querying
+	 * 
+	 * @return String: the stored sid to use for querying depending on if 
+	 * 		sid overriding is enabled
+	********************************************************/
+	private String getSIDInternal(){
+		return newPreferences.get("SID", Main.defSID);
 	}
 
 	
@@ -416,7 +493,7 @@ public class Preferences implements Serializable {
 	 * @param String sid: the override sid to use
 	********************************************************/
 	public void setSID(String sid) {
-		this.SID = sid;							//set the sid
+		newPreferences.put("SID", sid);							//set the sid
 	}
 
 	
@@ -426,7 +503,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if override url is enabled
 	********************************************************/
 	public boolean isOverRideURL() {
-		return overRideURL;						//return the override url status
+		return newPreferences.getBoolean("overRideURL", false);						//return the override url status
 	}
 
 	
@@ -436,7 +513,7 @@ public class Preferences implements Serializable {
 	 * @param boolean overRideURL: if the url override should be enabled
 	********************************************************/
 	public void setOverRideURL(boolean overRideURL) {
-		this.overRideURL = overRideURL;			//set the override url status
+		newPreferences.putBoolean("overRideURL", overRideURL);			//set the override url status
 	}
 
 
@@ -446,7 +523,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if override sid is enabled
 	********************************************************/
 	public boolean isOverRideSID() {
-		return overRideSID;						//return override sid status
+		return newPreferences.getBoolean("overRideSID", false);						//return override sid status
 	}
 
 
@@ -456,7 +533,7 @@ public class Preferences implements Serializable {
 	 * @param boolean overRideSID: if the overrid sid should be enabled
 	********************************************************/
 	public void setOverRideSID(boolean overRideSID) {
-		this.overRideSID = overRideSID;			//set overrid sid enable
+		newPreferences.putBoolean("overRideSID", overRideSID);			//set overrid sid enable
 	}
 	
 	
@@ -465,6 +542,7 @@ public class Preferences implements Serializable {
 	 * 
 	 * @return boolean: if the save was successful
 	*********************************************************/
+	@Deprecated
 	public boolean save(){
 		return Serial.save((Main.dataFolder + "Prefs" + Main.preferencesExt), this);
 	}
@@ -475,6 +553,7 @@ public class Preferences implements Serializable {
 	 * 
 	 * @return Preferences: the prefs loaded from the file
 	*********************************************************/
+	@Deprecated
 	public static Preferences load(){
 		return Serial.load(Main.dataFolder + "Prefs" + Main.preferencesExt);
 	}
@@ -486,7 +565,16 @@ public class Preferences implements Serializable {
 	 * @return CourseColor: the structure holding the course
 	*********************************************************/
 	public CourseColor getColors() {
-		return colors;							//get the colors
+		CourseColor colors;
+		try {
+			ByteArrayInputStream bos = new ByteArrayInputStream(newPreferences.getByteArray("colors", null));
+			ObjectInputStream out = new ObjectInputStream(bos);   
+			colors = (CourseColor)out.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			colors = new CourseColor();
+			setColors(colors);
+		}
+		return colors;
 	}
 
 
@@ -496,7 +584,15 @@ public class Preferences implements Serializable {
 	 * @param CourseColor colors: the course colors
 	********************************************************/
 	public void setColors(CourseColor colors) {
-		this.colors = colors;					//set the colors
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bos);   
+			out.writeObject(colors);
+			newPreferences.putByteArray("colors", bos.toByteArray());
+		} catch (IOException e) {
+			// TODO CATCH STUB
+			e.printStackTrace();
+		}
 	}
 
 
@@ -506,7 +602,7 @@ public class Preferences implements Serializable {
 	 * @return int: the number of grey codes per thread
 	********************************************************/
 	public int getGreyCodeLimit() {
-		return greyCodeLimit;					//return the grey code limit
+		return newPreferences.getInt("greyCodeLimit", 200);					//return the grey code limit
 	}
 
 
@@ -516,7 +612,7 @@ public class Preferences implements Serializable {
 	 * @param int greyCodeLimit: the maximum number of grey codes per thread
 	********************************************************/
 	public void setGreyCodeLimit(int greyCodeLimit) {
-		this.greyCodeLimit = greyCodeLimit;		//set the grey code limit
+		newPreferences.putInt("greyCodeLimit", greyCodeLimit);		//set the grey code limit
 	}
 
 
@@ -526,7 +622,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if on campus graduate courses should be downloaded
 	********************************************************/
 	public boolean isDownloadGrad() {
-		return downloadGrad;					//return if campus grad courses should be downloaded
+		return newPreferences.getBoolean("downloadGrad", true);					//return if campus grad courses should be downloaded
 	}
 
 
@@ -536,7 +632,7 @@ public class Preferences implements Serializable {
 	 * @param boolean downloadGrad: if on campus grad courses should be downloaded
 	********************************************************/
 	public void setDownloadGrad(boolean downloadGrad) {
-		this.downloadGrad = downloadGrad;		//set if courses should be downloaded
+		newPreferences.putBoolean("downloadGrad", downloadGrad);		//set if courses should be downloaded
 	}
 
 
@@ -546,7 +642,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if on campus override should be used
 	********************************************************/
 	public boolean isOverrideGrad() {
-		return overrideGrad;					//return if the campus grad url should be used
+		return newPreferences.getBoolean("overrideGrad", false);					//return if the campus grad url should be used
 	}
 
 
@@ -556,7 +652,7 @@ public class Preferences implements Serializable {
 	 * @param boolean overrideGrad: if the override url is to be used
 	********************************************************/
 	public void setOverrideGrad(boolean overrideGrad) {
-		this.overrideGrad = overrideGrad;		//set if override url should be used
+		newPreferences.putBoolean("overrideGrad", overrideGrad);		//set if override url should be used
 	}
 
 
@@ -566,7 +662,7 @@ public class Preferences implements Serializable {
 	 * @return String: the override URL
 	********************************************************/
 	public String getGradURL() {
-		return gradURL;							//return the override URL
+		return newPreferences.get("gradURL", Main.defGradCampURL);							//return the override URL
 	}
 
 
@@ -576,7 +672,7 @@ public class Preferences implements Serializable {
 	 * @param String gradURL: the URL to use
 	********************************************************/
 	public void setGradURL(String gradURL) {
-		this.gradURL = gradURL;					//set the override URL
+		newPreferences.put("gradURL", gradURL);					//set the override URL
 	}
 
 
@@ -586,7 +682,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if off campus graduate courses should be downloaded
 	********************************************************/
 	public boolean isDownloadGradDist() {
-		return downloadGradDist;				//return if off campus grad courses are downloaded
+		return newPreferences.getBoolean("downloadGradDist", true);				//return if off campus grad courses are downloaded
 	}
 
 
@@ -596,7 +692,7 @@ public class Preferences implements Serializable {
 	 * @param boolean downloadGradDist: if courses should be downloaded
 	********************************************************/
 	public void setDownloadGradDist(boolean downloadGradDist) {
-		this.downloadGradDist = downloadGradDist;//set if should download
+		newPreferences.putBoolean("downloadGradDist", downloadGradDist);//set if should download
 	}
 
 
@@ -606,7 +702,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if the override url is to be used
 	********************************************************/
 	public boolean isOverrideGradDist() {
-		return overrideGradDist;				//return if override url should be used
+		return newPreferences.getBoolean("overrideGradDist", false);				//return if override url should be used
 	}
 
 
@@ -616,7 +712,7 @@ public class Preferences implements Serializable {
 	 * @param boolean overrideGradDist: if the override URL should be used
 	********************************************************/
 	public void setOverrideGradDist(boolean overrideGradDist) {
-		this.overrideGradDist = overrideGradDist;//set if override
+		newPreferences.putBoolean("overrideGradDist", overrideGradDist);//set if override
 	}
 
 
@@ -626,7 +722,7 @@ public class Preferences implements Serializable {
 	 * @return String: the URL for off campus grad courses
 	********************************************************/
 	public String getGradDistURL() {
-		return gradDistURL;						//return the override url
+		return newPreferences.get(gradDistURL, Main.defGradDistURL);						//return the override url
 	}
 
 
@@ -636,7 +732,7 @@ public class Preferences implements Serializable {
 	 * @param String gradDistURL: the URL to use for downloading
 	********************************************************/
 	public void setGradDistURL(String gradDistURL) {
-		this.gradDistURL = gradDistURL;			//set the URL to download from
+		newPreferences.put("gradDistURL", gradDistURL);			//set the URL to download from
 	}
 
 
@@ -646,7 +742,7 @@ public class Preferences implements Serializable {
 	 * @return boolean: if undergrad courses have been downloaded
 	********************************************************/
 	public boolean isDownloadUGrad() {
-		return downloadUGrad;					//return if undergrad should be downloaded
+		return newPreferences.getBoolean("downloadUGrad", true);					//return if undergrad should be downloaded
 	}
 
 
@@ -656,6 +752,6 @@ public class Preferences implements Serializable {
 	 * @param boolean downloadUGrad: if undergrad courses should be downloaded
 	********************************************************/
 	public void setDownloadUGrad(boolean downloadUGrad) {
-		this.downloadUGrad = downloadUGrad;		//set if should download
+		newPreferences.putBoolean("downloadUGrad", downloadUGrad);		//set if should download
 	}
 }

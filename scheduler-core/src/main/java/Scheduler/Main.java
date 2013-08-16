@@ -1,5 +1,9 @@
 package Scheduler;
 
+import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.preferences.properties.PropertiesFilePreferencesFactory;
+import io.coursescheduler.util.preferences.properties.XMLPropertiesFilePreferencesFactory;
+
 import java.awt.Component;
 
 import javax.jnlp.ServiceManager;
@@ -11,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.TreeMap;
@@ -63,6 +68,7 @@ public class Main {
 	protected static ClassLoader loader;
 	
 	protected static Preferences prefs;
+	protected static PreferencesFactory prefFactory;
 	protected static MainFrame master;
 	protected static ScheduledThreadPoolExecutor threadExec;
 	protected static TreeMap<String, Database> terms;
@@ -142,8 +148,20 @@ public class Main {
 			new File(dataPath).mkdir();
 			Main.prefs = new Preferences();
 		}
-		prefs.setCurrentTerm(Term.nextTerm());
+
+		//specify preferences factory
+		systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
+		//systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
 		
+		//use explicit sub nodes
+		//Main.prefFactory = new PreferencesFactory("config/system/io.coursescheduler","config/user/io.coursescheduler");
+		
+		//use different default directories
+		systemProps.put("io.coursescheduler.util.preferences.path.user", "config/user");
+		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
+		Main.prefFactory = new PreferencesFactory("io.coursescheduler");
+		prefs.migrate();
+
 		String current = prefs.getCurrentTerm();
 		
 		terms = new TreeMap<String, Database>();
