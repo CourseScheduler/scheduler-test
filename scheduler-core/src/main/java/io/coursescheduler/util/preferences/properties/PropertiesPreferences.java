@@ -47,62 +47,84 @@ import java.util.prefs.BackingStoreException;
 public abstract class PropertiesPreferences extends AbstractPreferences {
 
 	/**
-	 * TODO Describe this field
+	 * The name of the backing store file for the user root Preference node
+	 * 
+	 * Value: {@value}
 	 */
 	private static final String ROOT_FILE_NAME_USER = "user-root";	
 	
 	/**
-	 * TODO Describe this field
+	 * The name of the backing store file for the system root Preference node
+	 * 
+	 * Value: {@value}
 	 */
 	private static final String ROOT_FILE_NAME_SYSTEM = "system-root";
 		
 	/**
-	 * TODO Describe this field
+	 * The system properties entry for specifying the user root filesystem path that will
+	 * be used for the backing store files of the user preferences tree.
+	 * 
+	 * Value: {@value}
 	 */
 	public static final String PROPERTY_PATH_USER = "io.coursescheduler.util.preferences.path.user";
 	
 	/**
-	 * TODO Describe this field
+	 * The system properties entry for specifying the system root filesystem path that will
+	 * be used for the backing store files of the system preferences tree.
+	 * 
+	 * Value: {@value}
 	 */
 	public static final String PROPERTY_PATH_SYSTEM = "io.coursescheduler.util.preferences.path.system";
 	
 	/**
-	 * TODO Describe this field
+	 * The default filesystem path for the user preferences tree if the 
+	 * io.coursescheduler.util.preferences.path.user system property is not set.
+	 * 
+	 * Value: {@value}
 	 */
 	private static final String DEFAULT_PATH_USER = ".";
 	
 	/**
-	 * TODO Describe this field
+	 * The default filesystem path for the system preferences tree if the 
+	 * io.coursescheduler.util.preferences.path.system system property is not set.
+	 * 
+	 * Value: {@value}
 	 */
 	private static final String DEFAULT_PATH_SYSTEM = ".";
 	
 	/**
-	 * The Properties object that stores the Preferences elements
+	 * The Properties object that stores the Preferences elements for this node
 	 */
 	private Properties properties;
 		
 	/**
-	 * TODO Describe this field
+	 * The node name for this Preferences node
 	 */
 	private String nodeName;
 	
 	/**
-	 * TODO Describe this field
+	 * A boolean specifying that this is a root Preferences node. If true, this 
+	 * node is a root node. If false this node is a child node.
 	 */
 	private boolean rootNode;
 	
 	/**
-	 * TODO Describe this field
+	 * A boolean specifying that this is a system Preferences node. If true,
+	 * this node is part of the system Preferences tree. If false, this node
+	 * is part of the user Preferences tree.
 	 */
 	private boolean systemNode;
 
 	/**
-	 * TODO Describe this field
+	 * The Preferences node that is a parent to this node. The Preferences API does
+	 * not appear to really allow for multiple active Preferences implementations,
+	 * which is good because we need specific info from the parent node in order 
+	 * to properly handle the file names and locations.
 	 */
 	private PropertiesPreferences propertiesFileParent;
 	
 	/**
-	 * TODO Describe this field
+	 * A map of the child node names to the child node objects.
 	 */
 	private Map<String, PropertiesPreferences> children;
 	
@@ -116,24 +138,14 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	PropertiesPreferences(AbstractPreferences parent, String name) {
 		super(parent, name);
 		
-		propertiesFileParent = (PropertiesPreferences)parent;
 		properties = new Properties();
 		children = new HashMap<>();
+		
+		propertiesFileParent = (PropertiesPreferences)parent;
 		nodeName = name;
 		rootNode = false;
 		
-		try{
-			sync();
-		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
-		}
-		try {
-			flush();
-		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
-		}
+		initializeProperties();
 	}
 	
 	/**
@@ -147,19 +159,32 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	PropertiesPreferences(String name, boolean isUserNode){
 		super(null, name);
 		
-		propertiesFileParent = null;
 		properties = new Properties();
 		children = new HashMap<>();
+		
+		propertiesFileParent = null;
 		nodeName = name;
 		rootNode = true;
 		systemNode = !isUserNode;
 		
-		try {
+		initializeProperties();
+	}
+
+	/**
+	 * Initialize the in-memory properties by sync'ing against the backing file
+	 * on disk. If the Preferences node is new (no backing file exists), flush
+	 * the properties instance back to disk if the "create immediately" setting
+	 * is set.	 *
+	 */
+	private void initializeProperties(){
+		try{
 			sync();
 		} catch (BackingStoreException e) {
 			// TODO CATCH STUB
 			e.printStackTrace();
 		}
+		
+		//TODO check for a "create immediately" setting, and then flush
 		try {
 			flush();
 		} catch (BackingStoreException e) {
@@ -167,7 +192,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.util.prefs.AbstractPreferences#putSpi(java.lang.String, java.lang.String)
 	 */
@@ -211,7 +236,11 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	@Override
 	protected synchronized void removeNodeSpi() throws BackingStoreException {
-		// TODO METHOD STUB
+		synchronized(lock){
+			File file = new File(getFullFilePathAndExtension());
+			
+			file.delete();	//TODO is this ok?
+		}
 
 	}
 
@@ -253,34 +282,17 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		synchronized (lock) {
 			File file = getAndCreateFilePaths();
 			
-			try (FileInputStream fileInStream = new FileInputStream(file)){
-				
-				load(properties, fileInStream);
-				
-				//TODO anything?
-				
-			} catch (IOException e) {
-				// TODO CATCH STUB
-				//e.printStackTrace();
+			if(!newNode){
+				try (FileInputStream fileInStream = new FileInputStream(file)){
+					load(properties, fileInStream);
+				} catch (IOException e) {
+					// TODO CATCH STUB
+					e.printStackTrace();
+					
+					throw new BackingStoreException(e);
+				}
 			}
 		}
-	}
-
-	/**
-	 * TODO Describe this method
-	 *
-	 * @return
-	 */
-	private File getAndCreateFilePaths() {
-		File file = new File(getFullFilePathAndExtension());
-		File path = file.getParentFile();
-		
-		newNode = !file.exists();
-		if(path != null && !path.exists()){
-			path.mkdirs();
-		}
-		
-		return file;
 	}
 
 	/* (non-Javadoc)
@@ -296,12 +308,37 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 			} catch (IOException e) {
 				// TODO CATCH STUB
 				e.printStackTrace();
+				
+				throw new BackingStoreException(e);
 			}
 		}
 	}
+
+	/**
+	 * Retrieve the backing store File. Verify whether the path to the specified
+	 * backing file exists and if not, create it. Check if the backing file currently
+	 * exists.
+	 *
+	 * @return the backing File for the current node
+	 */
+	private File getAndCreateFilePaths() {
+		File file = new File(getFullFilePathAndExtension());
+		File path = file.getParentFile();
+		
+		if(path != null && !path.exists()){
+			path.mkdirs();
+		}
+		
+		newNode = !file.exists();
+		
+		return file;
+	}
 	
 	/**
-	 * @return the filePath
+	 * Retrieve the filesystem path for the current node. This is where the backing 
+	 * properties file is stored.
+	 * 
+	 * @return the filesystem path for the backing file of the current node
 	 */
 	protected String getFilePath() {
 		String filePath;
@@ -317,9 +354,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	
 
 	/**
-	 * TODO Describe this method
+	 * Return the user root node filesystem path for the backing file. This is the 
+	 * current working directory by default. It can also be specified by setting the
+	 * system property "io.coursescheduler.util.preferences.path.user" to the desired
+	 * path.
 	 *
-	 * @return
+	 * @return the user root node backing filesystem path 
 	 */
 	private String getRootUserNodeFilesystemPath(){
 		String path = System.getProperty(PROPERTY_PATH_USER);
@@ -332,9 +372,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 	
 	/**
-	 * TODO Describe this method
+	 * Return the system root node filesystem path for the backing file. This is the 
+	 * current working directory by default. It can also be specified by setting the
+	 * system property "io.coursescheduler.util.preferences.path.system" to the desired
+	 * path.
 	 *
-	 * @return
+	 * @return the system root node backing filesystem path 
 	 */
 	private String getRootSystemNodeFilesystemPath(){
 		String path = System.getProperty(PROPERTY_PATH_SYSTEM);
@@ -347,9 +390,11 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 
 	/**
-	 * TODO Describe this method
+	 * Retrieve the filepath, name, and extension of the file that provides the backing
+	 * store for the Preferences node. This may be relative to the current working
+	 * directory or absolute, depending on the filepath of the root node
 	 *
-	 * @return
+	 * @return the filepath, name, and extension of the backing file
 	 */
 	protected String getFullFilePathAndExtension() {
 		String filePath = getFilePath();
@@ -361,9 +406,9 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 	
 	/**
-	 * TODO Describe this method
+	 * Return the Preferences node's path relative to the root node
 	 *
-	 * @return
+	 * @return the node's absolute path name
 	 */
 	protected String getFullNodeName(){
 		String fullNodeName;
@@ -380,6 +425,8 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 	
 	/**
+	 * Return this Preferences node's specific node name
+	 * 
 	 * @return the nodeName
 	 */
 	protected String getNodeName() {
@@ -387,50 +434,56 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 	
 	/**
-	 * @return the rootNode
+	 * Check if this Preferences node is a root node (path is "" or "/")
+	 * 
+	 * @return true if this is a root node, false if this is a child node
 	 */
 	protected boolean isRootNode() {
 		return rootNode;
 	}
 
 	/**
-	 * @return the systemNode
+	 * Check if this Preferences node is a system node
+	 * 
+	 * @return true if this is a system node, false for a user node
 	 */
 	private boolean isSystemNode() {
 		return systemNode;
 	}
 	
 	/**
-	 * TODO Describe this method
+	 * Return the backing implementation specific file extension
 	 *
-	 * @return
+	 * @return the file extension (without the ".") which will be used when writing the file 
+	 * (eg. properties or xml)
 	 */
 	protected abstract String getFileExtension();
 
 	/**
-	 * TODO Describe this method
+	 * Load the PropertiesPreferences from the specified File Input Stream into the Properties instance
 	 *
-	 * @param properties
-	 * @param fis
-	 * @throws IOException 
+	 * @param properties the target Properties instance for loading from the input file
+	 * @param fis the input filestream from which to load the properties
+	 * @throws IOException if there is some kind of IO error reading the input file
 	 */
 	protected abstract void load(Properties properties, FileInputStream fis) throws IOException;
 	
 	/**
-	 * TODO Describe this method
+	 * Store the PropertiesPreferences from the Properties instance to the specified File Output Stream
 	 *
-	 * @param properties
-	 * @param fos
-	 * @throws IOException 
+	 * @param properties the source Properties instance which will be flushed to the output file
+	 * @param fos the output filestream to which the properties should be flushed
+	 * @throws IOException  if there is some kind of error writing the output file
 	 */
 	protected abstract void store(Properties properties, FileOutputStream fos) throws IOException;
 	
 	/**
-	 * TODO Describe this method
+	 * Create a new PropertiesPreferences instance as a child to the specified abstractPrefernces
+	 * instance using the specified node name.
 	 *
-	 * @param abstractPreferences
-	 * @param name
-	 * @return
+	 * @param abstractPreferences the Preferences node which will be the new node's parent
+	 * @param name the node name under which to register the Preferences node
+	 * @return a new preferences node with the specified name as a child to the specified node
 	 */
 	protected abstract PropertiesPreferences createChildNode(AbstractPreferences abstractPreferences, String name);
 }
