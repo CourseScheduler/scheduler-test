@@ -150,8 +150,8 @@ public class Main {
 		}
 
 		//specify preferences factory
-		systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
-		//systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
+		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
+		systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
 		
 		//use explicit sub nodes
 		//Main.prefFactory = new PreferencesFactory("config/system/io.coursescheduler","config/user/io.coursescheduler");

@@ -95,7 +95,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	/**
 	 * The Properties object that stores the Preferences elements for this node
 	 */
-	private Properties properties;
+	private Properties properties = new Properties();
 		
 	/**
 	 * The node name for this Preferences node
@@ -126,7 +126,13 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	/**
 	 * A map of the child node names to the child node objects.
 	 */
-	private Map<String, PropertiesPreferences> children;
+	private Map<String, PropertiesPreferences> children = new HashMap<>();
+	
+	/**
+	 * Flag to indicate that the in-memory structure is dirty and that it should be
+	 * written to disk.
+	 */
+	private boolean dirty = false;
 	
 	/**
 	 * Create a new Preferences instance as a child of the specified instance using the
@@ -137,10 +143,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	PropertiesPreferences(AbstractPreferences parent, String name) {
 		super(parent, name);
-		
-		properties = new Properties();
-		children = new HashMap<>();
-		
+				
 		propertiesFileParent = (PropertiesPreferences)parent;
 		nodeName = name;
 		rootNode = false;
@@ -158,10 +161,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	PropertiesPreferences(String name, boolean isUserNode){
 		super(null, name);
-		
-		properties = new Properties();
-		children = new HashMap<>();
-		
+				
 		propertiesFileParent = null;
 		nodeName = name;
 		rootNode = true;
@@ -184,7 +184,6 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 			e.printStackTrace();
 		}
 		
-		//TODO check for a "create immediately" setting, and then flush
 		try {
 			flush();
 		} catch (BackingStoreException e) {
@@ -199,6 +198,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	@Override
 	protected void putSpi(String key, String value) {
 		properties.put(key, value);
+		setDirty();
 		
 		try {
 			flush();
@@ -222,6 +222,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	@Override
 	protected void removeSpi(String key) {
 		properties.remove(key);
+		setDirty();
 		
 		try {
 			flush();
@@ -282,9 +283,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		synchronized (lock) {
 			File file = getAndCreateFilePaths();
 			
+			//TODO how to handle if the object is dirty?
+			
 			if(!newNode){
 				try (FileInputStream fileInStream = new FileInputStream(file)){
 					load(properties, fileInStream);
+					clearDirty();
 				} catch (IOException e) {
 					// TODO CATCH STUB
 					e.printStackTrace();
@@ -300,16 +304,19 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	@Override
 	protected void flushSpi() throws BackingStoreException {
-		synchronized(lock){
-			File file = getAndCreateFilePaths();
-			
-			try(FileOutputStream fileOutStream = new FileOutputStream(file)){
-				store(properties, fileOutStream);
-			} catch (IOException e) {
-				// TODO CATCH STUB
-				e.printStackTrace();
+		if(isDirty()){
+			synchronized(lock){
+				File file = getAndCreateFilePaths();
 				
-				throw new BackingStoreException(e);
+				try(FileOutputStream fileOutStream = new FileOutputStream(file)){
+					store(properties, fileOutStream);
+					clearDirty();
+				} catch (IOException e) {
+					// TODO CATCH STUB
+					e.printStackTrace();
+					
+					throw new BackingStoreException(e);
+				}
 			}
 		}
 	}
@@ -397,12 +404,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * @return the filepath, name, and extension of the backing file
 	 */
 	protected String getFullFilePathAndExtension() {
-		String filePath = getFilePath();
-		String fullPathAndExtension;
-		
-		fullPathAndExtension = filePath + "/" + getFullNodeName() + "." + getFileExtension();
-		
-		return fullPathAndExtension;
+		return getFilePath() + "/" + getFullNodeName() + "." + getFileExtension();	
 	}
 	
 	/**
@@ -413,12 +415,10 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected String getFullNodeName(){
 		String fullNodeName;
 		
-		if(propertiesFileParent == null){
+		if(isRootNode()){
 			fullNodeName = isSystemNode() ? ROOT_FILE_NAME_SYSTEM : ROOT_FILE_NAME_USER;
 		}else{
-			String parentAbsolutePath = propertiesFileParent.absolutePath();
-			
-			fullNodeName = parentAbsolutePath + "/" + getNodeName();
+			fullNodeName = propertiesFileParent.absolutePath() + "/" + getNodeName();
 		}
 		
 		return fullNodeName;
@@ -449,6 +449,32 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	private boolean isSystemNode() {
 		return systemNode;
+	}
+	
+	/**
+	 * Mark this instance as dirty, indicating that it still needs to be flushed to disk.
+	 *
+	 */
+	protected void setDirty(){
+		dirty = true;
+	}
+	
+	/**
+	 * Mark this instance as clean, indicating that the data in memory in is sync with that 
+	 * on disk
+	 *
+	 */
+	private void clearDirty(){
+		dirty = false;
+	}
+	
+	/**
+	 * Check if this instance is dirty, aka has changes which still need to be flushed to disk.
+	 *
+	 * @return if this instance has unflushed changes
+	 */
+	protected boolean isDirty(){
+		return dirty;
 	}
 	
 	/**

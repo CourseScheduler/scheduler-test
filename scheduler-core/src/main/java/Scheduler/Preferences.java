@@ -143,7 +143,7 @@ public class Preferences implements Serializable {
 	public void migrate(){
 		newPreferences = Main.prefFactory.getUserNode("legacy");
 		try {
-			if(!newPreferences.nodeExists("migrateDate")){
+			if(newPreferences.get("migrateDate", null) == null){
 				this.setRatingsEnabled(ratingsEnabled);
 				this.setRateMyProfessorEnabled(rateMyProfessorEnabled);
 				this.setPreferred(preferred);
