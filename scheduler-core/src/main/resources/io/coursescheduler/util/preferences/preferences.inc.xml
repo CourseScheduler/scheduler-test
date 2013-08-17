@@ -1,0 +1,17 @@
+<!-- io.coursescheduler.util.preferences Logging configuration -->
+<included>
+
+	<!-- Preferences log file appender -->
+	<appender name="PREFERENCES" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/io.coursescheduler/preferences.log</file>
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- Preferences Logger -->
+	<logger name="io.coursescheduler.util.preferences" level="info">
+		<appender-ref ref="PREFERENCES" />
+	</logger>
+	
+</included>

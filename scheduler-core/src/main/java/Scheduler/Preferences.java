@@ -168,7 +168,7 @@ public class Preferences implements Serializable {
 				
 				newPreferences.put("migrateDate", new Date().toString());
 				
-				newPreferences.exportNode(new FileOutputStream("test.xml"));//TODO remove this - just for testing purposes
+				newPreferences.exportNode(new FileOutputStream("config/export-user.xml"));
 			}
 		} catch (BackingStoreException e) {
 			// TODO CATCH STUB

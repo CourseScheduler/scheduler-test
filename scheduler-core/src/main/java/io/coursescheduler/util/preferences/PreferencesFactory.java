@@ -30,6 +30,9 @@ package io.coursescheduler.util.preferences;
 
 import java.util.prefs.Preferences;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Factory class to build Preferences instances as needed by the application
  *
@@ -37,6 +40,11 @@ import java.util.prefs.Preferences;
  *
  */
 public class PreferencesFactory {
+	
+	/**
+	 * Instance specific logger
+	 */
+	private Logger log = LoggerFactory.getLogger("io.coursescheduler.util.preferences");
 	
 	/**
 	 * The root Preferences node for the user specific instance of the 
@@ -57,13 +65,17 @@ public class PreferencesFactory {
 	 *
 	 */
 	public PreferencesFactory(){
+		log.info("Starting preferences initialization");
 		userRoot = Preferences.userRoot();
+		log.info("User root initialized: {}", userRoot.absolutePath());
 		
 		try{
 			systemRoot = Preferences.systemRoot();
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}catch(SecurityException e){
-			e.printStackTrace();
+			log.warn("Unable to create standard system root. Using userRoot instead", e);
 			systemRoot = Preferences.userRoot();
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}
 	}
 	
@@ -73,13 +85,17 @@ public class PreferencesFactory {
 	 * @param rootPath the root path for this node under the user or system path
 	 */
 	public PreferencesFactory(String rootPath){
+		log.info("Starting preferences initialization");
 		userRoot = Preferences.userRoot().node(rootPath);
+		log.info("User root initialized: {}", userRoot.absolutePath());
 		
 		try{
 			systemRoot = Preferences.systemRoot().node(rootPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}catch(SecurityException e){
-			e.printStackTrace();
+			log.warn("Unable to create standard system root. Using userRoot instead", e);
 			systemRoot = Preferences.userRoot().node(rootPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}
 	}
 	
@@ -91,13 +107,17 @@ public class PreferencesFactory {
 	 * @param userRootPath the root path for the user nodes
 	 */
 	public PreferencesFactory(String systemRootPath, String userRootPath){
+		log.info("Starting preferences initialization");
 		userRoot = Preferences.userRoot().node(userRootPath);
+		log.info("User root initialized: {}", userRoot.absolutePath());
 		
 		try{
 			systemRoot = Preferences.systemRoot().node(systemRootPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}catch(SecurityException e){
-			e.printStackTrace();
+			log.warn("Unable to create standard system root. Using userRoot instead", e);
 			systemRoot = Preferences.userRoot().node(systemRootPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}
 	}
 	
@@ -111,7 +131,9 @@ public class PreferencesFactory {
 	 * root of this factory
 	 */
 	public Preferences getUserNode(String path){
-		return userRoot.node(path);
+		Preferences pref = userRoot.node(path);
+		log.debug("Using User Preferences node {} at {}", path, pref.absolutePath());
+		return pref;
 	}
 	
 	/**
@@ -124,6 +146,8 @@ public class PreferencesFactory {
 	 * root of this factory
 	 */
 	public Preferences getSystemNode(String path){
-		return systemRoot.node(path);
+		Preferences pref = systemRoot.node(path);
+		log.debug("Using System Preferences node {} at {}", path, pref.absolutePath());
+		return pref;
 	}
 }

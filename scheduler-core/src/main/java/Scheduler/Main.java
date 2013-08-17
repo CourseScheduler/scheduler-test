@@ -23,6 +23,8 @@ import ch.qos.logback.core.util.StatusPrinter;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -97,7 +99,7 @@ public class Main {
 	
 	
 	public static void main(String[] args){ 
-		initializeLogging();		
+		initializeLogging();        
 		
 		try {
 			try {
@@ -146,27 +148,8 @@ public class Main {
 		
 		loader = Main.class.getClassLoader();
 		
-		Main.prefs = Preferences.load();
+		initializePreferences();
 		
-		if (Main.prefs == null){
-			new File(folderName).mkdir();
-			new File(dataPath).mkdir();
-			Main.prefs = new Preferences();
-		}
-
-		//specify preferences factory
-		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
-		systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
-		
-		//use explicit sub nodes
-		//Main.prefFactory = new PreferencesFactory("config/system/io.coursescheduler","config/user/io.coursescheduler");
-		
-		//use different default directories
-		systemProps.put("io.coursescheduler.util.preferences.path.user", "config/user");
-		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
-		Main.prefFactory = new PreferencesFactory("io.coursescheduler");
-		prefs.migrate();
-
 		String current = prefs.getCurrentTerm();
 		
 		terms = new TreeMap<String, Database>();
@@ -240,13 +223,33 @@ public class Main {
 		Properties systemProps = System.getProperties();
 		
 		if(systemProps.getProperty("logback.configurationFile") == null){
-			systemProps.setProperty("logback.configurationFile", "config/logging.xml");
+			systemProps.setProperty("logback.configurationFile", "config/system/logback.xml");
 		}
-		
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-	    StatusPrinter.print(lc);
 	}
 	
+	private static void initializePreferences(){
+		Properties systemProps = System.getProperties();		
+		Main.prefs = Preferences.load();
+		
+		if (Main.prefs == null){
+			new File(folderName).mkdir();
+			new File(dataPath).mkdir();
+			Main.prefs = new Preferences();
+		}
+
+		//specify preferences factory
+		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
+		systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
+		
+		//use explicit sub nodes
+		//Main.prefFactory = new PreferencesFactory("config/system/io.coursescheduler","config/user/io.coursescheduler");
+		
+		//use different default directories
+		systemProps.put("io.coursescheduler.util.preferences.path.user", "config/user");
+		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
+		Main.prefFactory = new PreferencesFactory("io.coursescheduler");
+		prefs.migrate();
+	}
 	
 	public static void printZeroRatedProfs(){
 		ArrayList<Prof> profs = new ArrayList<Prof>();

@@ -1,0 +1,12 @@
+<!-- Main logging configuration file -->
+<configuration scan="true" scanPeriod="30 seconds" debug="true" >
+	
+	<!-- Default configuration properties -->
+	<property name="DEFAULT_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />     <!-- Default log file encoder pattern -->
+	<property name="LOG_DIR" value="log" />     <!-- Default log directory -->
+	
+	<!-- Logging Sub-Configuration Files -->
+	<include resource="config/system/root.inc.xml" />     <!-- Root logging configuration -->
+	<include resource="io/coursescheduler/util/preferences/preferences.inc.xml" />     <!-- Preferences logging configuration -->
+	
+</configuration>

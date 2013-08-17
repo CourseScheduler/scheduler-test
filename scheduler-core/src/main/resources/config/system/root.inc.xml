@@ -1,0 +1,31 @@
+<!-- root Logging configuration -->
+<included>
+
+	<!-- Default console appender -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+	    	<level>ERROR</level>
+	    </filter>
+	</appender>
+
+	<!-- Root log file appender -->
+	<appender name="ROOT" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/root.log</file>
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+	    	<level>ERROR</level>
+	    </filter>
+	</appender>
+	
+	<!-- Root Logger -->
+	<root level="warn">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROOT" />
+	</root>
+	
+</included>
