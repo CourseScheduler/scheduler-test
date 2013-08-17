@@ -16,6 +16,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.TreeMap;
@@ -92,6 +97,7 @@ public class Main {
 	
 	
 	public static void main(String[] args){ 
+		initializeLogging();		
 		
 		try {
 			try {
@@ -129,7 +135,6 @@ public class Main {
 		catch (IllegalAccessException e) {}
 		
 		Properties systemProps = System.getProperties();
-		
 		windowSystem = systemProps.getProperty("sun.desktop");
 		os = systemProps.getProperty("os.name");
 		availProcs = Runtime.getRuntime().availableProcessors();
@@ -229,6 +234,17 @@ public class Main {
 				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
 			}
 		}		
+	}
+	
+	private static void initializeLogging(){
+		Properties systemProps = System.getProperties();
+		
+		if(systemProps.getProperty("logback.configurationFile") == null){
+			systemProps.setProperty("logback.configurationFile", "config/logging.xml");
+		}
+		
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+	    StatusPrinter.print(lc);
 	}
 	
 	

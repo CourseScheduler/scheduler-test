@@ -28,7 +28,7 @@
 	<!-- Developers -->
 	<developers>
 		<developer>
-			<id>mikereinhold</id>
+			<id>mike938</id>
 			<name>Mike Reinhold</name>
 			<email>mike@coursescheduler.io</email>
 			<url>https://github.com/mike938</url>
@@ -129,7 +129,7 @@
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.3</version>
+				<version>2.2</version>
 			</dependency>
 
 			<!-- Logging facade for the application -->
@@ -139,18 +139,33 @@
 				<version>1.7.5</version>
 			</dependency>
 			
+			<!-- SLF4J Backend - Logback -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>1.0.13</version>
+			</dependency>
+			
+			<!-- SLF4J Backend - Logback -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.0.13</version>
+			</dependency>
+			
+			<!-- Java WebStart library -->
+			<dependency>
+				<groupId>javax.jnlp</groupId>
+				<artifactId>jnlp-api</artifactId>
+				<version>7.0</version>
+			</dependency>
+			
 		</dependencies>
 		
 	</dependencyManagement>
 	
 	<!-- Basic dependencies -->
 	<dependencies>
-		<!-- 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>jnlp</artifactId>
-		</dependency>
-		--> 
 		
 		<!-- Unit Test suite -->
 		<dependency>
@@ -170,6 +185,26 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		
+		<!-- SLF4J Backend - Logback -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		</dependency>
+		
+		<!-- SLF4J Backend - Logback -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		
+		<!-- Java WebStart library -->		
+		<dependency>
+			<groupId>javax.jnlp</groupId>
+			<artifactId>jnlp-api</artifactId>
+			<systemPath>${java.home}/lib/javaws.jar</systemPath>
+			<scope>system</scope>
 		</dependency>
 		
 	</dependencies>
@@ -238,7 +273,7 @@
 				<!-- Maven surefire plugin -->
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.16</version>
+					<version>2.15</version>
 				</plugin>
 				
 				<!-- Maven default clean plugin -->
