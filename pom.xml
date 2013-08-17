@@ -28,7 +28,7 @@
 	<!-- Developers -->
 	<developers>
 		<developer>
-			<id>mike938</id>
+			<id>mikereinhold</id>
 			<name>Mike Reinhold</name>
 			<email>mike@coursescheduler.io</email>
 			<url>https://github.com/mike938</url>
@@ -129,7 +129,7 @@
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 			</dependency>
 
 			<!-- Logging facade for the application -->
@@ -238,7 +238,7 @@
 				<!-- Maven surefire plugin -->
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.15</version>
+					<version>2.16</version>
 				</plugin>
 				
 				<!-- Maven default clean plugin -->
