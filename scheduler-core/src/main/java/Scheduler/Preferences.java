@@ -34,6 +34,8 @@ package Scheduler;								//declare as member of scheduler package
 /*********************************************************
  * The following imports are necessary for operation
 ********************************************************/
+import io.coursescheduler.util.preferences.PreferencesFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -47,6 +49,9 @@ import java.util.Date;
 import java.util.prefs.BackingStoreException;
 
 import org.omg.CORBA.BooleanSeqHelper;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 
 /*********************************************************
@@ -99,6 +104,9 @@ public class Preferences implements Serializable {
 	
 	private transient String currentTerm;		//current term identifier, non-serializable
 	
+	@Inject
+	private Injector injector;
+	
 	
 	/*********************************************************
 	 * (Constructor)
@@ -141,7 +149,7 @@ public class Preferences implements Serializable {
 	 *
 	 */
 	public void migrate(){
-		newPreferences = Main.prefFactory.getUserNode("legacy");
+		newPreferences = injector.getInstance(PreferencesFactory.class).getUserNode("legacy");
 		try {
 			if(newPreferences.get("migrateDate", null) == null){
 				this.setRatingsEnabled(ratingsEnabled);

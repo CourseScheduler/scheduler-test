@@ -103,42 +103,24 @@ public class PreferencesPropertiesFactory implements PreferencesFactory {
 			log.info("System root initialized: {}", systemRoot.absolutePath());
 		}
 	}
-	
-	/**
-	 * Return a Preferences instance rooted at the specified path, within
-	 * user preferences space and relative to the application root path
-	 * specified at the creation of the PreferencesPropertiesFactory.
-	 *
-	 * @param path the preferences node to return
-	 * @return a Preferences rooted at the specified path relative to the 
-	 * root of this factory
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.util.preferences.PreferencesFactory#getUserNode(java.lang.String)
 	 */
+	@Override
 	public Preferences getUserNode(String path){
 		Preferences pref = userRoot.node(path);
 		log.debug("Using User Preferences node {} at {}", path, pref.absolutePath());
 		return pref;
 	}
-	
-	/**
-	 * Return a Preferences instance rooted at the specified path, within
-	 * system preferences space and relative to the application root path
-	 * specified at the creation of the PreferencesPropertiesFactory.
-	 *
-	 * @param path the preferences node to return
-	 * @return a Preferences rooted at the specified path relative to the 
-	 * root of this factory
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.util.preferences.PreferencesFactory#getSystemNode(java.lang.String)
 	 */
+	@Override
 	public Preferences getSystemNode(String path){
 		Preferences pref = systemRoot.node(path);
 		log.debug("Using System Preferences node {} at {}", path, pref.absolutePath());
 		return pref;
-	}
-
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.preferences.PreferencesFactory#create(boolean, java.lang.String)
-	 */
-	@Override
-	public Preferences create(boolean systemNode, String path) {
-		return (systemNode) ? getSystemNode(path) : getUserNode(path);
 	}
 }

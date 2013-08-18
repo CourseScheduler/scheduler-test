@@ -38,13 +38,26 @@ import java.util.prefs.Preferences;
  */
 public interface PreferencesFactory {
 
+	
 	/**
-	 * Retrieve a Preferences instance for the specified path in the correct
-	 * namespace
+	 * Return a Preferences instance rooted at the specified path, within
+	 * user preferences space and relative to the application root path
+	 * specified at the creation of the PreferencesPropertiesFactory.
 	 *
-	 * @param systemNode if this is a system node (true for system, false for user)
-	 * @param path the path within the system or user tree, relative to the root
-	 * @return the Preferences instance
+	 * @param path the preferences node to return
+	 * @return a Preferences rooted at the specified path relative to the 
+	 * root of this factory
 	 */
-	public Preferences create(boolean systemNode, String path);
+	public Preferences getUserNode(String path);
+	
+	/**
+	 * Return a Preferences instance rooted at the specified path, within
+	 * system preferences space and relative to the application root path
+	 * specified at the creation of the PreferencesPropertiesFactory.
+	 *
+	 * @param path the preferences node to return
+	 * @return a Preferences rooted at the specified path relative to the 
+	 * root of this factory
+	 */
+	public Preferences getSystemNode(String path);
 }

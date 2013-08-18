@@ -1,6 +1,8 @@
 package Scheduler;
 
+import io.coursescheduler.util.preferences.PreferencesFactory;
 import io.coursescheduler.util.preferences.properties.PreferencesPropertiesFactory;
+import io.coursescheduler.util.preferences.properties.PreferencesPropertiesModule;
 import io.coursescheduler.util.preferences.properties.PropertiesFilePreferencesFactory;
 import io.coursescheduler.util.preferences.properties.XMLPropertiesFilePreferencesFactory;
 
@@ -18,6 +20,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
@@ -76,7 +81,7 @@ public class Main {
 	protected static ClassLoader loader;
 	
 	protected static Preferences prefs;
-	private static PreferencesPropertiesFactory prefFactory;
+	private static PreferencesFactory prefFactory;
 	protected static MainFrame master;
 	protected static ScheduledThreadPoolExecutor threadExec;
 	protected static TreeMap<String, Database> terms;
@@ -98,8 +103,11 @@ public class Main {
 	protected static boolean nimbus = false;
 	protected static boolean conflictDebugEnabled = false;
 	
+	private static Injector injector;
 	
-	public static void main(String[] args){ 		
+	public static void main(String[] args){
+		initializeGuice();
+		
 		try {
 			try {
 				sis = (SingleInstanceService) ServiceManager
@@ -218,6 +226,10 @@ public class Main {
 		}		
 	}
 	
+	private static void initializeGuice(){
+		injector = Guice.createInjector(new PreferencesPropertiesModule());
+	}
+	
 	private static void initializePreferences(){
 		Properties systemProps = System.getProperties();		
 		Main.prefs = Preferences.load();
@@ -227,6 +239,8 @@ public class Main {
 			new File(dataPath).mkdir();
 			Main.prefs = new Preferences();
 		}
+		
+		injector.injectMembers(Main.prefs);
 
 		//specify preferences factory, filesystem paths, and root node paths
 		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
@@ -235,7 +249,8 @@ public class Main {
 		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
 		systemProps.put("io.coursescheduler.util.preferences.root.user", "io.coursescheduler");
 		systemProps.put("io.coursescheduler.util.preferences.root.system", "io.coursescheduler");
-		Main.prefFactory = new PreferencesPropertiesFactory();
+		//Main.prefFactory = new PreferencesPropertiesFactory();
+		Main.prefFactory = injector.getInstance(PreferencesFactory.class);
 		prefs.migrate();
 	}
 	

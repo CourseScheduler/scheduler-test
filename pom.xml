@@ -160,6 +160,20 @@
 				<version>7.0</version>
 			</dependency>
 			
+			<!-- Google Guice IoC Multibindings -->
+			<dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-multibindings</artifactId>
+				<version>3.0</version>
+			</dependency>
+			
+			<!-- Google Guice IoC Assisted Inject -->
+			<dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-assistedinject</artifactId>
+				<version>3.0</version>
+			</dependency>
+			
 		</dependencies>
 		
 	</dependencyManagement>
@@ -205,6 +219,18 @@
 			<artifactId>jnlp-api</artifactId>
 			<systemPath>${java.home}/lib/javaws.jar</systemPath>
 			<scope>system</scope>
+		</dependency>
+		
+		<!-- Google Guice IoC Multibindings -->
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-multibindings</artifactId>
+		</dependency>
+		
+		<!-- Google Guice IoC Assisted Inject -->
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
 		</dependency>
 		
 	</dependencies>
