@@ -44,7 +44,7 @@ public class PreferencesFactory {
 	/**
 	 * Instance specific logger
 	 */
-	private Logger log = LoggerFactory.getLogger("io.coursescheduler.util.preferences");
+	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
 	/**
 	 * The root Preferences node for the user specific instance of the 

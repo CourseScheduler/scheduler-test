@@ -16,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -98,9 +99,7 @@ public class Main {
 	protected static boolean conflictDebugEnabled = false;
 	
 	
-	public static void main(String[] args){ 
-		initializeLogging();        
-		
+	public static void main(String[] args){ 		
 		try {
 			try {
 				sis = (SingleInstanceService) ServiceManager
@@ -217,14 +216,6 @@ public class Main {
 				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
 			}
 		}		
-	}
-	
-	private static void initializeLogging(){
-		Properties systemProps = System.getProperties();
-		
-		if(systemProps.getProperty("logback.configurationFile") == null){
-			systemProps.setProperty("logback.configurationFile", "config/system/logback.xml");
-		}
 	}
 	
 	private static void initializePreferences(){

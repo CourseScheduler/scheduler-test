@@ -1,6 +1,9 @@
 <!-- Main logging configuration file -->
 <configuration scan="true" scanPeriod="30 seconds" debug="true" >
 	
+	<!-- Allow JMX Management of Logback -->
+	<jmxConfigurator />
+	
 	<!-- Default configuration properties -->
 	<property name="DEFAULT_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />     <!-- Default log file encoder pattern -->
 	<property name="LOG_DIR" value="log" />     <!-- Default log directory -->

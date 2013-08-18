@@ -38,6 +38,9 @@ import java.util.Properties;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Provide a properties file backed Preferences implementation
  *
@@ -91,6 +94,11 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * Value: {@value}
 	 */
 	private static final String DEFAULT_PATH_SYSTEM = ".";
+
+	/**
+	 * Instance specific logger
+	 */
+	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
 	/**
 	 * The Properties object that stores the Preferences elements for this node
@@ -180,15 +188,13 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		try{
 			sync();
 		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Unable to synchronize preferences on disk to memory", e);
 		}
 		
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Unable to flush preferences from memory to disk", e);
 		}
 	}
 	
@@ -199,12 +205,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected void putSpi(String key, String value) {
 		properties.put(key, value);
 		setDirty();
+		log.debug("{}: Set {} to {}", new Object[]{getNodeName(), key, value});
 		
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Unable to flush preferences from memory to disk", e);
 		}
 	}
 
@@ -223,12 +229,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected void removeSpi(String key) {
 		properties.remove(key);
 		setDirty();
+		log.debug("{}: Removed {}", getNodeName(), key);
 		
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Unable to flush preferences from memory to disk", e);
 		}
 	}
 
@@ -240,9 +246,14 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		synchronized(lock){
 			File file = new File(getFullFilePathAndExtension());
 			
-			file.delete();	//TODO is this ok?
+			if(file.delete()){
+				//successful
+				log.info("Deletion of preferences node {} stored at {} succeeded", this.absolutePath(), file.getPath());
+			}else{
+				//unsuccessful
+				log.warn("Deletion of preferences node {} stored at {} failed", this.absolutePath(), file.getPath());
+			}
 		}
-
 	}
 
 	/* (non-Javadoc)
@@ -271,6 +282,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		if(node == null){
 			node = createChildNode(this, name);
 			children.put(name, node);
+			log.info("{}: Added child {}", getNodeName(), name);
 		}
 		return node;
 	}
@@ -281,7 +293,8 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	@Override
 	protected void syncSpi() throws BackingStoreException {
 		synchronized (lock) {
-			File file = getAndCreateFilePaths();
+			File file = getBackingFile();
+			createBackingFilePath(file);
 			
 			//TODO how to handle if the object is dirty?
 			
@@ -290,9 +303,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 					load(properties, fileInStream);
 					clearDirty();
 				} catch (IOException e) {
-					// TODO CATCH STUB
-					e.printStackTrace();
-					
+					log.error("Unable to load preferences from disk", e);					
 					throw new BackingStoreException(e);
 				}
 			}
@@ -306,14 +317,14 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected void flushSpi() throws BackingStoreException {
 		if(isDirty()){
 			synchronized(lock){
-				File file = getAndCreateFilePaths();
+				File file = getBackingFile();
+				createBackingFilePath(file);
 				
 				try(FileOutputStream fileOutStream = new FileOutputStream(file)){
 					store(properties, fileOutStream);
 					clearDirty();
 				} catch (IOException e) {
-					// TODO CATCH STUB
-					e.printStackTrace();
+					log.error("Unable to store preferences to disk", e);
 					
 					throw new BackingStoreException(e);
 				}
@@ -322,23 +333,34 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	}
 
 	/**
-	 * Retrieve the backing store File. Verify whether the path to the specified
-	 * backing file exists and if not, create it. Check if the backing file currently
-	 * exists.
+	 * Retrieve the backing store File.
 	 *
-	 * @return the backing File for the current node
+	 * @return the file that is the backing store for this Preferences node
 	 */
-	private File getAndCreateFilePaths() {
+	private File getBackingFile(){
 		File file = new File(getFullFilePathAndExtension());
+		newNode = !file.exists();
+		log.debug("{}: Backing file is {}", getNodeName(), file.getPath());
+		return file;
+	}
+	
+	/**
+	 * Create the directories necessary to write the backing store file
+	 *
+	 * @param file the backing store file
+	 */
+	private void createBackingFilePath(File file) {
 		File path = file.getParentFile();
 		
 		if(path != null && !path.exists()){
-			path.mkdirs();
+			if(path.mkdirs()){
+				//successful
+				log.info("Directory path creation of {} succeeded", path.getPath());
+			}else{
+				//unsuccessful
+				log.warn("Directory path creation of {} failed", path.getPath());
+			}
 		}
-		
-		newNode = !file.exists();
-		
-		return file;
 	}
 	
 	/**
@@ -351,11 +373,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		String filePath;
 		
 		if(isRootNode()){
+			log.trace("{}: Root Node: Is System {}", getNodeName(), isSystemNode());
 			filePath = isSystemNode() ? getRootSystemNodeFilesystemPath() : getRootUserNodeFilesystemPath();
 		}else{
 			filePath = propertiesFileParent.getFilePath();
 		}
-		
+		log.trace("{}: File path is {}", getNodeName(), filePath);
 		return filePath;
 	}
 	
@@ -371,10 +394,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	private String getRootUserNodeFilesystemPath(){
 		String path = System.getProperty(PROPERTY_PATH_USER);
 		
+		log.trace("{}: System property {}: {}", new Object[]{getNodeName(), PROPERTY_PATH_USER, path});
 		if(path == null){
 			path = DEFAULT_PATH_USER;
 		}
 		
+		log.trace("{}: User Root path: {}", getNodeName(), path);
 		return path;
 	}
 	
@@ -388,11 +413,13 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	private String getRootSystemNodeFilesystemPath(){
 		String path = System.getProperty(PROPERTY_PATH_SYSTEM);
-		
+
+		log.trace("{}: System property {}: {}", new Object[]{getNodeName(), PROPERTY_PATH_SYSTEM, path});
 		if(path == null){
 			path = DEFAULT_PATH_SYSTEM;
 		}
-		
+
+		log.trace("{}: System Root path: {}", getNodeName(), path);
 		return path;
 	}
 
@@ -416,11 +443,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 		String fullNodeName;
 		
 		if(isRootNode()){
+			log.trace("{}: Root Node: Is System: {}", getNodeName(), isSystemNode());
 			fullNodeName = isSystemNode() ? ROOT_FILE_NAME_SYSTEM : ROOT_FILE_NAME_USER;
 		}else{
 			fullNodeName = propertiesFileParent.absolutePath() + "/" + getNodeName();
 		}
-		
+		log.trace("{}: Full node name: {}", getNodeName(), fullNodeName);
 		return fullNodeName;
 	}
 	

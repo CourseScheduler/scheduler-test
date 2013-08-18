@@ -2,7 +2,7 @@
 <included>
 
 	<!-- Preferences log file appender -->
-	<appender name="PREFERENCES" class="ch.qos.logback.core.FileAppender">
+	<appender name="IO-CS-PREFERENCES" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/io.coursescheduler/preferences.log</file>
 		<encoder>
 			<pattern>${DEFAULT_PATTERN}</pattern>
@@ -11,7 +11,7 @@
 	
 	<!-- Preferences Logger -->
 	<logger name="io.coursescheduler.util.preferences" level="info">
-		<appender-ref ref="PREFERENCES" />
+		<appender-ref ref="IO-CS-PREFERENCES" />
 	</logger>
 	
 </included>
