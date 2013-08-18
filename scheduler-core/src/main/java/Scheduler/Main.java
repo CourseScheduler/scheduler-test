@@ -76,7 +76,7 @@ public class Main {
 	protected static ClassLoader loader;
 	
 	protected static Preferences prefs;
-	protected static PreferencesPropertiesFactory prefFactory;
+	private static PreferencesPropertiesFactory prefFactory;
 	protected static MainFrame master;
 	protected static ScheduledThreadPoolExecutor threadExec;
 	protected static TreeMap<String, Database> terms;
