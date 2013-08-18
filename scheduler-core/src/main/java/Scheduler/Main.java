@@ -1,6 +1,6 @@
 package Scheduler;
 
-import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.preferences.properties.PreferencesPropertiesFactory;
 import io.coursescheduler.util.preferences.properties.PropertiesFilePreferencesFactory;
 import io.coursescheduler.util.preferences.properties.XMLPropertiesFilePreferencesFactory;
 
@@ -76,7 +76,7 @@ public class Main {
 	protected static ClassLoader loader;
 	
 	protected static Preferences prefs;
-	protected static PreferencesFactory prefFactory;
+	protected static PreferencesPropertiesFactory prefFactory;
 	protected static MainFrame master;
 	protected static ScheduledThreadPoolExecutor threadExec;
 	protected static TreeMap<String, Database> terms;
@@ -228,17 +228,14 @@ public class Main {
 			Main.prefs = new Preferences();
 		}
 
-		//specify preferences factory
+		//specify preferences factory, filesystem paths, and root node paths
 		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
 		systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
-		
-		//use explicit sub nodes
-		//Main.prefFactory = new PreferencesFactory("config/system/io.coursescheduler","config/user/io.coursescheduler");
-		
-		//use different default directories
 		systemProps.put("io.coursescheduler.util.preferences.path.user", "config/user");
 		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
-		Main.prefFactory = new PreferencesFactory("io.coursescheduler");
+		systemProps.put("io.coursescheduler.util.preferences.root.user", "io.coursescheduler");
+		systemProps.put("io.coursescheduler.util.preferences.root.system", "io.coursescheduler");
+		Main.prefFactory = new PreferencesPropertiesFactory();
 		prefs.migrate();
 	}
 	
