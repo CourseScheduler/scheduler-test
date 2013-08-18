@@ -10,6 +10,7 @@
 	
 	<!-- Logging Sub-Configuration Files -->
 	<include resource="config/system/root.inc.xml" />     <!-- Root logging configuration -->
+	<include resource="Scheduler/legacy.inc.xml" />     <!-- Legacy modules logging configuration -->
 	<include resource="io/coursescheduler/util/preferences/preferences.inc.xml" />     <!-- Preferences logging configuration -->
 	
 </configuration>

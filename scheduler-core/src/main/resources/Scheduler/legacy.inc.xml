@@ -1,0 +1,17 @@
+<!-- legacy modules Logging configuration -->
+<included>
+
+	<!-- Legacy log file appender -->
+	<appender name="LEGACY" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/Scheduler.log</file>
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- legacy Logger -->
+	<logger name="Scheduler" level="info">
+		<appender-ref ref="LEGACY" />
+	</logger>
+	
+</included>

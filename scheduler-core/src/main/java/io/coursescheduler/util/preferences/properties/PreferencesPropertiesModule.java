@@ -47,7 +47,7 @@ public class PreferencesPropertiesModule extends AbstractModule {
 	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
-	protected void configure() {
+	protected void configure() {		
 		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
 		bind(PreferencesFactory.class)
 			.to(PreferencesPropertiesFactory.class)

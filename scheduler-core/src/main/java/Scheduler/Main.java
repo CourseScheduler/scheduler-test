@@ -1,10 +1,6 @@
 package Scheduler;
 
 import io.coursescheduler.util.preferences.PreferencesFactory;
-import io.coursescheduler.util.preferences.properties.PreferencesPropertiesFactory;
-import io.coursescheduler.util.preferences.properties.PreferencesPropertiesModule;
-import io.coursescheduler.util.preferences.properties.standard.PropertiesFilePreferencesFactory;
-import io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory;
 
 import java.awt.Component;
 
@@ -23,14 +19,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
+import com.google.inject.Module;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -103,7 +96,15 @@ public class Main {
 	protected static boolean nimbus = false;
 	protected static boolean conflictDebugEnabled = false;
 	
+	/**
+	 * Guice injector that will be used to access and build dependencies
+	 */
 	private static Injector injector;
+	
+	/**
+	 * A basic logger for this class to monitor the startup routine
+	 */
+	private static Logger log = LoggerFactory.getLogger(Main.class.getName());
 	
 	public static void main(String[] args){
 		initializeGuice();
@@ -143,11 +144,7 @@ public class Main {
 		catch (InstantiationException e) {} 
 		catch (IllegalAccessException e) {}
 		
-		Properties systemProps = System.getProperties();
-		windowSystem = systemProps.getProperty("sun.desktop");
-		os = systemProps.getProperty("os.name");
-		availProcs = Runtime.getRuntime().availableProcessors();
-		jvm = System.getProperty("java.vendor") + " " + System.getProperty("java.version");
+		retrieveSystemSpecifications();
 				
 		threadExec = new ScheduledThreadPoolExecutor(32 * availProcs);
 		threadExec.setKeepAliveTime(1500, TimeUnit.MILLISECONDS);
@@ -226,12 +223,81 @@ public class Main {
 		}		
 	}
 	
+	/**
+	 * Initialize the Guice injector with the 
+	 *
+	 */
 	private static void initializeGuice(){
-		injector = Guice.createInjector(new PreferencesPropertiesModule());
+		log.info("Preparing to initialize Guice subsystem");
+		configureGuiceProperties();
+				
+		injector = Guice.createInjector(getGuiceModules());
 	}
 	
+	/**
+	 * Retrieve a list of built Guice modules that will be used during injector
+	 * construction and Guice configuration
+	 *
+	 * @return the list list of Guice modules
+	 */
+	private static List<Module> getGuiceModules(){
+		log.info("Preparing to initialize Guice modules");
+		List<Module> moduleList = new ArrayList<Module>();
+		
+		for(String moduleName: getGuiceModuleNames()){
+			try {
+				log.debug("Preparing to build Guice Module: {}", moduleName);
+				moduleList.add((Module)Class.forName(moduleName).newInstance());
+				log.info("Successfully built Guice Module: {}", moduleName);
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				log.error("Unable to build Guice Module: " + moduleName,  e);
+			}
+		}
+		
+		log.info("Finished building Guice Modules");
+		return moduleList;
+	}
+	
+	/**
+	 * Retrieve the list of Guice modules that should be built and configured
+	 * for the Guice injector
+	 *
+	 * @return the list of module names
+	 */
+	private static String[] getGuiceModuleNames(){
+		String moduleString = System.getProperty("io.coursescheduler.modules");
+		String[] modules = moduleString.split(",");
+		
+		log.info("Found Guice module list: {}", moduleString);
+		return modules;
+	}
+	
+	/**
+	 * Check for command line specified properties for the Guice configuration.
+	 * If the property is not specified on the command line, use the default value
+	 *
+	 */
+	private static void configureGuiceProperties(){
+		final String moduleProperty = "io.coursescheduler.modules";
+		final String defaultModuleList = 
+				"io.coursescheduler.util.preferences.properties.PreferencesPropertiesModule"
+			;
+		
+		//check for the list of modules to load
+		log.debug("Checking for Guice modules specified in System property {}", moduleProperty);
+		if(System.getProperty(moduleProperty) == null){
+			System.setProperty(moduleProperty, defaultModuleList);
+			log.debug("System property {} not found. Using default module list: {}", moduleProperty, defaultModuleList);
+		}
+	}
+	
+	/**
+	 * Initialize the configuration storage subsystem to allow for storage and retrieval
+	 * of configuration settings
+	 *
+	 */
 	private static void initializePreferences(){
-		Properties systemProps = System.getProperties();		
+		log.info("Preparing to initialize application Preferences");
 		Main.prefs = Preferences.load();
 		
 		if (Main.prefs == null){
@@ -240,18 +306,78 @@ public class Main {
 			Main.prefs = new Preferences();
 		}
 		
+		configurePreferencesProperties();
 		injector.injectMembers(Main.prefs);
-
-		//specify preferences factory, filesystem paths, and root node paths
-		//systemProps.put("java.util.prefs.PreferencesFactory", PropertiesFilePreferencesFactory.class.getName());
-		systemProps.put("java.util.prefs.PreferencesFactory", XMLPropertiesFilePreferencesFactory.class.getName());
-		systemProps.put("io.coursescheduler.util.preferences.path.user", "config/user");
-		systemProps.put("io.coursescheduler.util.preferences.path.system", "config/system");
-		systemProps.put("io.coursescheduler.util.preferences.root.user", "io.coursescheduler");
-		systemProps.put("io.coursescheduler.util.preferences.root.system", "io.coursescheduler");
-		//Main.prefFactory = new PreferencesPropertiesFactory();
 		Main.prefFactory = injector.getInstance(PreferencesFactory.class);
 		prefs.migrate();
+	}
+	
+	/**
+	 * Check for command line specified configurations for the preferences storage.
+	 * If command line configurations have not been specified, use the default values
+	 *
+	 */
+	private static void configurePreferencesProperties(){
+		final String preferencesFactoryProperty = "java.util.prefs.PreferencesFactory";
+		final String defaultPreferencesBackend = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
+		final String userFilePathProperty = "io.coursescheduler.util.preferences.path.user";
+		final String defaultUserFilePath = "config/user";
+		final String systemFilePathProperty = "io.coursescheduler.util.preferences.path.system";
+		final String defaultSystemFilePath = "config/system";
+		final String userRootPathProperty = "io.coursescheduler.util.preferences.root.user";
+		final String defaultUserRootPath = "io.coursescheduler";
+		final String systemRootPathProperty = "io.coursescheduler.util.preferences.root.system";
+		final String defaultSystemRootPath = "io.coursescheduler"; 
+		
+		Properties systemProps = System.getProperties();	
+
+		//check for a desired Preferences Factory class
+		log.debug("Checking for Preferences backend specified in {}", preferencesFactoryProperty);
+		if(systemProps.get(preferencesFactoryProperty) == null){
+			systemProps.put(preferencesFactoryProperty, defaultPreferencesBackend);
+			log.debug("No backend found in {}. Using default backend: {}", preferencesFactoryProperty, defaultPreferencesBackend);
+		}
+		
+		//check for desired filesystem path for the user root
+		log.debug("Checking for user root file path specified in {}", userFilePathProperty);
+		if(systemProps.get(userFilePathProperty) == null){
+			systemProps.put(userFilePathProperty, defaultUserFilePath);
+			log.debug("No user root file path found in {}. Using default backend: {}", userFilePathProperty, defaultUserFilePath);
+		}
+		
+		//check for desired filesystem path for the system root
+		log.debug("Checking for system root file path specified in {}", systemFilePathProperty);
+		if(systemProps.get(systemFilePathProperty) == null){
+			systemProps.put(systemFilePathProperty, defaultSystemFilePath);
+			log.debug("No system root file path found in {}. Using default backend: {}", systemFilePathProperty, defaultSystemFilePath);
+		}
+		
+		//check for the desired root node path for the user root
+		log.debug("Checking for user root node path specified in {}", userRootPathProperty);
+		if(systemProps.get(userRootPathProperty) == null){
+			systemProps.put(userRootPathProperty, defaultUserRootPath);
+			log.debug("No user root node path found in {}. Using default backend: {}", userRootPathProperty, defaultUserRootPath);
+		}
+
+		//check for the desired root node path for the user root
+		log.debug("Checking for system root node file path specified in {}", systemRootPathProperty);
+		if(systemProps.get(systemRootPathProperty) == null){
+			systemProps.put(systemRootPathProperty, defaultSystemRootPath);
+			log.debug("No system root node path found in {}. Using default backend: {}", systemRootPathProperty, defaultSystemRootPath);
+		}
+	}
+	
+	/**
+	 * Retrieve system specifications from the JVM Properties and Runtime
+	 *
+	 */
+	private static void retrieveSystemSpecifications(){
+		Properties systemProps = System.getProperties();
+		
+		windowSystem = systemProps.getProperty("sun.desktop");
+		os = systemProps.getProperty("os.name");
+		availProcs = Runtime.getRuntime().availableProcessors();
+		jvm = System.getProperty("java.vendor") + " " + System.getProperty("java.version");
 	}
 	
 	public static void printZeroRatedProfs(){
