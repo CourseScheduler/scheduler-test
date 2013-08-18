@@ -48,10 +48,8 @@ import java.util.Calendar;						//to get date information
 import java.util.Date;
 import java.util.prefs.BackingStoreException;
 
-import org.omg.CORBA.BooleanSeqHelper;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 
 /*********************************************************
@@ -105,7 +103,7 @@ public class Preferences implements Serializable {
 	private transient String currentTerm;		//current term identifier, non-serializable
 	
 	@Inject
-	private Injector injector;
+	private PreferencesFactory prefFact;
 	
 	
 	/*********************************************************
@@ -149,7 +147,7 @@ public class Preferences implements Serializable {
 	 *
 	 */
 	public void migrate(){
-		newPreferences = injector.getInstance(PreferencesFactory.class).getUserNode("legacy");
+		newPreferences = prefFact.getUserNode("legacy");
 		try {
 			if(newPreferences.get("migrateDate", null) == null){
 				this.setRatingsEnabled(ratingsEnabled);

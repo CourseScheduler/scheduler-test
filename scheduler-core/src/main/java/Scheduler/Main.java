@@ -40,7 +40,6 @@ public class Main {
 	protected static final long buildNumber = 1510L;//build number
 	protected static final String version = new String("4.12");
 	
-	
 	protected static final String author = new String("Mike Reinhold");
 	protected static final String maintain = new String("Mike Reinhold");
 	protected static final String email = new String("kuscheduler@gmail.com");
@@ -64,6 +63,58 @@ public class Main {
 	protected static final String jarFixRMP = new String(dataName + "/" + rmp);
 	protected static InputStream fixRMPFile;
 	
+
+	/**
+	 * System property for specifying the java.util.pref.Preferences backend store implementation
+	 * that should be used by the application
+	 */
+	protected static final String preferencesFactoryProperty = "java.util.prefs.PreferencesFactory";
+	
+	/**
+	 * Default preferred java.util.pref.Preferences backend
+	 */
+	protected static final String defaultPreferencesBackend = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
+	
+	/**
+	 * System property for specifying the filesystem path of the user preferences root node
+	 */
+	protected static final String userFilePathProperty = "io.coursescheduler.util.preferences.path.user";
+	
+	/**
+	 * Default filesystem path for the user preferences node
+	 */
+	protected static final String defaultUserFilePath = "config/user";
+	
+	/**
+	 * System property for specifying the filesystem path of the system preferences root node
+	 */
+	protected static final String systemFilePathProperty = "io.coursescheduler.util.preferences.path.system";
+	
+	/**
+	 * Default filesystem path for the system preferences node
+	 */
+	protected static final String defaultSystemFilePath = "config/system";
+	
+	/**
+	 * System property for specifying the user preferences root node path within the user root filesystem path
+	 */
+	protected static final String userRootPathProperty = "io.coursescheduler.util.preferences.root.user";
+	
+	/**
+	 * Default user preferences root node within the user tree
+	 */
+	protected static final String defaultUserRootPath = "io.coursescheduler";
+	
+	/**
+	 * System property for specifying the system preferences root node path within the system root filesystem path
+	 */
+	protected static final String systemRootPathProperty = "io.coursescheduler.util.preferences.root.system";
+	
+	/**
+	 * Default system preferences root node within the system tree
+	 */
+	protected static final String defaultSystemRootPath = "io.coursescheduler"; 
+	
 	private static final int buffers = 1;
 	
 	protected static String defURL = new String("https://jweb.kettering.edu/cku1/bwckschd.p_get_crse_unsec");
@@ -74,7 +125,6 @@ public class Main {
 	protected static ClassLoader loader;
 	
 	protected static Preferences prefs;
-	private static PreferencesFactory prefFactory;
 	protected static MainFrame master;
 	protected static ScheduledThreadPoolExecutor threadExec;
 	protected static TreeMap<String, Database> terms;
@@ -308,8 +358,8 @@ public class Main {
 		
 		configurePreferencesProperties();
 		injector.injectMembers(Main.prefs);
-		Main.prefFactory = injector.getInstance(PreferencesFactory.class);
 		prefs.migrate();
+		log.info("Preferences initialization complete");
 	}
 	
 	/**
@@ -317,18 +367,7 @@ public class Main {
 	 * If command line configurations have not been specified, use the default values
 	 *
 	 */
-	private static void configurePreferencesProperties(){
-		final String preferencesFactoryProperty = "java.util.prefs.PreferencesFactory";
-		final String defaultPreferencesBackend = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
-		final String userFilePathProperty = "io.coursescheduler.util.preferences.path.user";
-		final String defaultUserFilePath = "config/user";
-		final String systemFilePathProperty = "io.coursescheduler.util.preferences.path.system";
-		final String defaultSystemFilePath = "config/system";
-		final String userRootPathProperty = "io.coursescheduler.util.preferences.root.user";
-		final String defaultUserRootPath = "io.coursescheduler";
-		final String systemRootPathProperty = "io.coursescheduler.util.preferences.root.system";
-		final String defaultSystemRootPath = "io.coursescheduler"; 
-		
+	private static void configurePreferencesProperties(){		
 		Properties systemProps = System.getProperties();	
 
 		//check for a desired Preferences Factory class
