@@ -149,7 +149,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * @param parent the parent Preferences node
 	 * @param name the preferences node name
 	 */
-	PropertiesPreferences(AbstractPreferences parent, String name) {
+	protected PropertiesPreferences(AbstractPreferences parent, String name) {
 		super(parent, name);
 				
 		propertiesFileParent = (PropertiesPreferences)parent;
@@ -167,7 +167,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * @param name the preferences node name
 	 * @param isUserNode true if a user root instance, false if a system root
 	 */
-	PropertiesPreferences(String name, boolean isUserNode){
+	protected PropertiesPreferences(String name, boolean isUserNode){
 		super(null, name);
 				
 		propertiesFileParent = null;

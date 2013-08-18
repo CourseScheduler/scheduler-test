@@ -26,7 +26,9 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.preferences.properties;
+package io.coursescheduler.util.preferences.properties.standard;
+
+import io.coursescheduler.util.preferences.properties.PropertiesPreferences;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

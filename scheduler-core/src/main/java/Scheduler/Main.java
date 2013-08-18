@@ -3,8 +3,8 @@ package Scheduler;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 import io.coursescheduler.util.preferences.properties.PreferencesPropertiesFactory;
 import io.coursescheduler.util.preferences.properties.PreferencesPropertiesModule;
-import io.coursescheduler.util.preferences.properties.PropertiesFilePreferencesFactory;
-import io.coursescheduler.util.preferences.properties.XMLPropertiesFilePreferencesFactory;
+import io.coursescheduler.util.preferences.properties.standard.PropertiesFilePreferencesFactory;
+import io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory;
 
 import java.awt.Component;
 

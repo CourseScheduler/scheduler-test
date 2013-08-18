@@ -1,7 +1,7 @@
 /**
   * @(#)PropertiesFilePreferencesFactory.java
   *
-  * Factory class for PropertiesFilePreferences
+  * Factory class for XMLPropertiesFilePreferences
   *
   * @author Mike Reinhold
   * 
@@ -26,22 +26,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.preferences.properties;
+package io.coursescheduler.util.preferences.properties.xml;
+
+import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFactory;
 
 
 /**
- * Factory class for PropertiesFilePreferences
+ * Factory class for XMLPropertiesFilePreferences
  *
  * @author Mike Reinhold
  *
  */
-public class PropertiesFilePreferencesFactory extends PropertiesPreferencesFactory {
-
+public class XMLPropertiesFilePreferencesFactory extends PropertiesPreferencesFactory {
+	
 	/**
-	 * Create a new PropertiesFilePreferencesFactory with System and User root nodes.
+	 * Create a new XMLPropertiesFilePreferencesFactory with System and User root nodes.
 	 *
 	 */
-	public PropertiesFilePreferencesFactory(){
-		super(new PropertiesFilePreferences("", false), new PropertiesFilePreferences("", true));
+	public XMLPropertiesFilePreferencesFactory(){
+		super(new XMLPropertiesFilePreferences("", false), new XMLPropertiesFilePreferences("", true));
 	}
 }
