@@ -330,7 +330,7 @@ public class Main {
 	private static void configureGuiceProperties(){
 		final String moduleProperty = "io.coursescheduler.modules";
 		final String defaultModuleList = 
-				"io.coursescheduler.util.preferences.properties.PreferencesPropertiesModule"
+				"io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule"
 			;
 		
 		//check for the list of modules to load

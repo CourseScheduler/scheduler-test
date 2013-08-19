@@ -42,7 +42,7 @@ public interface PreferencesFactory {
 	/**
 	 * Return a Preferences instance rooted at the specified path, within
 	 * user preferences space and relative to the application root path
-	 * specified at the creation of the PreferencesPropertiesFactory.
+	 * specified at the creation of the PreferencesFactory.
 	 *
 	 * @param path the preferences node to return
 	 * @return a Preferences rooted at the specified path relative to the 
@@ -53,7 +53,7 @@ public interface PreferencesFactory {
 	/**
 	 * Return a Preferences instance rooted at the specified path, within
 	 * system preferences space and relative to the application root path
-	 * specified at the creation of the PreferencesPropertiesFactory.
+	 * specified at the creation of the PreferencesFactory.
 	 *
 	 * @param path the preferences node to return
 	 * @return a Preferences rooted at the specified path relative to the 

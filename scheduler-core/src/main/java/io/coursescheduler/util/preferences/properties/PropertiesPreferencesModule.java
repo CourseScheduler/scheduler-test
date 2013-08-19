@@ -1,7 +1,8 @@
 /**
-  * @(#)PropertiesFilePreferencesFactory.java
+  * @(#)PropertiesPreferencesModule.java
   *
-  * Factory class for PropertiesFilePreferences
+  * Guice Module for binding the PropertiesPreferencesFactory class as the
+  * implementation class for the PreferencesFactory interface
   *
   * @author Mike Reinhold
   * 
@@ -26,24 +27,31 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.preferences.properties.standard;
+package io.coursescheduler.util.preferences.properties;
 
-import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFactory;
+import io.coursescheduler.util.preferences.PreferencesFactory;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 
 /**
- * Factory class for PropertiesFilePreferences
+ * Guice Module for binding the PropertiesPreferencesFactory class as the
+ * implementation class for the PreferencesFactory interface
  *
  * @author Mike Reinhold
  *
  */
-public class PropertiesFilePreferencesFactory extends PropertiesPreferencesFactory {
+public class PropertiesPreferencesModule extends AbstractModule {
 
-	/**
-	 * Create a new PropertiesFilePreferencesFactory with System and User root nodes.
-	 *
+	/* (non-Javadoc)
+	 * @see com.google.inject.AbstractModule#configure()
 	 */
-	public PropertiesFilePreferencesFactory(){
-		super(new PropertiesFilePreferences("", false), new PropertiesFilePreferences("", true));
+	@Override
+	protected void configure() {		
+		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
+		bind(PreferencesFactory.class)
+			.to(PropertiesPreferencesFactory.class)
+			.in(Singleton.class);
 	}
+
 }

@@ -1,7 +1,7 @@
 /**
   * @(#)XMLPropertiesFilePreferences.java
   *
-  * An XML Properties File implementation of PropertiesPreferences
+  * An XML Properties File implementation of PropertiesFilePreferences
   *
   * @author Mike Reinhold
   * 
@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.util.preferences.properties.xml;
 
-import io.coursescheduler.util.preferences.properties.PropertiesPreferences;
+import io.coursescheduler.util.preferences.properties.PropertiesFilePreferences;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,12 +37,12 @@ import java.util.Properties;
 import java.util.prefs.AbstractPreferences;
 
 /**
- * An XML Properties File implementation of PropertiesPreferences
+ * An XML Properties File implementation of PropertiesFilePreferences
  *
  * @author Mike Reinhold
  *
  */
-public class XMLPropertiesFilePreferences extends PropertiesPreferences {
+public class XMLPropertiesFilePreferences extends PropertiesFilePreferences {
 
 	/**
 	 * Create a new Preferences instance as a child of the specified instance using the
@@ -79,7 +79,7 @@ public class XMLPropertiesFilePreferences extends PropertiesPreferences {
 	 * @see io.coursescheduler.util.config.properties.PropertiesPreferences#createChildNode(java.util.prefs.AbstractPreferences, java.lang.String)
 	 */
 	@Override
-	protected PropertiesPreferences createChildNode(AbstractPreferences abstractPreferences, String name) {
+	protected PropertiesFilePreferences createChildNode(AbstractPreferences abstractPreferences, String name) {
 		return new XMLPropertiesFilePreferences(abstractPreferences, name);
 	}
 

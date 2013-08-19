@@ -1,5 +1,5 @@
 /**
-  * @(#)PropertiesFilePreferencesFactory.java
+  * @(#)XMLPropertiesFilePreferencesFactory.java
   *
   * Factory class for XMLPropertiesFilePreferences
   *
@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.util.preferences.properties.xml;
 
-import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFactory;
+import io.coursescheduler.util.preferences.properties.PropertiesFilePreferencesFactory;
 
 
 /**
@@ -37,7 +37,7 @@ import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFacto
  * @author Mike Reinhold
  *
  */
-public class XMLPropertiesFilePreferencesFactory extends PropertiesPreferencesFactory {
+public class XMLPropertiesFilePreferencesFactory extends PropertiesFilePreferencesFactory {
 	
 	/**
 	 * Create a new XMLPropertiesFilePreferencesFactory with System and User root nodes.

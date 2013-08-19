@@ -1,8 +1,7 @@
 /**
-  * @(#)PropertiesFilePreferencesFactory.java
+  * @(#)PropertiesPreferencesFactory.java
   *
-  * Factory class for PropertiesPreferences, used by Properties backed Preferences
-  * implementations
+  * Factory class to build Preferences instances as needed by the application
   *
   * @author Mike Reinhold
   * 
@@ -29,51 +28,99 @@
   */
 package io.coursescheduler.util.preferences.properties;
 
+import io.coursescheduler.util.preferences.PreferencesFactory;
+
 import java.util.prefs.Preferences;
-import java.util.prefs.PreferencesFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Factory class for PropertiesPreferences, used by Properties backed Preferences
- * implementations
+ * Factory class to build Preferences instances as needed by the application
  *
  * @author Mike Reinhold
  *
  */
-public abstract class PropertiesPreferencesFactory implements PreferencesFactory {
+public class PropertiesPreferencesFactory implements PreferencesFactory {
+	
+	/**
+	 * System property for specifying the system root path
+	 */
+	private static final String ROOT_NODE_SYSTEM = "io.coursescheduler.util.preferences.root.system";
+	
+	/**
+	 * System property for specifying the user root path
+	 */
+	private static final String ROOT_NODE_USER = "io.coursescheduler.util.preferences.root.user";
+	
+	/**
+	 * Default System Root path
+	 */
+	private static final String DEFAULT_ROOT_SYSTEM = "/";
+	
+	/**
+	 * Default User Root path
+	 */
+	private static final String DEFAULT_ROOT_USER = "/";
+	
+	/**
+	 * Instance specific logger
+	 */
+	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	/**
-	 * The System root preferences node
+	 * The root Preferences node for the system specific instance of the 
+	 * application. This will be used as the application root for all
+	 * system based properties  
 	 */
 	private Preferences systemRoot;
 	
 	/**
-	 * The User root preferences node
+	 * The root Preferences node for the user specific instance of the 
+	 * application. This will be used as the application root for all
+	 * user based properties  
 	 */
 	private Preferences userRoot;
 	
 	/**
-	 * Create a new PropertiesPreferencesFactory using the specified system and user roots
+	 * Create a new Preferences Factory rooted at the default location
 	 *
 	 */
-	public PropertiesPreferencesFactory(PropertiesPreferences system, PropertiesPreferences user){
-		systemRoot = system;
-		userRoot = user;
+	public PropertiesPreferencesFactory(){
+		String systemPath = System.getProperty(ROOT_NODE_SYSTEM, DEFAULT_ROOT_SYSTEM);
+		String userPath = System.getProperty(ROOT_NODE_USER, DEFAULT_ROOT_USER);
+		
+		log.info("Starting preferences initialization");
+		userRoot = Preferences.userRoot().node(userPath);
+		log.info("User root initialized: {}", userRoot.absolutePath());
+		
+		try{
+			systemRoot = Preferences.systemRoot().node(systemPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
+		}catch(SecurityException e){
+			log.warn("Unable to create standard system root. Using userRoot instead", e);
+			systemRoot = Preferences.userRoot().node(systemPath);
+			log.info("System root initialized: {}", systemRoot.absolutePath());
+		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see java.util.prefs.PreferencesFactory#systemRoot()
+	 * @see io.coursescheduler.util.preferences.PreferencesFactory#getUserNode(java.lang.String)
 	 */
 	@Override
-	public Preferences systemRoot() {
-		return systemRoot;
+	public Preferences getUserNode(String path){
+		Preferences pref = userRoot.node(path);
+		log.debug("Using User Preferences node {} at {}", path, pref.absolutePath());
+		return pref;
 	}
 
 	/* (non-Javadoc)
-	 * @see java.util.prefs.PreferencesFactory#userRoot()
+	 * @see io.coursescheduler.util.preferences.PreferencesFactory#getSystemNode(java.lang.String)
 	 */
 	@Override
-	public Preferences userRoot() {
-		return userRoot;
+	public Preferences getSystemNode(String path){
+		Preferences pref = systemRoot.node(path);
+		log.debug("Using System Preferences node {} at {}", path, pref.absolutePath());
+		return pref;
 	}
-
 }

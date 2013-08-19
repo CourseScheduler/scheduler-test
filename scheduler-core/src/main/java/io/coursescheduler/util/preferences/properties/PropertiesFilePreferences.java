@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Mike Reinhold
  *
  */
-public abstract class PropertiesPreferences extends AbstractPreferences {
+public abstract class PropertiesFilePreferences extends AbstractPreferences {
 
 	/**
 	 * The name of the backing store file for the user root Preference node
@@ -129,12 +129,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * which is good because we need specific info from the parent node in order 
 	 * to properly handle the file names and locations.
 	 */
-	private PropertiesPreferences propertiesFileParent;
+	private PropertiesFilePreferences propertiesFileParent;
 	
 	/**
 	 * A map of the child node names to the child node objects.
 	 */
-	private Map<String, PropertiesPreferences> children = new HashMap<>();
+	private Map<String, PropertiesFilePreferences> children = new HashMap<>();
 	
 	/**
 	 * Flag to indicate that the in-memory structure is dirty and that it should be
@@ -149,10 +149,10 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * @param parent the parent Preferences node
 	 * @param name the preferences node name
 	 */
-	protected PropertiesPreferences(AbstractPreferences parent, String name) {
+	protected PropertiesFilePreferences(AbstractPreferences parent, String name) {
 		super(parent, name);
 				
-		propertiesFileParent = (PropertiesPreferences)parent;
+		propertiesFileParent = (PropertiesFilePreferences)parent;
 		nodeName = name;
 		rootNode = false;
 		
@@ -167,7 +167,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 * @param name the preferences node name
 	 * @param isUserNode true if a user root instance, false if a system root
 	 */
-	protected PropertiesPreferences(String name, boolean isUserNode){
+	protected PropertiesFilePreferences(String name, boolean isUserNode){
 		super(null, name);
 				
 		propertiesFileParent = null;
@@ -277,7 +277,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	 */
 	@Override
 	protected synchronized AbstractPreferences childSpi(String name) {
-		PropertiesPreferences node = children.get(name);
+		PropertiesFilePreferences node = children.get(name);
 		
 		if(node == null){
 			node = createChildNode(this, name);
@@ -514,7 +514,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected abstract String getFileExtension();
 
 	/**
-	 * Load the PropertiesPreferences from the specified File Input Stream into the Properties instance
+	 * Load the PropertiesFilePreferences from the specified File Input Stream into the Properties instance
 	 *
 	 * @param properties the target Properties instance for loading from the input file
 	 * @param fis the input filestream from which to load the properties
@@ -523,7 +523,7 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected abstract void load(Properties properties, FileInputStream fis) throws IOException;
 	
 	/**
-	 * Store the PropertiesPreferences from the Properties instance to the specified File Output Stream
+	 * Store the PropertiesFilePreferences from the Properties instance to the specified File Output Stream
 	 *
 	 * @param properties the source Properties instance which will be flushed to the output file
 	 * @param fos the output filestream to which the properties should be flushed
@@ -532,12 +532,12 @@ public abstract class PropertiesPreferences extends AbstractPreferences {
 	protected abstract void store(Properties properties, FileOutputStream fos) throws IOException;
 	
 	/**
-	 * Create a new PropertiesPreferences instance as a child to the specified abstractPrefernces
+	 * Create a new PropertiesFilePreferences instance as a child to the specified abstractPrefernces
 	 * instance using the specified node name.
 	 *
 	 * @param abstractPreferences the Preferences node which will be the new node's parent
 	 * @param name the node name under which to register the Preferences node
 	 * @return a new preferences node with the specified name as a child to the specified node
 	 */
-	protected abstract PropertiesPreferences createChildNode(AbstractPreferences abstractPreferences, String name);
+	protected abstract PropertiesFilePreferences createChildNode(AbstractPreferences abstractPreferences, String name);
 }

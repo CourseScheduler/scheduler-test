@@ -1,7 +1,7 @@
 /**
-  * @(#)PropertiesFilePreferences.java
+  * @(#)StandardPropertiesFilePreferences.java
   *
-  * A standard Properties File implementation of PropertiesPreferences
+  * A standard Properties File implementation of PropertiesFilePreferences
   *
   * @author Mike Reinhold
   * 
@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.util.preferences.properties.standard;
 
-import io.coursescheduler.util.preferences.properties.PropertiesPreferences;
+import io.coursescheduler.util.preferences.properties.PropertiesFilePreferences;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,12 +37,12 @@ import java.util.Properties;
 import java.util.prefs.AbstractPreferences;
 
 /**
- * A standard Properties File implementation of PropertiesPreferences
+ * A standard Properties File implementation of PropertiesFilePreferences
  *
  * @author Mike Reinhold
  *
  */
-public class PropertiesFilePreferences extends PropertiesPreferences {
+public class StandardPropertiesFilePreferences extends PropertiesFilePreferences {
 
 	/**
 	 * Create a new Preferences instance as a child of the specified instance using the
@@ -51,7 +51,7 @@ public class PropertiesFilePreferences extends PropertiesPreferences {
 	 * @param parent the parent Preferences node
 	 * @param name the preferences node name
 	 */
-	PropertiesFilePreferences(AbstractPreferences parent, String name){
+	StandardPropertiesFilePreferences(AbstractPreferences parent, String name){
 		super(parent, name);
 	}
 	
@@ -63,7 +63,7 @@ public class PropertiesFilePreferences extends PropertiesPreferences {
 	 * @param name the preferences node name
 	 * @param isUserNode true if a user root instance, false if a system root
 	 */
-	PropertiesFilePreferences(String name, boolean isUserNode) {
+	StandardPropertiesFilePreferences(String name, boolean isUserNode) {
 		super(name, isUserNode);
 	}
 
@@ -79,8 +79,8 @@ public class PropertiesFilePreferences extends PropertiesPreferences {
 	 * @see io.coursescheduler.util.config.properties.PropertiesPreferences#createChildNode(java.util.prefs.AbstractPreferences, java.lang.String)
 	 */
 	@Override
-	protected PropertiesPreferences createChildNode(AbstractPreferences abstractPreferences, String name) {
-		return new PropertiesFilePreferences(abstractPreferences, name);
+	protected PropertiesFilePreferences createChildNode(AbstractPreferences abstractPreferences, String name) {
+		return new StandardPropertiesFilePreferences(abstractPreferences, name);
 	}
 
 	/* (non-Javadoc)
