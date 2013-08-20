@@ -4,9 +4,6 @@
 	<!-- Allow JMX Management of Logback -->
 	<jmxConfigurator />
 	
-	<!-- Allow console plugin for Eclipse -->
-	<consolePlugin />
-	
 	<!-- Default configuration properties -->
 	<property name="DEFAULT_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />     <!-- Default log file encoder pattern -->
 	<property name="LOG_DIR" value="log" />     <!-- Default log directory -->
@@ -15,5 +12,6 @@
 	<include resource="config/system/root.inc.xml" />     <!-- Root logging configuration -->
 	<include resource="Scheduler/legacy.inc.xml" />     <!-- Legacy modules logging configuration -->
 	<include resource="io/coursescheduler/util/preferences/preferences.inc.xml" />     <!-- Preferences logging configuration -->
+	<include resource="io/coursescheduler/util/guice/guice.inc.xml" />     <!-- Guice logging configuration -->
 	
 </configuration>

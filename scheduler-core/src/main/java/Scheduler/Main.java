@@ -1,5 +1,6 @@
 package Scheduler;
 
+import io.coursescheduler.util.guice.Guicer;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 
 import java.awt.Component;
@@ -23,7 +24,9 @@ import com.google.inject.Module;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -279,66 +282,24 @@ public class Main {
 	 */
 	private static void initializeGuice(){
 		log.info("Preparing to initialize Guice subsystem");
-		configureGuiceProperties();
-				
-		injector = Guice.createInjector(getGuiceModules());
+		Guicer guicer= new Guicer(configureDefaultModules());
+						
+		injector = guicer.initialize();
+		log.info("Guice subsystem initialized");
 	}
 	
 	/**
-	 * Retrieve a list of built Guice modules that will be used during injector
-	 * construction and Guice configuration
+	 * Build the Map of application components to default module implementations
 	 *
-	 * @return the list list of Guice modules
+	 * @return the map of default implementations for application components
 	 */
-	private static List<Module> getGuiceModules(){
-		log.info("Preparing to initialize Guice modules");
-		List<Module> moduleList = new ArrayList<Module>();
+	private static Map<String, String> configureDefaultModules(){
+		Map<String, String> modules = new HashMap<String, String>();
 		
-		for(String moduleName: getGuiceModuleNames()){
-			try {
-				log.debug("Preparing to build Guice Module: {}", moduleName);
-				moduleList.add((Module)Class.forName(moduleName).newInstance());
-				log.info("Successfully built Guice Module: {}", moduleName);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				log.error("Unable to build Guice Module: " + moduleName,  e);
-			}
-		}
+		//default component module definitions
+		modules.put("preferences", "io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule");
 		
-		log.info("Finished building Guice Modules");
-		return moduleList;
-	}
-	
-	/**
-	 * Retrieve the list of Guice modules that should be built and configured
-	 * for the Guice injector
-	 *
-	 * @return the list of module names
-	 */
-	private static String[] getGuiceModuleNames(){
-		String moduleString = System.getProperty("io.coursescheduler.modules");
-		String[] modules = moduleString.split(",");
-		
-		log.info("Found Guice module list: {}", moduleString);
 		return modules;
-	}
-	
-	/**
-	 * Check for command line specified properties for the Guice configuration.
-	 * If the property is not specified on the command line, use the default value
-	 *
-	 */
-	private static void configureGuiceProperties(){
-		final String moduleProperty = "io.coursescheduler.modules";
-		final String defaultModuleList = 
-				"io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule"
-			;
-		
-		//check for the list of modules to load
-		log.debug("Checking for Guice modules specified in System property {}", moduleProperty);
-		if(System.getProperty(moduleProperty) == null){
-			System.setProperty(moduleProperty, defaultModuleList);
-			log.debug("System property {} not found. Using default module list: {}", moduleProperty, defaultModuleList);
-		}
 	}
 	
 	/**

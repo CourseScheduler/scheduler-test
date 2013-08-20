@@ -1,0 +1,17 @@
+<!-- io.coursescheduler.util.guice Logging configuration -->
+<included>
+
+	<!-- Preferences log file appender -->
+	<appender name="IO-CS-GUICE" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_DIR}/io.coursescheduler/guice.log</file>
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- Preferences Logger -->
+	<logger name="io.coursescheduler.util.guice" level="info">
+		<appender-ref ref="IO-CS-GUICE" />
+	</logger>
+	
+</included>
