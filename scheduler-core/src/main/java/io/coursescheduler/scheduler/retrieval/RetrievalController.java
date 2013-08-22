@@ -1,7 +1,7 @@
 /**
   * @(#)RetrievalController.java
   *
-  * A generic retrieval controller that is applicable for may types of 
+  * A generic retrieval controller that is applicable for many types of 
   * data retrieval
   *
   * @author Mike Reinhold
@@ -32,12 +32,12 @@ package io.coursescheduler.scheduler.retrieval;
 import java.util.Observable;
 
 /**
- * A generic retrieval controller that is applicable for may types of 
+ * A generic retrieval controller that is applicable for many types of 
   * data retrieval
  *
  * @author Mike Reinhold
  *
  */
-public abstract class RetrievalController<T> extends Observable implements Retriever<T> {
+public abstract class RetrievalController<T> extends Observable {
 
 }

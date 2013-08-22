@@ -1,5 +1,6 @@
 package Scheduler;
 
+import io.coursescheduler.scheduler.parse.SectionBasedXMLParser;
 import io.coursescheduler.util.guice.Guicer;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 
@@ -23,6 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -160,6 +162,8 @@ public class Main {
 	private static Logger log = LoggerFactory.getLogger(Main.class.getName());
 	
 	public static void main(String[] args){
+		XMLTest();
+		
 		initializeGuice();
 		
 		try {
@@ -274,6 +278,15 @@ public class Main {
 				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
 			}
 		}		
+	}
+	
+	private static void XMLTest(){
+		try{
+			SectionBasedXMLParser test = new SectionBasedXMLParser(new FileInputStream("Data/ku_scheduler_2.xml"));
+			test.parse();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
