@@ -56,13 +56,18 @@ import org.xml.sax.SAXException;
  */
 public class SectionBasedXMLParser {
 
+	
 	public static final String sectionExpression = "//ROWSET/ROW";
 	
-	public static final String sectionRelativeLevelExpression = "Levels/Levels_ROW/Student/text()";
+	public static final Map<String, String> subCodes;
+	
+	public static final Map<String, String> subKeys;
 	
 	public static final Map<String, String> courseCodes;
 	
 	static {
+		subCodes = new HashMap<String, String>();
+		subKeys = new HashMap<String, String>();
 		courseCodes = new HashMap<String, String>();
 		courseCodes.put("course.department.code", "DeparmentCode/text()");
 		courseCodes.put("course.department.name", "Department/text()");
@@ -77,7 +82,8 @@ public class SectionBasedXMLParser {
 		//corequisites
 		//prerequisites
 		//required sections
-		//levels
+		courseCodes.put("course.levels", "Levels/Levels_ROW/Student");
+		subCodes.put("course.levels", "text()");
 	}
 	
 	public static final Map<String, String> sectionCodes;
@@ -90,8 +96,11 @@ public class SectionBasedXMLParser {
 		sectionCodes.put("section.capacity.total", "TotalCapacity/text()");
 		sectionCodes.put("section.capacity.registered", "RegisteredCapacity/text()");
 		sectionCodes.put("section.capacity.remaining", "RemainingCapacity/text()");
-		//weekdays
+		
 		//campus
+		
+		sectionCodes.put("section.meetings", "WeekDays/WeekDays_ROW");
+		subKeys.put("", "");
 	}
 	
 	private Document doc;
@@ -141,26 +150,11 @@ public class SectionBasedXMLParser {
 		String courseID = (String)xPath.evaluate(courseCodes.get("course.id"), node, XPathConstants.STRING);
 		if(!courseData.containsKey(courseID)){
 			courseData.put(courseID, new HashMap<String, String>());
-			retrieveCourseData(xPath, node, courseData.get(courseID));
+			retrieveData(xPath, node, courseData.get(courseID), courseCodes);
 		}else{
 			System.out.println("Course data captured for " + courseID + " during parse of previous section");
 		}
 		return courseID;
-	}
-	
-	private void retrieveCourseData(XPath xPath, Node node, Map<String, String> courseData){
-		for(Entry<String, String> entry: courseCodes.entrySet()){
-			String result;
-			try {
-				result = (String)xPath.evaluate(entry.getValue(), node, XPathConstants.STRING);
-				courseData.put(entry.getKey(), result);
-				System.out.println(entry.getKey() + " ( \"" + entry.getValue() + "\" ) = " + result);
-			} catch (XPathExpressionException e) {
-				// TODO CATCH STUB
-				e.printStackTrace();
-				System.err.println(entry.getKey() + " ( \"" + entry.getValue() + "\" )");
-			}
-		}
 	}
 	
 	private String captureCourseSectionData(XPath xPath, Node node, String courseID) throws XPathExpressionException{
@@ -176,23 +170,62 @@ public class SectionBasedXMLParser {
 		
 		Map<String, String> sectionData = new HashMap<String, String>();
 		course.put(sectionID, sectionData);
-		retrieveSectionData(xPath, node, sectionData);
+		retrieveData(xPath, node, sectionData, sectionCodes);
 		
 		return sectionID;
 	}
 	
-	private void retrieveSectionData(XPath xPath, Node node, Map<String, String> sectionData){
-		for(Entry<String, String> entry: sectionCodes.entrySet()){
-			String result;
-			try {
-				result = (String)xPath.evaluate(entry.getValue(), node, XPathConstants.STRING);
-				sectionData.put(entry.getKey(), result);
-				System.out.println(entry.getKey() + " ( \"" + entry.getValue() + "\" ) = " + result);
-			} catch (XPathExpressionException e) {
-				// TODO CATCH STUB
-				e.printStackTrace();
-				System.err.println(entry.getKey() + " ( \"" + entry.getValue() + "\" )");
+	//TODO change retrieve data logic
+	//			always retrieve multi
+	//			write number of nodes into {key}
+	//			for each node found by {key}
+	//				if sub query exists
+	//					retrieve multi for {key}.index.{subkey} using {key}.{subkey} as query
+	//				else no subquery exists
+	//					retrieve single for {key}.index using {key}.{subkey} as query (default to text() ?)
+	
+	private void retrieveData(XPath xPath, Node node, Map<String, String> data, Map<String, String> codes){
+		for(Entry<String, String> entry: codes.entrySet()){
+			String key = entry.getKey();
+			if(subCodes.containsKey(entry.getKey())){
+				getMultiValue(xPath, key, entry.getValue(), subCodes.get(key), node, data);
+			}else{
+				getSingleValue(xPath, key, entry.getValue(), node, data);
 			}
+		}
+	}
+	
+	private void retrieveData(XPath xPath, Node node, String parentKey, Map<String, String> codes, Map<String, String> data){
+		//TODO
+	}
+	
+	private void getSingleValue(XPath xPath, String key, String query, Node node, Map<String, String> data){
+		String result;
+		try {
+			result = (String)xPath.evaluate(query, node, XPathConstants.STRING);
+			data.put(key, result);
+			System.out.println(key + " ( \"" + query + "\" ) = " + result);
+		} catch (XPathExpressionException e) {
+			// TODO CATCH STUB
+			e.printStackTrace();
+			System.err.println(key + " ( \"" + query + "\" )");
+		}
+	}
+	
+	private void getMultiValue(XPath xPath, String key, String query, String subQuery, Node node, Map<String, String> data){
+		NodeList subNodes;
+		try{
+			subNodes = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
+			
+			for(int item = 0; item < subNodes.getLength(); item++){
+				Node subNode = subNodes.item(item);
+				getSingleValue(xPath, key+"."+item, subQuery, subNode, data);
+			}
+			
+			
+		} catch (XPathExpressionException e){
+			e.printStackTrace();
+			System.err.println(key + " ( \"" + query + "\" ) -> ( \"" + subQuery + "\")");
 		}
 	}
 	
