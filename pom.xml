@@ -173,6 +173,13 @@
 				<artifactId>guice-assistedinject</artifactId>
 				<version>3.0</version>
 			</dependency>
+		
+			<!-- Saxonica XML Parsing Library -->
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>Saxon-HE</artifactId>
+				<version>9.5.1-1</version>
+			</dependency>
 			
 		</dependencies>
 		
@@ -232,6 +239,13 @@
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-assistedinject</artifactId>
 		</dependency>
+		
+		<!-- Saxonica XML Parsing Library -->
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+		</dependency>
+            
 		
 	</dependencies>
 	
