@@ -97,14 +97,14 @@ public class SectionBasedXMLParser {
 		
 		//campus
 		
-		sectionCodes.put("section.meetings", "WeekDays/WeekDays_ROW");
+		sectionCodes.put("section.meetings", "WEEKDAYS/WEEKDAYS_ROW");
 		Map<String, String> meetingsCodes = new HashMap<>();
 		meetingsCodes.put("day", "Day");
 		meetingsCodes.put("building.code", "BuildCode");
 		meetingsCodes.put("building.name", "Building");
 		meetingsCodes.put("room", "Room");
-		meetingsCodes.put("time.start", "STime");
-		meetingsCodes.put("time.end", "ETime");
+		meetingsCodes.put("time.start", "Stime");
+		meetingsCodes.put("time.end", "Etime");
 		subCodes.put("section.meetings", meetingsCodes);
 	}
 	
@@ -141,6 +141,8 @@ public class SectionBasedXMLParser {
 				String courseID = captureCourseData(xPath, node);
 				String sectionID = captureCourseSectionData(xPath, node, courseID);
 			}
+
+			//TODO consolidate section data under the course data
 			
 		} catch (XPathExpressionException e) {
 			// TODO CATCH STUB
@@ -180,78 +182,48 @@ public class SectionBasedXMLParser {
 		return sectionID;
 	}
 	
-	//TODO change retrieve data logic
-	//			always retrieve multi
-	//			write number of nodes into {key}
-	//			for each node found by {key}
-	//				if sub query exists
-	//					retrieve multi for {key}.index.{subkey} using {key}.{subkey} as query
-	//				else no subquery exists
-	//					retrieve single for {key}.index using {key}.{subkey} as query (default to text() ?)
-	
 	private void retrieveData(XPath xPath, Node node, Map<String, String> data, Map<String, String> codes){
+		retrieveData(xPath, node, "", "", codes, data);
+	}
+	
+	private void retrieveData(XPath xPath, Node node, String attributePath, String nodePath, Map<String, String> codes, Map<String, String> data){
 		for(Entry<String, String> entry: codes.entrySet()){
 			String key = entry.getKey();
-			if(subCodes.containsKey(entry.getKey())){
-				getMultiValue(xPath, key, entry.getValue(), subCodes.get(key), node, data);
-			}else{
-				getSingleValue(xPath, key, entry.getValue(), node, data);
-			}
+			String query = entry.getValue();
+			String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
+			String newKey = (nodePath == null || nodePath.compareTo("") == 0) ? key : nodePath + "." + key;
+						
+			retrieveDataElement(xPath, node, newPath, newKey, key, query, data);
 		}
 	}
 	
-	private void retrieveData(XPath xPath, Node node, String parentKey, Map<String, String> codes, Map<String, String> data){
-		
-	}
-	
-	private void getMultiValue(){
-		
-	}
-	
-	private void getSingleValueLegacy(XPath xPath, String key, String query, Node node, Map<String, String> data){
-		String result;
-		try {
-			result = (String)xPath.evaluate(query, node, XPathConstants.STRING);
-			data.put(key, result);
-			System.out.println(key + " ( \"" + query + "\" ) = " + result);
-		} catch (XPathExpressionException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
-			System.err.println(key + " ( \"" + query + "\" )");
-		}
-	}
-	
-	private void getMultiValueLegacy(XPath xPath, String key, String query, String subQuery, Node node, Map<String, String> data){
-		NodeList subNodes;
+	private void retrieveDataElement(XPath xPath, Node node, String attributePath, String keyPath, String key, String query, Map<String, String> data){
 		try{
-			subNodes = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
+			NodeList children = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
 			
-			for(int item = 0; item < subNodes.getLength(); item++){
-				Node subNode = subNodes.item(item);
-				getSingleValue(xPath, key+"."+item, subQuery, subNode, data);
+			//write the number of values
+			String count = new Integer(children.getLength()).toString();
+			data.put(keyPath, count);
+			System.out.println(keyPath + " ( \"" + query + "\" ) = " + count);
+			
+			//process each item
+			for(int item = 0; item < children.getLength(); item++){
+				Node child = children.item(item);
+				
+				if(subCodes.containsKey(attributePath)){
+					
+					//subvalues to retrieve
+					retrieveData(xPath, child, attributePath, keyPath + "." + item, subCodes.get(attributePath), data);
+				}else{
+					String itemKey = keyPath + "." + item;
+					String value = child.getTextContent();
+					data.put(itemKey, value);
+					System.out.println(itemKey + " ( \"text()\" ) = " + value);
+				}
 			}
-			
-			
-		} catch (XPathExpressionException e){
+		} catch(XPathExpressionException e){
+			//TODO CATCH STUB
 			e.printStackTrace();
-			System.err.println(key + " ( \"" + query + "\" ) -> ( \"" + subQuery + "\")");
-		}
-	}
-	
-	private void printElement(Node node){
-		String name = node.getLocalName();
-		if(name != null && name.compareTo("#Text") != 0){
-			System.out.println(node.getLocalName() + ":" + node.getTextContent());
-		}
-	}
-	
-	private void printChildElements(Node node){		
-		NodeList children = node.getChildNodes();
-		
-		for(int child = 0; child < children.getLength(); child++){
-			Node childNode = children.item(child);
-			
-			printElement(childNode);
 		}
 	}
 }
