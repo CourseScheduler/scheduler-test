@@ -110,13 +110,13 @@ public class SectionBasedXMLParser {
 	
 	private Document doc;
 	
-	private Map<String, Map<String, String>> courseData;
+	private Map<String, Map<String, String>> courseDataSets;
 	
-	private Map<String, Map<String, Map<String, String>>> courseSectionData;
+	private Map<String, Map<String, Map<String, String>>> courseSectionDataSets;
 	
 	private SectionBasedXMLParser(){
-		courseData = new HashMap<>();
-		courseSectionData = new HashMap<>();
+		courseDataSets = new HashMap<>();
+		courseSectionDataSets = new HashMap<>();
 	}
 	
 	public SectionBasedXMLParser(InputStream input) throws ParserConfigurationException, SAXException, IOException{
@@ -142,7 +142,7 @@ public class SectionBasedXMLParser {
 				String sectionID = captureCourseSectionData(xPath, node, courseID);
 			}
 
-			//TODO consolidate section data under the course data
+			consolidate();
 			
 		} catch (XPathExpressionException e) {
 			// TODO CATCH STUB
@@ -155,9 +155,9 @@ public class SectionBasedXMLParser {
 		System.out.println("\n----ROW-------------");
 		
 		String courseID = (String)xPath.evaluate(courseCodes.get("course.id"), node, XPathConstants.STRING);
-		if(!courseData.containsKey(courseID)){
-			courseData.put(courseID, new HashMap<String, String>());
-			retrieveData(xPath, node, courseData.get(courseID), courseCodes);
+		if(!courseDataSets.containsKey(courseID)){
+			courseDataSets.put(courseID, new HashMap<String, String>());
+			retrieveData(xPath, node, courseDataSets.get(courseID), courseCodes);
 		}else{
 			System.out.println("Course data captured for " + courseID + " during parse of previous section");
 		}
@@ -168,11 +168,11 @@ public class SectionBasedXMLParser {
 		String sectionID = (String)xPath.evaluate(sectionCodes.get("section.id"), node, XPathConstants.STRING);
 		Map<String, Map<String, String>> course;
 		
-		if(!courseSectionData.containsKey(courseID)){
+		if(!courseSectionDataSets.containsKey(courseID)){
 			course = new HashMap<String, Map<String, String>>();
-			courseSectionData.put(courseID, course);
+			courseSectionDataSets.put(courseID, course);
 		}else{
-			course = courseSectionData.get(courseID);
+			course = courseSectionDataSets.get(courseID);
 		}
 		
 		Map<String, String> sectionData = new HashMap<String, String>();
@@ -224,6 +224,29 @@ public class SectionBasedXMLParser {
 		} catch(XPathExpressionException e){
 			//TODO CATCH STUB
 			e.printStackTrace();
+		}
+	}
+	
+	private void consolidate(){
+		for(String course: courseDataSets.keySet()){
+			Map<String, String> courseData = courseDataSets.get(course);
+			Map<String, Map<String, String>> sectionDataSet = courseSectionDataSets.get(course);
+			String sectionCount = new Integer(sectionDataSet.size()).toString();
+			
+			courseData.put("course.section", sectionCount);
+			System.out.println("course.section = " + sectionCount);
+			
+			int sectionIndex = 0;
+			for(String section: sectionDataSet.keySet()){
+				for(Entry<String, String> entry: sectionDataSet.get(section).entrySet()){
+					String sectionEntry = entry.getKey();
+					String courseEntry = "course.sections." + sectionIndex + "." + sectionEntry;
+					String value = entry.getValue();
+					
+					courseData.put(courseEntry, value);
+					System.out.println("Migrating \"" + sectionEntry + "\" to \"" + courseEntry + "\": " + value);
+				}
+			}
 		}
 	}
 }
