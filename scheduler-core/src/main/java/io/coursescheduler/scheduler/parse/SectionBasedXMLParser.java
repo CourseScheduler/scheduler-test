@@ -59,48 +59,53 @@ public class SectionBasedXMLParser {
 	
 	public static final String sectionExpression = "//ROWSET/ROW";
 	
-	public static final Map<String, String> subCodes;
+	public static final String defaultQuery = "text()";
 	
-	public static final Map<String, String> subKeys;
+	public static final Map<String, Map<String, String>> subCodes;
 	
 	public static final Map<String, String> courseCodes;
 	
 	static {
-		subCodes = new HashMap<String, String>();
-		subKeys = new HashMap<String, String>();
+		subCodes = new HashMap<String, Map<String, String>>();
 		courseCodes = new HashMap<String, String>();
-		courseCodes.put("course.department.code", "DeparmentCode/text()");
-		courseCodes.put("course.department.name", "Department/text()");
-		courseCodes.put("course.title", "Title/text()");
-		courseCodes.put("course.id", "CourseID/text()");
-		courseCodes.put("course.term", "AssociatedTerm/text()");
-		courseCodes.put("course.registration", "RegistrationDates/text()");
-		courseCodes.put("course.catalog.url", "CatalogEntryURL/text()");
-		courseCodes.put("course.credits", "Credits/text()");
-		courseCodes.put("course.description", "Description/text()");
-		courseCodes.put("course.standing.minimum", "MinimumClassStanding/text()");
+		courseCodes.put("course.department.code", "DeparmentCode");
+		courseCodes.put("course.department.name", "Department");
+		courseCodes.put("course.title", "Title");
+		courseCodes.put("course.id", "CourseID");
+		courseCodes.put("course.term", "AssociatedTerm");
+		courseCodes.put("course.registration", "RegistrationDates");
+		courseCodes.put("course.catalog.url", "CatalogEntryURL");
+		courseCodes.put("course.credits", "Credits");
+		courseCodes.put("course.description", "Description");
+		courseCodes.put("course.standing.minimum", "MinimumClassStanding");
 		//corequisites
 		//prerequisites
 		//required sections
 		courseCodes.put("course.levels", "Levels/Levels_ROW/Student");
-		subCodes.put("course.levels", "text()");
 	}
 	
 	public static final Map<String, String> sectionCodes;
 	
 	static {
 		sectionCodes = new HashMap<String, String>();
-		sectionCodes.put("section.id", "SectionID/text()");
-		sectionCodes.put("section.crn", "CRN/text()");
-		sectionCodes.put("section.type", "ScheduleType/text()");
-		sectionCodes.put("section.capacity.total", "TotalCapacity/text()");
-		sectionCodes.put("section.capacity.registered", "RegisteredCapacity/text()");
-		sectionCodes.put("section.capacity.remaining", "RemainingCapacity/text()");
+		sectionCodes.put("section.id", "SectionID");
+		sectionCodes.put("section.crn", "CRN");
+		sectionCodes.put("section.type", "ScheduleType");
+		sectionCodes.put("section.capacity.total", "TotalCapacity");
+		sectionCodes.put("section.capacity.registered", "RegisteredCapacity");
+		sectionCodes.put("section.capacity.remaining", "RemainingCapacity");
 		
 		//campus
 		
 		sectionCodes.put("section.meetings", "WeekDays/WeekDays_ROW");
-		subKeys.put("", "");
+		Map<String, String> meetingsCodes = new HashMap<>();
+		meetingsCodes.put("day", "Day");
+		meetingsCodes.put("building.code", "BuildCode");
+		meetingsCodes.put("building.name", "Building");
+		meetingsCodes.put("room", "Room");
+		meetingsCodes.put("time.start", "STime");
+		meetingsCodes.put("time.end", "ETime");
+		subCodes.put("section.meetings", meetingsCodes);
 	}
 	
 	private Document doc;
@@ -196,10 +201,14 @@ public class SectionBasedXMLParser {
 	}
 	
 	private void retrieveData(XPath xPath, Node node, String parentKey, Map<String, String> codes, Map<String, String> data){
-		//TODO
+		
 	}
 	
-	private void getSingleValue(XPath xPath, String key, String query, Node node, Map<String, String> data){
+	private void getMultiValue(){
+		
+	}
+	
+	private void getSingleValueLegacy(XPath xPath, String key, String query, Node node, Map<String, String> data){
 		String result;
 		try {
 			result = (String)xPath.evaluate(query, node, XPathConstants.STRING);
@@ -212,7 +221,7 @@ public class SectionBasedXMLParser {
 		}
 	}
 	
-	private void getMultiValue(XPath xPath, String key, String query, String subQuery, Node node, Map<String, String> data){
+	private void getMultiValueLegacy(XPath xPath, String key, String query, String subQuery, Node node, Map<String, String> data){
 		NodeList subNodes;
 		try{
 			subNodes = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
