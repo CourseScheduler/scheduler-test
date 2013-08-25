@@ -115,7 +115,7 @@ public class SectionBasedXMLParser {
 	/**
 	 * Instance specifice logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().toString());
+	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	private Document doc;
 	
@@ -135,8 +135,8 @@ public class SectionBasedXMLParser {
 	}
 	
 	public void parse(){
-		long start = System.currentTimeMillis();
-		
+		log.info("Starting to parse the XML input");
+		long start = System.currentTimeMillis();		
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		try {
@@ -144,43 +144,44 @@ public class SectionBasedXMLParser {
 				try {
 					captureCourseData(xPath, courseID);
 				} catch(XPathExpressionException e) {
-					//TODO CATCH STUB
-					e.printStackTrace();
+					log.error("Exception capturing course data for " + courseID, e);
 				}
 			}			
 		} catch (XPathExpressionException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Exception retrieving course names", e);
 		}
+		
 		long end = System.currentTimeMillis();
-		System.out.println("Execution took " + (end - start) + " milliseconds.");
+		log.info("Retrieved course data for {} courses in {} milliseconds", courseDataSets.size(), (end - start));
 	}
 	
 	private Set<String> getCourseNames(XPath xPath) throws XPathExpressionException{
+		log.debug("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		
 		XPathExpression expr = xPath.compile("//ROWSET/ROW/CourseID");
-		
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
+		
 		for(int item = 0; item < list.getLength(); item++){
-			Node node = list.item(item);
+			Node node = list.item(item).cloneNode(true);
 			String courseID = node.getTextContent();
-			
-			System.out.println("Found Course: " + courseID);
 			courses.add(courseID);
+			log.trace("Found section belonging to {}", courseID);
 		}
 
+		log.debug("Finished retrieving course IDs from source data set");
 		return courses;
 	}
 	
 	private void captureCourseData(XPath xPath, String courseID) throws XPathExpressionException {
-		System.out.println("\nProcessing course: " + courseID);
+		log.debug("Processing course: {}", courseID);
+		long start = System.currentTimeMillis();
 		
 		XPathExpression expr = xPath.compile("//ROWSET/ROW[CourseID='" + courseID + "']");
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
+		
+		log.debug("Found {} section elements for {}", list.getLength(), courseID);
 		int item = 0;
 		Node node = list.item(item).cloneNode(false);
-		
 		Map<String, String> courseData = captureCourseData(xPath, node, courseID);
 		
 		for(; item < list.getLength(); item++){
@@ -188,21 +189,23 @@ public class SectionBasedXMLParser {
 			
 			captureSectionData(xPath, node, item, courseData);
 		}
+		long end = System.currentTimeMillis();
+		log.debug("Finished processing course {} in {} milliseconds", courseID, (end - start));
 	}
 	
 	private Map<String, String> captureCourseData(XPath xPath, Node node, String courseID) throws XPathExpressionException{
+		log.debug("Capturing course data for {}", courseID);
 		Map<String, String> data = courseDataSets.get(courseID);
 		if(!courseDataSets.containsKey(courseID)){
 			data = new HashMap<String, String>();
 			courseDataSets.put(courseID, data);
 			retrieveData(xPath, node, data, courseCodes);
-		}else{
-			System.out.println("Course data captured for " + courseID + " during parse of previous section");
 		}
 		return data;
 	}
 	
 	private void captureSectionData(XPath xPath, Node node, int sectionIndex, Map<String, String> data) {
+		log.debug("Capturing course data for section index {}", sectionIndex);
 		retrieveData(xPath, node, "course.sections", "course.sections." + sectionIndex, sectionCodes, data);
 	}
 	
@@ -228,26 +231,29 @@ public class SectionBasedXMLParser {
 			//write the number of values
 			String count = new Integer(children.getLength()).toString();
 			data.put(keyPath, count);
-			System.out.println(keyPath + " ( \"" + query + "\" ) = " + count);
+			log.trace("Element: {} ( \" {} \" ) = {}", new Object[] {keyPath, query, count});
 			
+			//TODO remove this line
+			System.out.println(keyPath + " ( \"" + query + "\" ) = " + count);
+						
 			//process each item
 			for(int item = 0; item < children.getLength(); item++){
 				Node child = children.item(item).cloneNode(false);
 				
 				if(subCodes.containsKey(attributePath)){
-					
-					//subvalues to retrieve
 					retrieveData(xPath, child, attributePath, keyPath + "." + item, subCodes.get(attributePath), data);
 				}else{
 					String itemKey = keyPath + "." + item;
 					String value = child.getTextContent();
 					data.put(itemKey, value);
+					log.trace("Element: {} ( \" text() \" ) = {}", itemKey, count);
+					
+					//TODO remove this line
 					System.out.println(itemKey + " ( \"text()\" ) = " + value);
 				}
 			}
 		} catch(XPathExpressionException e){
-			//TODO CATCH STUB
-			e.printStackTrace();
+			log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, keyPath, e);
 		}
 	}
 }
