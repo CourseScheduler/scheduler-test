@@ -33,6 +33,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +45,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -105,18 +109,20 @@ public class SectionBasedXMLParser {
 		meetingsCodes.put("room", "Room");
 		meetingsCodes.put("time.start", "Stime");
 		meetingsCodes.put("time.end", "Etime");
-		subCodes.put("section.meetings", meetingsCodes);
+		subCodes.put("course.sections.section.meetings", meetingsCodes);
 	}
+	
+	/**
+	 * Instance specifice logger
+	 */
+	private Logger log = LoggerFactory.getLogger(getClass().toString());
 	
 	private Document doc;
 	
 	private Map<String, Map<String, String>> courseDataSets;
 	
-	private Map<String, Map<String, Map<String, String>>> courseSectionDataSets;
-	
 	private SectionBasedXMLParser(){
 		courseDataSets = new HashMap<>();
-		courseSectionDataSets = new HashMap<>();
 	}
 	
 	public SectionBasedXMLParser(InputStream input) throws ParserConfigurationException, SAXException, IOException{
@@ -132,18 +138,14 @@ public class SectionBasedXMLParser {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		try {
-			XPathExpression expr = xPath.compile("//ROWSET/ROW");
-			
-			NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
-			for(int item = 0; item < list.getLength(); item++){
-				Node node = list.item(item);
-				
-				String courseID = captureCourseData(xPath, node);
-				String sectionID = captureCourseSectionData(xPath, node, courseID);
-			}
-
-			consolidate();
-			
+			for(String courseID: getCourseNames(xPath)){
+				try {
+					captureCourseData(xPath, courseID);
+				} catch(XPathExpressionException e) {
+					//TODO CATCH STUB
+					e.printStackTrace();
+				}
+			}			
 		} catch (XPathExpressionException e) {
 			// TODO CATCH STUB
 			e.printStackTrace();
@@ -151,35 +153,54 @@ public class SectionBasedXMLParser {
 		
 	}
 	
-	private String captureCourseData(XPath xPath, Node node) throws XPathExpressionException{
-		System.out.println("\n----ROW-------------");
+	private Set<String> getCourseNames(XPath xPath) throws XPathExpressionException{
+		Set<String> courses = new TreeSet<String>();
 		
-		String courseID = (String)xPath.evaluate(courseCodes.get("course.id"), node, XPathConstants.STRING);
+		XPathExpression expr = xPath.compile("//ROWSET/ROW/CourseID");
+		
+		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
+		for(int item = 0; item < list.getLength(); item++){
+			Node node = list.item(item);
+			String courseID = node.getTextContent();
+			
+			System.out.println("Found Course: " + courseID);
+			courses.add(courseID);
+		}
+
+		return courses;
+	}
+	
+	private void captureCourseData(XPath xPath, String courseID) throws XPathExpressionException {
+		System.out.println("\nProcessing course: " + courseID);
+		
+		XPathExpression expr = xPath.compile("//ROWSET/ROW[CourseID='" + courseID + "']");
+		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
+		int item = 0;
+		Node node = list.item(item);
+		
+		Map<String, String> courseData = captureCourseData(xPath, node, courseID);
+		
+		for(; item < list.getLength(); item++){
+			node = list.item(item);
+			
+			captureSectionData(xPath, node, item, courseData);
+		}
+	}
+	
+	private Map<String, String> captureCourseData(XPath xPath, Node node, String courseID) throws XPathExpressionException{
+		Map<String, String> data = courseDataSets.get(courseID);
 		if(!courseDataSets.containsKey(courseID)){
-			courseDataSets.put(courseID, new HashMap<String, String>());
-			retrieveData(xPath, node, courseDataSets.get(courseID), courseCodes);
+			data = new HashMap<String, String>();
+			courseDataSets.put(courseID, data);
+			retrieveData(xPath, node, data, courseCodes);
 		}else{
 			System.out.println("Course data captured for " + courseID + " during parse of previous section");
 		}
-		return courseID;
+		return data;
 	}
 	
-	private String captureCourseSectionData(XPath xPath, Node node, String courseID) throws XPathExpressionException{
-		String sectionID = (String)xPath.evaluate(sectionCodes.get("section.id"), node, XPathConstants.STRING);
-		Map<String, Map<String, String>> course;
-		
-		if(!courseSectionDataSets.containsKey(courseID)){
-			course = new HashMap<String, Map<String, String>>();
-			courseSectionDataSets.put(courseID, course);
-		}else{
-			course = courseSectionDataSets.get(courseID);
-		}
-		
-		Map<String, String> sectionData = new HashMap<String, String>();
-		course.put(sectionID, sectionData);
-		retrieveData(xPath, node, sectionData, sectionCodes);
-		
-		return sectionID;
+	private void captureSectionData(XPath xPath, Node node, int sectionIndex, Map<String, String> data) {
+		retrieveData(xPath, node, "course.sections", "course.sections." + sectionIndex, sectionCodes, data);
 	}
 	
 	private void retrieveData(XPath xPath, Node node, Map<String, String> data, Map<String, String> codes){
@@ -224,29 +245,6 @@ public class SectionBasedXMLParser {
 		} catch(XPathExpressionException e){
 			//TODO CATCH STUB
 			e.printStackTrace();
-		}
-	}
-	
-	private void consolidate(){
-		for(String course: courseDataSets.keySet()){
-			Map<String, String> courseData = courseDataSets.get(course);
-			Map<String, Map<String, String>> sectionDataSet = courseSectionDataSets.get(course);
-			String sectionCount = new Integer(sectionDataSet.size()).toString();
-			
-			courseData.put("course.section", sectionCount);
-			System.out.println("course.section = " + sectionCount);
-			
-			int sectionIndex = 0;
-			for(String section: sectionDataSet.keySet()){
-				for(Entry<String, String> entry: sectionDataSet.get(section).entrySet()){
-					String sectionEntry = entry.getKey();
-					String courseEntry = "course.sections." + sectionIndex + "." + sectionEntry;
-					String value = entry.getValue();
-					
-					courseData.put(courseEntry, value);
-					System.out.println("Migrating \"" + sectionEntry + "\" to \"" + courseEntry + "\": " + value);
-				}
-			}
 		}
 	}
 }
