@@ -135,6 +135,8 @@ public class SectionBasedXMLParser {
 	}
 	
 	public void parse(){
+		long start = System.currentTimeMillis();
+		
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		try {
@@ -150,7 +152,8 @@ public class SectionBasedXMLParser {
 			// TODO CATCH STUB
 			e.printStackTrace();
 		}
-		
+		long end = System.currentTimeMillis();
+		System.out.println("Execution took " + (end - start) + " milliseconds.");
 	}
 	
 	private Set<String> getCourseNames(XPath xPath) throws XPathExpressionException{
@@ -176,12 +179,12 @@ public class SectionBasedXMLParser {
 		XPathExpression expr = xPath.compile("//ROWSET/ROW[CourseID='" + courseID + "']");
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
 		int item = 0;
-		Node node = list.item(item);
+		Node node = list.item(item).cloneNode(false);
 		
 		Map<String, String> courseData = captureCourseData(xPath, node, courseID);
 		
 		for(; item < list.getLength(); item++){
-			node = list.item(item);
+			node = list.item(item).cloneNode(false);
 			
 			captureSectionData(xPath, node, item, courseData);
 		}
@@ -229,7 +232,7 @@ public class SectionBasedXMLParser {
 			
 			//process each item
 			for(int item = 0; item < children.getLength(); item++){
-				Node child = children.item(item);
+				Node child = children.item(item).cloneNode(false);
 				
 				if(subCodes.containsKey(attributePath)){
 					
