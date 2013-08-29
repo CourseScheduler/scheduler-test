@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="course.department.code">DeparmentCode</entry>
+	<entry key="course.department.name">Department</entry>
+	<entry key="course.title">Title</entry>
+	<entry key="course.id">CourseID</entry>
+	<entry key="course.term">AssociatedTerm</entry>
+	<entry key="course.registration">RegistrationTerm</entry>
+	<entry key="course.catalog.url">CatalogEntryURL</entry>
+	<entry key="course.credits">Credits</entry>
+	<entry key="course.description">Description</entry>
+	<entry key="course.standing.minimum">MinimumClassStanding</entry>
+	<entry key="course.levels">Levels/Levels_ROW/Student</entry>
+</properties>

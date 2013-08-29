@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="section.id">SectionID</entry>
+	<entry key="section.crn">CRN</entry>
+	<entry key="section.type">ScheduleType</entry>
+	<entry key="section.capacity.total">TotalCapacity</entry>
+	<entry key="section.capacity.registered">RegisteredCapacity</entry>
+	<entry key="section.capacity.remaining">RemainingCapacity</entry>
+	<entry key="section.meetings">WEEKDAYS/WEEKDAYS_ROW</entry>
+</properties>

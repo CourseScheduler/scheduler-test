@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="day">Day</entry>
+	<entry key="building.code">BuildCode</entry>
+	<entry key="building.name">Building</entry>
+	<entry key="room">Room</entry>
+	<entry key="time.start">Stime</entry>
+	<entry key="time.end">Etime</entry>
+</properties>

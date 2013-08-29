@@ -68,17 +68,6 @@ public class Main {
 	protected static final String jarFixRMP = new String(dataName + "/" + rmp);
 	protected static InputStream fixRMPFile;
 	
-
-	/**
-	 * System property for specifying the java.util.pref.Preferences backend store implementation
-	 * that should be used by the application
-	 */
-	protected static final String preferencesFactoryProperty = "java.util.prefs.PreferencesFactory";
-	
-	/**
-	 * Default preferred java.util.pref.Preferences backend
-	 */
-	protected static final String defaultPreferencesBackend = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
 	
 	/**
 	 * System property for specifying the filesystem path of the user preferences root node
@@ -162,8 +151,6 @@ public class Main {
 	private static Logger log = LoggerFactory.getLogger(Main.class.getName());
 	
 	public static void main(String[] args){
-		XMLTest();
-		
 		initializeGuice();
 		
 		try {
@@ -210,6 +197,10 @@ public class Main {
 		loader = Main.class.getClassLoader();
 		
 		initializePreferences();
+		
+
+		XMLTest();
+		
 		
 		String current = prefs.getCurrentTerm();
 		
@@ -282,7 +273,8 @@ public class Main {
 	
 	private static void XMLTest(){
 		try{
-			SectionBasedXMLParser test = new SectionBasedXMLParser(new FileInputStream("Data/ku_scheduler_2.xml"));
+			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
+			SectionBasedXMLParser test = new SectionBasedXMLParser(new FileInputStream("Data/ku_scheduler_2.xml"), prefFact.getSystemNode("profiles/kettering"));
 			test.parse();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -343,13 +335,6 @@ public class Main {
 	 */
 	private static void configurePreferencesProperties(){		
 		Properties systemProps = System.getProperties();	
-
-		//check for a desired Preferences Factory class
-		log.debug("Checking for Preferences backend specified in {}", preferencesFactoryProperty);
-		if(systemProps.get(preferencesFactoryProperty) == null){
-			systemProps.put(preferencesFactoryProperty, defaultPreferencesBackend);
-			log.debug("No backend found in {}. Using default backend: {}", preferencesFactoryProperty, defaultPreferencesBackend);
-		}
 		
 		//check for desired filesystem path for the user root
 		log.debug("Checking for user root file path specified in {}", userFilePathProperty);
