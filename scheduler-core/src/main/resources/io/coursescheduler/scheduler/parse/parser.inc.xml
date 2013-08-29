@@ -1,0 +1,25 @@
+<!-- io.coursescheduler.scheduler.parse Logging configuration -->
+<included>
+
+	<!-- Parse log file appender -->
+	<appender name="IO-CS-PARSE" class="ch.qos.logback.classic.sift.SiftingAppender">
+	    <discriminator>
+	    	<key>profile</key>
+	    	<defaultValue>default</defaultValue>
+	    </discriminator>
+	    <sift>
+	        <appender class="ch.qos.logback.core.FileAppender">
+	            <file>${LOG_DIR}/io.coursescheduler/parse/parser-${profile}.log</file>
+	            <encoder>
+	                <pattern>${DEFAULT_PATTERN}</pattern>
+	            </encoder>
+	        </appender>
+	    </sift>
+	</appender>
+	
+	<!-- Parse Logger -->
+	<logger name="io.coursescheduler.scheduler.parse" level="info">
+		<appender-ref ref="IO-CS-PARSE" />
+	</logger>
+	
+</included>

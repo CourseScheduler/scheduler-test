@@ -3,7 +3,7 @@
 
 	<!-- Legacy log file appender -->
 	<appender name="LEGACY" class="ch.qos.logback.core.FileAppender">
-		<file>${LOG_DIR}/Scheduler.log</file>
+		<file>${LOG_DIR}/scheduler.log</file>
 		<encoder>
 			<pattern>${DEFAULT_PATTERN}</pattern>
 		</encoder>

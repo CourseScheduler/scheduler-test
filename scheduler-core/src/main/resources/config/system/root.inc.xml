@@ -22,10 +22,24 @@
 	    </filter>
 	</appender>
 	
+	<!-- Thread based log appender -->
+	<appender name="THREADS" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator class="io.coursescheduler.util.logging.ThreadNameBasedLoggingEventDiscriminator" />
+        <sift>
+            <appender name="FILE-${userid}" class="ch.qos.logback.core.FileAppender">
+                <file>${LOG_DIR}/scheduler-${threadName}.log</file>
+				<encoder>
+					<pattern>${DEFAULT_PATTERN}</pattern>
+				</encoder>
+            </appender>
+        </sift>
+    </appender>
+	
 	<!-- Root Logger -->
-	<root level="warn">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROOT" />
+		<appender-ref ref="THREADS" />
 	</root>
 	
 </included>
