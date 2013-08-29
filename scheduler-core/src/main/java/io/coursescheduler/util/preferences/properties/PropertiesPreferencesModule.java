@@ -30,8 +30,8 @@
 package io.coursescheduler.util.preferences.properties;
 
 import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.preferences.PreferencesModule;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 /**
@@ -41,13 +41,20 @@ import com.google.inject.Singleton;
  * @author Mike Reinhold
  *
  */
-public class PropertiesPreferencesModule extends AbstractModule {
-
+public class PropertiesPreferencesModule extends PreferencesModule {
+	
+	/**
+	 * Default preferred java.util.pref.Preferences backend
+	 */
+	protected static final String PREFERENCES_BACKEND_CLASS = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
+	
 	/* (non-Javadoc)
 	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
 	protected void configure() {		
+		setPreferencesFactory(PREFERENCES_BACKEND_CLASS);
+		
 		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
 		bind(PreferencesFactory.class)
 			.to(PropertiesPreferencesFactory.class)
