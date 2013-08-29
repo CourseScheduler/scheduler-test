@@ -14,6 +14,7 @@
 	<!-- Root log file appender -->
 	<appender name="ROOT" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/root.log</file>
+		<append>false</append>
 		<encoder>
 			<pattern>${DEFAULT_PATTERN}</pattern>
 		</encoder>
@@ -28,6 +29,7 @@
         <sift>
             <appender name="FILE-${userid}" class="ch.qos.logback.core.FileAppender">
                 <file>${LOG_DIR}/scheduler-${threadName}.log</file>
+				<append>false</append>
 				<encoder>
 					<pattern>${DEFAULT_PATTERN}</pattern>
 				</encoder>

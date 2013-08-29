@@ -4,6 +4,7 @@
 	<!-- Preferences log file appender -->
 	<appender name="IO-CS-GUICE" class="ch.qos.logback.core.FileAppender">
 		<file>${LOG_DIR}/io.coursescheduler/guice.log</file>
+		<append>false</append>
 		<encoder>
 			<pattern>${DEFAULT_PATTERN}</pattern>
 		</encoder>
