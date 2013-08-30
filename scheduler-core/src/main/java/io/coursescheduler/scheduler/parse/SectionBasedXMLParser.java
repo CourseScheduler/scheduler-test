@@ -226,7 +226,7 @@ public class SectionBasedXMLParser {
 			NodeList children = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
 			
 			//write the number of values
-			String count = new Integer(children.getLength()).toString();
+			String count = Integer.toString(children.getLength());
 			data.put(keyPath, count);
 			log.trace("Element: {} ( \" {} \" ) = {}", new Object[] {keyPath, query, count});
 			
@@ -236,11 +236,24 @@ public class SectionBasedXMLParser {
 			//process each item
 			for(int item = 0; item < children.getLength(); item++){
 				Node child = children.item(item).cloneNode(true);
+				int keyCount = 0;
 				
 				log.debug("Getting code subnode: {}", key);
 				Preferences subCodes = codes.node(key);
+				try {
+					keyCount = subCodes.keys().length;
+					
+					if(keyCount == 0) {
+						log.debug("No sub code entries exist for node {}, removing", key);
+						subCodes.removeNode();
+					}
+				} catch(IllegalStateException e) {
+					//node previously removed - ok for us since we have to load (or "create") a node 
+					//in order to check for sub keys.
+					log.trace("No sub code entries exist for node {}, previously removed", key);
+				}
 				
-				if(subCodes.keys().length > 0){
+				if(keyCount > 0){
 					log.debug("Sub codes exist for node {}, processing", key);
 					retrieveData(xPath, child, attributePath, keyPath + "." + item, subCodes, data);
 				}else{					
