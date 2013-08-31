@@ -27,8 +27,8 @@
 	<appender name="THREADS" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator class="io.coursescheduler.util.logging.ThreadNameBasedLoggingEventDiscriminator" />
         <sift>
-            <appender name="FILE-${userid}" class="ch.qos.logback.core.FileAppender">
-                <file>${LOG_DIR}/scheduler-${threadName}.log</file>
+            <appender name="THREAD-${threadName}" class="ch.qos.logback.core.FileAppender">
+                <file>${LOG_DIR}/io.coursescheduler/threads/${threadName}.log</file>
 				<append>false</append>
 				<encoder>
 					<pattern>${DEFAULT_PATTERN}</pattern>

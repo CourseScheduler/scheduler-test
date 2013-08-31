@@ -30,10 +30,14 @@ package io.coursescheduler.scheduler.parse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.RecursiveAction;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -61,7 +65,7 @@ import org.xml.sax.SAXException;
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLParser {
+public class SectionBasedXMLParser extends RecursiveAction {
 	
 	/**
 	 * TODO Describe this field
@@ -106,7 +110,7 @@ public class SectionBasedXMLParser {
 	
 	private SectionBasedXMLParser(){
 		super();
-		courseDataSets = new HashMap<>();
+		courseDataSets = new ConcurrentHashMap<>();
 	}
 	
 	public SectionBasedXMLParser(InputStream input, Preferences profile) throws ParserConfigurationException, SAXException, IOException{
@@ -118,37 +122,30 @@ public class SectionBasedXMLParser {
 		doc = builder.parse(input);
 		this.profile = profile;
 	}
-	
-	public void parse(){
+
+	@Override
+	protected void compute() {
 		log.info("Starting to parse the XML input");
 		long start = System.currentTimeMillis();		
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		
+
+		List<RecursiveAction> tasks = new ArrayList<RecursiveAction>();
 		try {
 			for(String courseID: getCourseNames(xPath, profile.node(GENERAL_SETTINGS_NODE))){
-				try {
-
-					//TODO remove this line
-					System.out.println("\n----- Course: " + courseID + " -----");
-					
-					captureCourseData(xPath, profile.node(GENERAL_SETTINGS_NODE), courseID);
-				} catch(XPathExpressionException e) {
-					log.error("Exception capturing course data for " + courseID, e);
-				}
-			}			
+				RecursiveAction task = createCourseTask(xPath, profile, courseID);
+				tasks.add(task);
+			}
+			invokeAll(tasks);
 		} catch (XPathExpressionException e) {
 			log.error("Exception retrieving course names", e);
 		}
 		
 		long end = System.currentTimeMillis();
 		log.info("Retrieved course data for {} courses in {} milliseconds", courseDataSets.size(), (end - start));
-		
-		//TODO remove this line
-		System.out.println("\nRetrieved course data for " + courseDataSets.size() + " courses in " + (end - start) + " milliseconds");
 	}
 	
 	private Set<String> getCourseNames(XPath xPath, Preferences settings) throws XPathExpressionException{
-		log.debug("Retrieving course IDs from source data set");
+		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
 		XPathExpression expr = xPath.compile(settings.get(COURSE_NAME_XPATH_EXPRESSION_PROPERTY, null));
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
@@ -157,119 +154,149 @@ public class SectionBasedXMLParser {
 			Node node = list.item(item).cloneNode(true);
 			String courseID = node.getTextContent();
 			courses.add(courseID);
-			log.trace("Found section belonging to {}", courseID);
+			log.debug("Found section belonging to {}", courseID);
 		}
 
 		log.debug("Finished retrieving course IDs from source data set");
 		return courses;
 	}
 	
-	private void captureCourseData(XPath xPath, Preferences settings, String courseID) throws XPathExpressionException {
-		log.debug("Processing course: {}", courseID);
-		long start = System.currentTimeMillis();
-		
-		String query = settings.get(COURSE_DETAIL_XPATH_EXPRESSION_PROPERTY, null);
+	private RecursiveAction createCourseTask(XPath xPath, Preferences settings, String courseID) throws XPathExpressionException {
+		String query = settings.node(GENERAL_SETTINGS_NODE).get(COURSE_DETAIL_XPATH_EXPRESSION_PROPERTY, null);
 		query = query.replaceAll(Pattern.quote(COURSE_ID_VARIABLE), courseID);
 		XPathExpression expr = xPath.compile(query);
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
 		
-		log.debug("Found {} section elements for {}", list.getLength(), courseID);
-		int item = 0;
-		Node node = list.item(item).cloneNode(true);
-		Map<String, String> courseData = captureCourseData(xPath, node, courseID);
+		log.info("Found {} section elements for {}", list.getLength(), courseID);
 		
-		for(; item < list.getLength(); item++){
+		Node node;
+		ConcurrentMap<String, String> courseData = new ConcurrentHashMap<>();
+		List<Node> nodeList = new ArrayList<Node>();
+		
+		courseDataSets.put(courseID, courseData);
+		for(int item = 0; item < list.getLength(); item++){
 			node = list.item(item).cloneNode(true);
+			nodeList.add(node);
+		}
+		
+		return new CourseParserBySectionXMLTask(nodeList, settings, courseID, courseData);
+		
+	}
+	
+	private static class CourseParserBySectionXMLTask extends RecursiveAction {
+		
+		private Logger log = LoggerFactory.getLogger(getClass().getName());
+		private List<Node> nodeList;
+		private ConcurrentMap<String, String> data;
+		private Preferences retrievalSettings;
+		private String id;
+		
+		public CourseParserBySectionXMLTask(List<Node> nodeList, Preferences settings, String courseID, ConcurrentMap<String, String> data) {
+			super();
 			
-			captureSectionData(xPath, node, item, courseData);
+			this.nodeList = nodeList;
+			this.data = data;
+			this.id = courseID;
+			this.retrievalSettings = settings;
 		}
-		long end = System.currentTimeMillis();
-		log.debug("Finished processing course {} in {} milliseconds", courseID, (end - start));
-	}
-	
-	private Map<String, String> captureCourseData(XPath xPath, Node node, String courseID) throws XPathExpressionException{
-		log.debug("Capturing course data for {}", courseID);
-		Map<String, String> data = courseDataSets.get(courseID);
-		if(!courseDataSets.containsKey(courseID)){
-			data = new HashMap<String, String>();
-			courseDataSets.put(courseID, data);
-			retrieveData(xPath, node, data, profile.node(COURSE_CODES_NODE));
+
+		@Override
+		protected void compute() {
+			log.info("Processing course: {}", id);
+			long start = System.currentTimeMillis();
+			
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			Node node = nodeList.get(0);
+			captureCourseData(xPath, retrievalSettings, node, id, data);
+			
+			for(int item = 0; item < nodeList.size(); item++){
+				node = nodeList.get(item);
+				
+				captureSectionData(xPath, retrievalSettings, node, item, data);
+			}
+
+			long end = System.currentTimeMillis();
+			log.info("Finished processing course {} in {} milliseconds", id, (end - start));
 		}
-		return data;
-	}
-	
-	private void captureSectionData(XPath xPath, Node node, int sectionIndex, Map<String, String> data) {
-		log.debug("Capturing course data for section index {}", sectionIndex);
-		retrieveData(xPath, node, "course.sections", "course.sections." + sectionIndex, profile.node(SECTION_CODES_NODE), data);
-	}
-	
-	private void retrieveData(XPath xPath, Node node, Map<String, String> data, Preferences codes){
-		retrieveData(xPath, node, "", "", codes, data);
-	}
-	
-	private void retrieveData(XPath xPath, Node node, String attributePath, String nodePath, Preferences codes, Map<String, String> data){
-		try {
-			for(String key: codes.keys()){
-				String query = codes.get(key, null);
-				String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
-				String newKey = (nodePath == null || nodePath.compareTo("") == 0) ? key : nodePath + "." + key;
+		
+		private void captureCourseData(XPath xPath, Preferences settings, Node node, String courseID, Map<String, String> courseData) {
+			log.debug("Capturing course data for {}", courseID);
+			long start = System.currentTimeMillis();
+			retrieveData(xPath, node, data, settings.node(COURSE_CODES_NODE));
+			long end = System.currentTimeMillis();
+			log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
+		}
+		
+		private void captureSectionData(XPath xPath, Preferences settings, Node node, int sectionIndex, Map<String, String> data) {
+			log.debug("Capturing course data for section index {}", sectionIndex);
+			long start = System.currentTimeMillis();
+			retrieveData(xPath, node, "course.sections", "course.sections." + sectionIndex, settings.node(SECTION_CODES_NODE), data);
+			long end = System.currentTimeMillis();
+			log.debug("Capturing course data for section index {} in {} milliseconds", sectionIndex, (end - start));
+		}
+		
+		private void retrieveData(XPath xPath, Node node, Map<String, String> data, Preferences codes){
+			retrieveData(xPath, node, "", "", codes, data);
+		}
+		
+		private void retrieveData(XPath xPath, Node node, String attributePath, String nodePath, Preferences codes, Map<String, String> data){
+			try {
+				for(String key: codes.keys()){
+					String query = codes.get(key, null);
+					String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
+					String newKey = (nodePath == null || nodePath.compareTo("") == 0) ? key : nodePath + "." + key;
+								
+					retrieveDataElement(xPath, node, newPath, newKey, key, query, codes, data);
+				}
+			} catch (BackingStoreException e) {
+				log.error("Exception while reading profile entries for profile node {}: {}", codes, e);
+			}
+		}
+		
+		private void retrieveDataElement(XPath xPath, Node node, String attributePath, String keyPath, String key, String query, Preferences codes, Map<String, String> data){
+			try{
+				NodeList children = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
+				
+				//write the number of values
+				String count = Integer.toString(children.getLength());
+				data.put(keyPath, count);
+				log.trace("Element: {} ( \" {} \" ) = {}", new Object[] {keyPath, query, count});
 							
-				retrieveDataElement(xPath, node, newPath, newKey, key, query, codes, data);
-			}
-		} catch (BackingStoreException e) {
-			log.error("Exception while reading profile entries for profile node {}: {}", codes, e);
-		}
-	}
-	
-	private void retrieveDataElement(XPath xPath, Node node, String attributePath, String keyPath, String key, String query, Preferences codes, Map<String, String> data){
-		try{
-			NodeList children = (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
-			
-			//write the number of values
-			String count = Integer.toString(children.getLength());
-			data.put(keyPath, count);
-			log.trace("Element: {} ( \" {} \" ) = {}", new Object[] {keyPath, query, count});
-			
-			//TODO remove this line
-			System.out.println(keyPath + " ( \"" + query + "\" ) = " + count);
+				//process each item
+				for(int item = 0; item < children.getLength(); item++){
+					Node child = children.item(item).cloneNode(true);
+					int keyCount = 0;
+					
+					log.debug("Getting code subnode: {}", key);
+					Preferences subCodes = codes.node(key);
+					try {
+						keyCount = subCodes.keys().length;
 						
-			//process each item
-			for(int item = 0; item < children.getLength(); item++){
-				Node child = children.item(item).cloneNode(true);
-				int keyCount = 0;
-				
-				log.debug("Getting code subnode: {}", key);
-				Preferences subCodes = codes.node(key);
-				try {
-					keyCount = subCodes.keys().length;
-					
-					if(keyCount == 0) {
-						log.debug("No sub code entries exist for node {}, removing", key);
-						subCodes.removeNode();
+						if(keyCount == 0) {
+							log.debug("No sub code entries exist for node {}, removing", key);
+							subCodes.removeNode();
+						}
+					} catch(IllegalStateException e) {
+						//node previously removed - ok for us since we have to load (or "create") a node 
+						//in order to check for sub keys.
+						log.trace("No sub code entries exist for node {}, previously removed", key);
 					}
-				} catch(IllegalStateException e) {
-					//node previously removed - ok for us since we have to load (or "create") a node 
-					//in order to check for sub keys.
-					log.trace("No sub code entries exist for node {}, previously removed", key);
-				}
-				
-				if(keyCount > 0){
-					log.debug("Sub codes exist for node {}, processing", key);
-					retrieveData(xPath, child, attributePath, keyPath + "." + item, subCodes, data);
-				}else{					
-					String itemKey = keyPath + "." + item;
-					String value = child.getTextContent();
-					data.put(itemKey, value);
-					log.trace("Element: {} ( \" text() \" ) = {}", itemKey, count);
 					
-					//TODO remove this line
-					System.out.println(itemKey + " ( \"text()\" ) = " + value);
+					if(keyCount > 0){
+						log.debug("Sub codes exist for node {}, processing", key);
+						retrieveData(xPath, child, attributePath, keyPath + "." + item, subCodes, data);
+					}else{					
+						String itemKey = keyPath + "." + item;
+						String value = child.getTextContent();
+						data.put(itemKey, value);
+						log.trace("Element: {} ( \" text() \" ) = {}", itemKey, count);
+					}
 				}
+			} catch(XPathExpressionException e){
+				log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, keyPath, e);
+			} catch (DOMException | BackingStoreException e) {
+				log.error("Exception reading profile entries for profile node {}: {}", codes, e);
 			}
-		} catch(XPathExpressionException e){
-			log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, keyPath, e);
-		} catch (DOMException | BackingStoreException e) {
-			log.error("Exception reading profile entries for profile node {}: {}", codes, e);
 		}
 	}
 }

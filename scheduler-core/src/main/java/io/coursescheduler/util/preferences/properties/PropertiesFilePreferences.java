@@ -246,12 +246,16 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		synchronized(lock){
 			File file = new File(getFullFilePathAndExtension());
 			
-			if(file.delete()){
-				//successful
-				log.info("Deletion of preferences node {} stored at {} succeeded", this.absolutePath(), file.getPath());
-			}else{
-				//unsuccessful
-				log.warn("Deletion of preferences node {} stored at {} failed", this.absolutePath(), file.getPath());
+			if(file.exists()){
+				if(file.delete()){
+					//successful
+					log.info("Deletion of preferences node {} stored at {} succeeded", this.absolutePath(), file.getPath());
+				}else{
+					//unsuccessful
+					log.warn("Deletion of preferences node {} stored at {} failed", this.absolutePath(), file.getPath());
+				}
+			}else {
+				log.debug("Deletion of preferences node {} skipped becuase backing file {} does not exist", this.absolutePath(), file.getPath());
 			}
 		}
 	}

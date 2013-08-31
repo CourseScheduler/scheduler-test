@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.Properties;
@@ -274,8 +275,11 @@ public class Main {
 	private static void XMLTest(){
 		try{
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
-			SectionBasedXMLParser test = new SectionBasedXMLParser(new FileInputStream("Data/ku_scheduler_2.xml"), prefFact.getSystemNode("profiles/kettering"));
-			test.parse();
+			SectionBasedXMLParser test = new SectionBasedXMLParser(
+					new FileInputStream("Data/ku_scheduler_2.xml"), 
+					prefFact.getSystemNode("profiles/kettering")
+			);
+			new ForkJoinPool().invoke(test);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
