@@ -28,6 +28,7 @@
   */
 package io.coursescheduler.scheduler.parse;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -223,45 +224,9 @@ public class SectionBasedXMLParser extends RecursiveAction {
 	}
 	
 	private RecursiveAction createBatch(List<RecursiveAction> actions) {
-		return new ActionBatch(actions);
+		return new ParseActionBatch(actions);
 	}
 	
-	
-	
-	private static class ActionBatch extends RecursiveAction {
-		
-		/**
-		 * TODO Describe this field
-		 */
-		private Logger log = LoggerFactory.getLogger(getClass().getName());
-
-		/**
-		 * TODO Describe this field
-		 */
-		private List<RecursiveAction> actions;
-
-		public ActionBatch(List<RecursiveAction> actions) {
-			super();
-			
-			this.actions = actions;
-		}
-		
-		@Override
-		protected void compute() {
-			log.info("Initiating batch processing of {} tasks", actions.size());
-			invokeAll(actions);
-			log.info("Batch processing of {} tasks completed", actions.size());
-		}
-
-		/**
-		 * TODO Describe this method
-		 *
-		 * @return
-		 */
-		public List<RecursiveAction> getActions() {
-			return actions;
-		}
-	}
 	
 	
 	private static class CourseParserBySectionXMLTask extends RecursiveAction {
