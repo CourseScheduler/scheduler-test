@@ -70,6 +70,11 @@ public class SectionBasedXMLParser extends RecursiveAction {
 	/**
 	 * TODO Describe this field
 	 */
+	private static final String BATCH_SIZE_PROPERTY = "batch.size";
+	
+	/**
+	 * TODO Describe this field
+	 */
 	private static final String COURSE_NAME_XPATH_EXPRESSION_PROPERTY = "query-list-course.id";
 	
 	/**
@@ -129,13 +134,8 @@ public class SectionBasedXMLParser extends RecursiveAction {
 		long start = System.currentTimeMillis();		
 		XPath xPath = XPathFactory.newInstance().newXPath();
 
-		List<RecursiveAction> tasks = new ArrayList<RecursiveAction>();
 		try {
-			for(String courseID: getCourseNames(xPath, profile.node(GENERAL_SETTINGS_NODE))){
-				RecursiveAction task = createCourseTask(xPath, profile, courseID);
-				tasks.add(task);
-			}
-			invokeAll(tasks);
+			executeBatches(xPath, profile, getCourseNames(xPath, profile));
 		} catch (XPathExpressionException e) {
 			log.error("Exception retrieving course names", e);
 		}
@@ -147,7 +147,7 @@ public class SectionBasedXMLParser extends RecursiveAction {
 	private Set<String> getCourseNames(XPath xPath, Preferences settings) throws XPathExpressionException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		XPathExpression expr = xPath.compile(settings.get(COURSE_NAME_XPATH_EXPRESSION_PROPERTY, null));
+		XPathExpression expr = xPath.compile(settings.node(GENERAL_SETTINGS_NODE).get(COURSE_NAME_XPATH_EXPRESSION_PROPERTY, null));
 		NodeList list = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
 		
 		for(int item = 0; item < list.getLength(); item++){
@@ -180,8 +180,89 @@ public class SectionBasedXMLParser extends RecursiveAction {
 		}
 		
 		return new CourseParserBySectionXMLTask(nodeList, settings, courseID, courseData);
-		
 	}
+	
+	private void executeBatches(XPath xPath, Preferences settings, Set<String> courses) {
+		Preferences generalSettings = settings.node(GENERAL_SETTINGS_NODE);
+		int batchSize = generalSettings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
+		log.info("Using batch size of {}", batchSize);
+
+		List<RecursiveAction> batches = new ArrayList<RecursiveAction>();
+		List<RecursiveAction> coursesBatch = new ArrayList<RecursiveAction>();
+		int coursesBatched = 0;
+		
+		for(String courseID: courses) {
+			RecursiveAction task;
+			try {
+				task = createCourseTask(xPath, settings, courseID);
+				coursesBatch.add(task);
+			} catch (XPathExpressionException e) {
+				log.error("Unable to creat background task for processing course {}", courseID);
+			}
+
+			//increment this separately from the task creation in case there is an issue with that step
+			//this needs to be incremented for each course so that we can be sure to initiate the last 
+			//batch in the instance that courses.size() % batchSize != 0 (which will be often)
+			coursesBatched++;	
+			
+			//check if batch size is met or if all
+			if(coursesBatch.size() == batchSize || coursesBatched == courses.size()) {
+				RecursiveAction batch = createBatch(coursesBatch);
+				batches.add(batch);
+				batch.fork();
+				coursesBatch = new ArrayList<>();
+			}
+		}
+		
+		//wait for the batches to finish processing
+		log.info("Waiting for batches to finish");
+		for(RecursiveAction action: batches) {
+			action.join();
+		}
+		log.info("All batches finished");
+	}
+	
+	private RecursiveAction createBatch(List<RecursiveAction> actions) {
+		return new ActionBatch(actions);
+	}
+	
+	
+	
+	private static class ActionBatch extends RecursiveAction {
+		
+		/**
+		 * TODO Describe this field
+		 */
+		private Logger log = LoggerFactory.getLogger(getClass().getName());
+
+		/**
+		 * TODO Describe this field
+		 */
+		private List<RecursiveAction> actions;
+
+		public ActionBatch(List<RecursiveAction> actions) {
+			super();
+			
+			this.actions = actions;
+		}
+		
+		@Override
+		protected void compute() {
+			log.info("Initiating batch processing of {} tasks", actions.size());
+			invokeAll(actions);
+			log.info("Batch processing of {} tasks completed", actions.size());
+		}
+
+		/**
+		 * TODO Describe this method
+		 *
+		 * @return
+		 */
+		public List<RecursiveAction> getActions() {
+			return actions;
+		}
+	}
+	
 	
 	private static class CourseParserBySectionXMLTask extends RecursiveAction {
 		
