@@ -1,6 +1,6 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.parse.SectionBasedXMLParser;
+import io.coursescheduler.scheduler.parse.xml.SectionBasedXMLParser;
 import io.coursescheduler.util.guice.Guicer;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 
@@ -26,9 +26,12 @@ import com.google.inject.Module;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
@@ -280,8 +283,24 @@ public class Main {
 					prefFact.getSystemNode("profiles/kettering")
 			);
 			new ForkJoinPool().invoke(test);
+			printTestResults(test.getCourseDataSets());
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+	}
+	
+	private static void printTestResults(Map<String, Map<String, String>> results) {
+		List<String> courseSet = new ArrayList<>(results.keySet());
+		Collections.sort(courseSet);
+		for(String course: courseSet) {
+			System.out.println("\n------------Course " + course + "-----------------");
+			
+			Map<String, String> courseData = results.get(course);
+			List<String> elementSet = new ArrayList<>(courseData.keySet());
+			Collections.sort(elementSet);
+			for(String element: elementSet) {
+				System.out.println(element + " = " + courseData.get(element));
+			}
 		}
 	}
 	
