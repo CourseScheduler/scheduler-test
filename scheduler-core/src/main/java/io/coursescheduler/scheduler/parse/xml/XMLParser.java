@@ -28,10 +28,15 @@
   */
 package io.coursescheduler.scheduler.parse.xml;
 
+import io.coursescheduler.scheduler.parse.ParseException;
+
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * TODO Describe this type
@@ -41,11 +46,19 @@ import org.w3c.dom.Node;
  */
 public abstract class XMLParser {
 	
-	public abstract List<Node> retrieveNodes(Node node, String query);
+	public abstract NodeList retrieveNodeList(Node node, Preferences settings, String key) throws ParseException;
 	
-	public abstract void retrieveData(Node node, Preferences codes, Map<String, String> data);
+	public abstract NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException;
 	
-	public abstract void retrieveData(Node node, Preferences codes, String attributePath, String nodePath, Map<String, String> data);
+	public abstract List<Node> retrieveNodes(Node node, Preferences settings, String key) throws ParseException;
 	
-	public abstract void retrieveDataElement(Node node, Preferences codes, String attributePath, String keyPath, String key, String query, Map<String, String> data);
+	public abstract List<Node> retrieveNodes(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException;
+	
+	public abstract void retrieveData(Node node, Preferences settings, Map<String, String> data) throws ParseException;
+	
+	public abstract void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException;
+	
+	public abstract void retrieveDataElement(Node node, Preferences settings, String attributePath, String keyPath, String key, String query, Map<String, String> data) throws ParseException;
+	
+	public abstract void retrieveDataElement(Node child, Preferences settings, String attributePath, String keyPath, String key, int item, Map<String, String> data) throws ParseException, BackingStoreException;
 }

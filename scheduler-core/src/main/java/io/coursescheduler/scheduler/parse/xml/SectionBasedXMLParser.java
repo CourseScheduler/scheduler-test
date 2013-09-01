@@ -30,11 +30,14 @@ package io.coursescheduler.scheduler.parse.xml;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
+import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.SectionBasedParser;
 import io.coursescheduler.scheduler.parse.xml.xpath.XPathParser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +46,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -61,7 +64,7 @@ import org.xml.sax.SAXException;
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLParser extends RecursiveAction {
+public class SectionBasedXMLParser extends SectionBasedParser {
 	
 	/**
 	 * TODO Describe this field
@@ -76,12 +79,12 @@ public class SectionBasedXMLParser extends RecursiveAction {
 	/**
 	 * TODO Describe this field
 	 */
-	private static final String COURSE_NAME_XPATH_EXPRESSION_PROPERTY = "query-list-course.id";
+	private static final String COURSE_NAME_FULL_LIST_PROPERTY = "query-all";
 	
 	/**
 	 * TODO Describe this field
 	 */
-	private static final String COURSE_DETAIL_XPATH_EXPRESSION_PROPERTY = "query-single-course.id";
+	private static final String COURSE_NAME_SINGLE_PROPERTY = "query-single";
 	
 	/**
 	 * TODO Describe this field
@@ -137,13 +140,13 @@ public class SectionBasedXMLParser extends RecursiveAction {
 		log.info("Retrieved course data for {} courses in {} milliseconds", courseDataSets.size(), (end - start));
 	}
 	
-	private Set<String> getCourseNames(Preferences settings){
+	private Set<String> getCourseNames(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		List<Node> list = parser.retrieveNodes(doc, settings.node(GENERAL_SETTINGS_NODE).get(COURSE_NAME_XPATH_EXPRESSION_PROPERTY, null));
+		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedParser.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
 		
-		for(int item = 0; item < list.size(); item++){
-			Node node = list.get(item).cloneNode(true);
+		for(int item = 0; item < list.getLength(); item++){
+			Node node = list.item(item).cloneNode(true);
 			String courseID = node.getTextContent();
 			courses.add(courseID);
 			log.debug("Found section belonging to {}", courseID);
@@ -153,20 +156,20 @@ public class SectionBasedXMLParser extends RecursiveAction {
 		return courses;
 	}
 	
-	private RecursiveAction createCourseTask(Preferences settings, String courseID){
-		String query = settings.node(GENERAL_SETTINGS_NODE).get(COURSE_DETAIL_XPATH_EXPRESSION_PROPERTY, null);
-		query = query.replaceAll(Pattern.quote(COURSE_ID_VARIABLE), courseID);
-		List<Node> list = parser.retrieveNodes(doc, query);
+	private RecursiveAction createCourseTask(Preferences settings, String courseID) throws ParseException{
+		Map<String, String> replacements = new HashMap<String, String>();
+		replacements.put(COURSE_ID_VARIABLE, courseID);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedParser.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
-		log.info("Found {} section elements for {}", list.size(), courseID);
+		log.info("Found {} section elements for {}", list.getLength(), courseID);
 		
 		Node node;
 		ConcurrentMap<String, String> courseData = new ConcurrentHashMap<>();
 		List<Node> nodeList = new ArrayList<Node>();
 		
 		courseDataSets.put(courseID, courseData);
-		for(int item = 0; item < list.size(); item++){
-			node = list.get(item).cloneNode(true);
+		for(int item = 0; item < list.getLength(); item++){
+			node = list.item(item).cloneNode(true);
 			nodeList.add(node);
 		}
 		
@@ -188,7 +191,7 @@ public class SectionBasedXMLParser extends RecursiveAction {
 				task = createCourseTask(settings, courseID);
 				coursesBatch.add(task);
 			} catch (Exception e) {
-				log.error("Unable to creat background task for processing course {}", courseID);
+				log.error("Unable to create background task for processing course {}", courseID);
 			}
 
 			//increment this separately from the task creation in case there is an issue with that step

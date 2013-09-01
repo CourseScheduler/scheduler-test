@@ -108,4 +108,13 @@ public class RecursiveActionBatch extends RecursiveAction {
 		log.info("Batch processing of {} tasks completed", actions.size());
 	}
 	
+	/**
+	 * Returns the number of tasks in this batch. 
+	 *
+	 * @return the batch size
+	 */
+	public int getBatchSize() {
+		return actions.size();
+	}
+	
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="batch.size">5</entry>
+	<entry key="query-all">//ROWSET/ROW/CourseID</entry>
+	<entry key="query-single">//ROWSET/ROW[CourseID='${course.id}']</entry>
 </properties>

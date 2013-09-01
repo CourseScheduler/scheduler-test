@@ -28,12 +28,13 @@
   */
 package io.coursescheduler.scheduler.parse.xml;
 
+import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.SectionBasedParser;
 import io.coursescheduler.scheduler.parse.xml.xpath.XPathParser;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
@@ -46,17 +47,7 @@ import org.w3c.dom.Node;
  * @author Mike Reinhold
  *
  */
-public class XMLCourseParserBySection extends RecursiveAction {
-
-	/**
-	 * TODO Describe this field
-	 */
-	private static final String COURSE_CODES_NODE = "course_codes";
-	
-	/**
-	 * TODO Describe this field
-	 */
-	private static final String SECTION_CODES_NODE = "section_codes";
+public class XMLCourseParserBySection extends SectionBasedParser {
 	
 	/**
 	 * Serial Version UID
@@ -103,36 +94,44 @@ public class XMLCourseParserBySection extends RecursiveAction {
 		this.parser = new XPathParser();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.RecursiveAction#compute()
+	 */
 	@Override
 	protected void compute() {
 		log.info("Processing course: {}", id);
 		long start = System.currentTimeMillis();
 		
-		Node node = nodeList.get(0);
-		captureCourseData(retrievalSettings, node, id, data);
-		
-		for(int item = 0; item < nodeList.size(); item++){
-			node = nodeList.get(item);
+		try {
+			Node node = nodeList.get(0);
+			captureCourseData(retrievalSettings, node, id, data);
 			
-			captureSectionData(retrievalSettings, node, item, data);
-		}
+			for(int item = 0; item < nodeList.size(); item++){
+				node = nodeList.get(item);
+				
+				captureSectionData(retrievalSettings, node, item, data);
+			}
+		} catch(ParseException e) {
+			log.error("Processing course {} failed - course may not be present or correct in output", id, e);
+			completeExceptionally(e);
+		} 
 
 		long end = System.currentTimeMillis();
 		log.info("Finished processing course {} in {} milliseconds", id, (end - start));
 	}
 	
-	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) {
+	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for {}", courseID);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(COURSE_CODES_NODE), data);
+		parser.retrieveData(node, settings.node(SectionBasedParser.COURSE_SETTINGS_NODE), data);
 		long end = System.currentTimeMillis();
 		log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
 	}
 	
-	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> data) {
+	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> data) throws ParseException {
 		log.debug("Capturing course data for section index {}", sectionIndex);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(SECTION_CODES_NODE), "course.sections", "course.sections." + sectionIndex, data);
+		parser.retrieveData(node, settings.node(SectionBasedParser.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, data);
 		long end = System.currentTimeMillis();
 		log.debug("Capturing course data for section index {} in {} milliseconds", sectionIndex, (end - start));
 	}
