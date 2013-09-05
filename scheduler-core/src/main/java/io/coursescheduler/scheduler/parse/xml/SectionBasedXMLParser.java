@@ -201,7 +201,7 @@ public class SectionBasedXMLParser extends SectionBasedParser {
 			
 			//check if batch size is met or if all
 			if(coursesBatch.size() == batchSize || coursesBatched == courses.size()) {
-				RecursiveAction batch = createBatch(coursesBatch);
+				RecursiveAction batch = new ParseActionBatch(coursesBatch);
 				batches.add(batch);
 				batch.fork();
 				coursesBatch = new ArrayList<>();
@@ -214,10 +214,6 @@ public class SectionBasedXMLParser extends SectionBasedParser {
 			action.join();
 		}
 		log.info("All batches finished");
-	}
-	
-	private RecursiveAction createBatch(List<RecursiveAction> actions) {
-		return new ParseActionBatch(actions);
 	}
 	
 	/**

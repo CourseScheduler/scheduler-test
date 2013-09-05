@@ -77,7 +77,7 @@ public class XMLCourseParserBySection extends SectionBasedParser {
 	/**
 	 * TODO Describe this field
 	 */
-	private XPathParser parser;
+	private XMLParser parser;
 	
 	/**
 	 * TODO Describe this field

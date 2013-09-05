@@ -272,6 +272,8 @@ public class Main {
 				
 				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
 			}
+			
+			
 		}		
 	}
 	
@@ -310,7 +312,7 @@ public class Main {
 	 */
 	private static void initializeGuice(){
 		log.info("Preparing to initialize Guice subsystem");
-		Guicer guicer= new Guicer(configureDefaultModules());
+		Guicer guicer = new Guicer(configureDefaultModules());
 						
 		injector = guicer.initialize();
 		log.info("Guice subsystem initialized");

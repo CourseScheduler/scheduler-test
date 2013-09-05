@@ -1,7 +1,20 @@
 /**
   * @(#)XPathParser.java
   *
-  * TODO FILE PURPOSE
+  * XML Parser that performs the heavy lifting of parsing out data elements based on a Preferences node that 
+  * contains data element names mapped to XPath expressions.
+  *
+  * The methods of this XML Parser takes a {@link java.util.prefs.Prefenences} node that contains the 
+  * invocation specific configuration elements. In particular, this XML Parser implementation requires
+  * a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the data element name and the value
+  * is the XPath expression that is used to retrieve the data for that element.
+  *
+  * This class is not thread safe and instances should not be shared between threads. Create a new instance
+  * for each thread that processes XML DOM Nodes. 
+  * 
+  * Additionally, the W3C DOM specification does not require that the DOM implementation be thread-safe. 
+  * Provide external synchronization of DOM objects, avoid processing the same DOM objects in multiple 
+  * threads, or use a DOM implementation that does provide thread-safety to ensure correct functioning.
   *
   * @author Mike Reinhold
   * 
@@ -31,8 +44,6 @@ package io.coursescheduler.scheduler.parse.xml.xpath;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.xml.XMLParser;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.prefs.BackingStoreException;
@@ -53,13 +64,28 @@ import org.w3c.dom.NodeList;
  * XML Parser that performs the heavy lifting of parsing out data elements based on a Preferences node that 
  * contains data element names mapped to XPath expressions.
  *
+ * The methods of this XML Parser takes a {@link java.util.prefs.Prefenences} node that contains the 
+ * invocation specific configuration elements. In particular, the data retrieval methods of this XML 
+ * Parser implementation requires a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the 
+ * data element name and the value is the XPath expression that is used to retrieve the data for that 
+ * element.
+ *  
+ * This class is not thread safe and instances should not be shared between threads. Create a new instance
+ * for each thread that processes XML DOM Nodes. 
+ * 
+ * Additionally, the W3C DOM specification does not require that the DOM implementation be thread-safe. 
+ * Provide external synchronization of DOM objects, avoid processing the same DOM objects in multiple 
+ * threads, or use a DOM implementation that does provide thread-safety to ensure correct functioning.
+ * 
  * @author Mike Reinhold
  *
  */
 public class XPathParser extends XMLParser {
 
 	/**
-	 * TODO Describe this field
+	 * The preferences configuration node used by the XPath Parser to retrieve data elements. Every entry
+	 * in the preferences node should map from a data element name to an XPath query that retrieves that
+	 * element.
 	 */
 	private static final String CODES_PREFERENCES_NODE = "codes";
 	
@@ -69,13 +95,13 @@ public class XPathParser extends XMLParser {
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * TODO Describe this field
+	 * The XPath instance used for this XPath XML Parser. XPath instances are inherently not thread-
+	 * safe, as such the XPathParser class in not thread-safe.
 	 */
 	private XPath xPath;
 	
 	/**
-	 * TODO Describe this constructor
-	 *
+	 * Create a new XPath XML Parser for retrieving DOM nodes.
 	 */
 	public XPathParser() {
 		super();
@@ -106,34 +132,14 @@ public class XPathParser extends XMLParser {
 		return retrieveNodeList(node, query);
 	}
 	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveNodes(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
+	/**
+	 * Execute the specified XPath expression on a DOM Node and return the resulting NodeList
+	 *
+	 * @param node the DOM node on which to execute the query
+	 * @param query the XPath expression to execute
+	 * @return the NodeList which is the result of the XPath Query
+	 * @throws ParseException if there is an issue executing the XPath expression
 	 */
-	@Override
-	public List<Node> retrieveNodes(Node node, Preferences settings, String key) throws ParseException {
-		NodeList list = retrieveNodeList(node, settings, key);
-		
-		List<Node> nodes = new ArrayList<Node>();
-		for(int item = 0; item < list.getLength(); item++) {
-			nodes.add(list.item(item));
-		}
-		return nodes;
-	}
-	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveNodes(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
-	 */
-	@Override
-	public List<Node> retrieveNodes(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
-		NodeList list = retrieveNodeList(node, settings, key, replacements);
-		
-		List<Node> nodes = new ArrayList<Node>();
-		for(int item = 0; item < list.getLength(); item++) {
-			nodes.add(list.item(item));
-		}
-		return nodes;
-	}
-	
 	protected NodeList retrieveNodeList(Node node, String query) throws ParseException{
 		try {
 			return (NodeList)xPath.evaluate(query, node, XPathConstants.NODESET);
@@ -142,16 +148,7 @@ public class XPathParser extends XMLParser {
 			throw new ParseException(e);
 		}
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.util.Map)
-	 */
-	@Override
-	public void retrieveData(Node node, Preferences codes, Map<String, String> data) throws ParseException{
-		retrieveData( node, codes, "", "", data);
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
 	 */
@@ -160,24 +157,34 @@ public class XPathParser extends XMLParser {
 		Preferences codes = settings.node(CODES_PREFERENCES_NODE);
 		try {
 			for(String key: codes.keys()){
-				String query = codes.get(key, null);
 				String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
 				String newKey = (nodePath == null || nodePath.compareTo("") == 0) ? key : nodePath + "." + key;
 							
-				retrieveDataElement(node, settings, newPath, newKey, key, query, data);
+				retrieveDataElement(node, settings, newPath, newKey, key, data);
 			}
 		} catch (BackingStoreException e) {
 			log.error("Exception while reading profile entries for profile node {}: {}", codes, e);
 			throw new ParseException(e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveDataElement(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map)
+
+	/**
+	 * Bulk retrieve data under a specific node, attribute path, key path, and key according to the configuration stored under
+	 * the Preferences node, and store it into the data Map. This method queries a nodelist and processes each child result 
+	 * by calling {@link #retrieveDataElementIndex(Node, Preferences, String, String, String, int, Map)} with the index of the child	 *
+	 * 
+	 * @param node the DOM Node under which retrieval should occur
+	 * @param settings the Preferences node specifying the configuration 
+	 * @param attributePath the general (non-indexed) attribute path under which the element configuration is found
+	 * @param keyPath the specific (indexed) attribute path under which the data is stored
+	 * @param key the specific key for which a retrieval should be performed
+	 * @param data the map of data element names to data element values in which to store the retrieved data
+	 * @throws ParseException if there is an issue processing the data retrieval
 	 */
-	@Override
-	public void retrieveDataElement(Node node, Preferences settings, String attributePath, String keyPath, String key, String query, Map<String, String> data) throws ParseException{
+	protected void retrieveDataElement(Node node, Preferences settings, String attributePath, String keyPath, String key, Map<String, String> data) throws ParseException{
 		try{
+			Preferences codes = settings.node(CODES_PREFERENCES_NODE);
+			String query = codes.get(key, null);
 			NodeList children = retrieveNodeList(node, query);
 			
 			//write the number of values
@@ -188,7 +195,7 @@ public class XPathParser extends XMLParser {
 			//process each item
 			for(int item = 0; item < children.getLength(); item++){
 				Node child = children.item(item).cloneNode(true);
-				retrieveDataElement(child, settings, attributePath, keyPath, key, item, data);
+				retrieveDataElementIndex(child, settings, attributePath, keyPath, key, item, data);
 			}
 		} catch(ParseException e){
 			log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, keyPath, e);
@@ -199,20 +206,33 @@ public class XPathParser extends XMLParser {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveDataElement(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.lang.String, int, java.util.Map)
+
+	/**
+	 * Bulk retrieve data under a specific node-result index, attribute path, key path, and key according to the configuration
+	 * stored under the Preferences node, and store it into the data Map. This method processes a single data element index 
+	 * (and its children, if any), by recursively calling the {@link #retrieveData(Node, Preferences, String, String, Map)} method
+	 * with appropriate key.
+	 * 
+	 * @param node the DOM Node under which retrieval should occur
+	 * @param settings the Preferences node specifying the configuration 
+	 * @param attributePath the general (non-indexed) attribute path under which the element configuration is found
+	 * @param keyPath the specific (indexed) attribute path under which the data is stored
+	 * @param key the specific key for which a retrieval should be performed
+	 * @param item the data element index being processed
+	 * @param data the map of data element names to data element values in which to store the retrieved data
+	 * @throws ParseException if there is an issue processing the data retrieval
+	 * @throws BackingStoreException if there is an issue accessing the configuration
 	 */
-	@Override
-	public void retrieveDataElement(Node child, Preferences settings, String attributePath, String keyPath, String key, int item, Map<String, String> data) throws ParseException, BackingStoreException {
+	protected void retrieveDataElementIndex(Node child, Preferences settings, String attributePath, String keyPath, String key, int item, Map<String, String> data) throws ParseException, BackingStoreException {
 		log.debug("Getting code subnode: {}", key);
 		Preferences codes = settings.node(CODES_PREFERENCES_NODE); 
 		Preferences subCodes = codes.node(key);
-		int keyCount = 0;
+		int subNodeCount = 0;
 		
 		try {
-			keyCount = subCodes.keys().length;
+			subNodeCount = subCodes.keys().length;
 			
-			if(keyCount == 0) {
+			if(subNodeCount == 0) {
 				log.debug("No sub code entries exist for node {}, removing", key);
 				subCodes.removeNode();
 			}
@@ -222,7 +242,7 @@ public class XPathParser extends XMLParser {
 			log.trace("No sub code entries exist for node {}, previously removed", key);
 		}
 		
-		if(keyCount > 0){
+		if(subNodeCount > 0){
 			log.debug("Sub codes exist for node {}, processing", key);
 			retrieveData(child, subCodes, attributePath, keyPath + "." + item, data);
 		}else{					
