@@ -1,7 +1,7 @@
 /**
   * @(#)XMLParser.java
   *
-  * A generic XML parser class that contains general XML processing methods. Most methods accept
+  * A generic interface for XML parsers that contains general XML processing methods. Most methods accept
   * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
   * elements. Consult the documentation for the specific XMLParser implementation for more
   * information on the content of the Preferences node. 
@@ -39,7 +39,6 @@ package io.coursescheduler.scheduler.parse.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -48,7 +47,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * A generic XML parser class that contains general XML processing methods. Most methods accept
+ * A generic interface for XML parsers that contains general XML processing methods. Most methods accept
  * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
  * elements. Consult the documentation for the specific XMLParser implementation for more
  * information on the content of the Preferences node. 
@@ -62,7 +61,7 @@ import org.w3c.dom.NodeList;
  * @author Mike Reinhold
  *
  */
-public abstract class XMLParser {
+public interface XMLParser {
 	
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node
@@ -111,15 +110,7 @@ public abstract class XMLParser {
 	 * @return the node list retrieved as specified in the configuration
 	 * @throws ParseException if there is an issue processing the node retrieval
 	 */
-	public List<Node> retrieveNodes(Node node, Preferences settings, String key) throws ParseException {
-		NodeList list = retrieveNodeList(node, settings, key);
-		
-		List<Node> nodes = new ArrayList<Node>();
-		for(int item = 0; item < list.getLength(); item++) {
-			nodes.add(list.item(item));
-		}
-		return nodes;
-	}
+	public List<Node> retrieveNodes(Node node, Preferences settings, String key) throws ParseException;
 	
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node
@@ -136,15 +127,7 @@ public abstract class XMLParser {
 	 * @return the node list retrieved as specified in the configuration
 	 * @throws ParseException if there is an issue processing the node retrieval
 	 */
-	public List<Node> retrieveNodes(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
-		NodeList list = retrieveNodeList(node, settings, key, replacements);
-		
-		List<Node> nodes = new ArrayList<Node>();
-		for(int item = 0; item < list.getLength(); item++) {
-			nodes.add(list.item(item));
-		}
-		return nodes;
-	}
+	public List<Node> retrieveNodes(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException;
 	
 	/**
 	 * Bulk retrieve data under the node according to the configuration stored under the Preferences node and store it into
@@ -158,9 +141,7 @@ public abstract class XMLParser {
 	 * @param data the map of data element names to data element values in which to store the retrieved data
 	 * @throws ParseException if there is an issue processing the data retrieval
 	 */
-	public void retrieveData(Node node, Preferences settings, Map<String, String> data) throws ParseException{
-		retrieveData(node, settings, "", "", data);
-	}
+	public void retrieveData(Node node, Preferences settings, Map<String, String> data) throws ParseException;
 
 	/**
 	 * Bulk retrieve data under the node according to the configuration stored under the Preferences node and store it into

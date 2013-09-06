@@ -42,7 +42,7 @@
 package io.coursescheduler.scheduler.parse.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.xml.XMLParser;
+import io.coursescheduler.scheduler.parse.xml.AbstractXMLParser;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,7 +80,7 @@ import org.w3c.dom.NodeList;
  * @author Mike Reinhold
  *
  */
-public class XPathParser extends XMLParser {
+public class XPathParser extends AbstractXMLParser {
 
 	/**
 	 * The preferences configuration node used by the XPath Parser to retrieve data elements. Every entry

@@ -69,7 +69,7 @@ public class Guicer {
 	 * named "ui" that has a module loaded by Guice, this module could be overridden by supplying an alternate
 	 * module implementation in the Java system property {@value}ui.
 	 */
-	public static final String STANDARD_MODULES_BASE_PROPERTY = "io.coursescheduler.util.guice.modules.owerride.";
+	public static final String STANDARD_MODULES_BASE_PROPERTY = "io.coursescheduler.util.guice.modules.override.";
 	
 	/**
 	 * The map of application components to default implementation classes
