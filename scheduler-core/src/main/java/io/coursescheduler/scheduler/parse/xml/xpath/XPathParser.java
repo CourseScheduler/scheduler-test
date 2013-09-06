@@ -60,6 +60,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.inject.Inject;
+
 /**
  * XML Parser that performs the heavy lifting of parsing out data elements based on a Preferences node that 
  * contains data element names mapped to XPath expressions.
@@ -103,6 +105,7 @@ public class XPathParser extends AbstractXMLParser {
 	/**
 	 * Create a new XPath XML Parser for retrieving DOM nodes.
 	 */
+	@Inject
 	public XPathParser() {
 		super();
 		

@@ -1,8 +1,8 @@
 /**
-  * @(#)PropertiesPreferencesModule.java
+  * @(#)StandardPropertiesPreferencesModule.java
   *
-  * Guice Module for binding the PropertiesPreferencesFactory class as the
-  * implementation class for the PreferencesFactory interface
+  * Guice module for binding the Standard Properties File Preferences backend as the PreferencesFactory
+  * implementation.
   *
   * @author Mike Reinhold
   * 
@@ -27,38 +27,35 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.preferences.properties;
-
-import io.coursescheduler.util.preferences.PreferencesFactory;
-import io.coursescheduler.util.preferences.PreferencesModule;
+package io.coursescheduler.util.preferences.properties.standard;
 
 import com.google.inject.Singleton;
 
+import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.preferences.PreferencesModule;
+import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFactory;
+
 /**
- * Guice Module for binding the PropertiesPreferencesFactory class as the
- * implementation class for the PreferencesFactory interface
+ * Guice module for binding the Standard Properties File Preferences backend as the PreferencesFactory
+ * implementation.
  *
  * @author Mike Reinhold
  *
  */
-public class PropertiesPreferencesModule extends PreferencesModule {
-	
-	/**
-	 * Default preferred java.util.pref.Preferences backend
-	 */
-	protected static final String PREFERENCES_BACKEND_CLASS = "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesFactory";
+public class StandardPropertiesPreferencesModule extends PreferencesModule {
 	
 	/* (non-Javadoc)
-	 * @see com.google.inject.AbstractModule#configure()
+	 * @see io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule#configure()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void configure() {		
-		setPreferencesFactory(PREFERENCES_BACKEND_CLASS);
+	public void configure() {
+		setPreferencesFactory((Class<? extends PreferencesFactory>) StandardPropertiesFilePreferencesFactory.class);
 		
 		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
 		bind(PreferencesFactory.class)
 			.to(PropertiesPreferencesFactory.class)
 			.in(Singleton.class);
 	}
-
+	
 }

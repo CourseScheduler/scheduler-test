@@ -313,8 +313,8 @@ public class Main {
 		log.info("Preparing to initialize Guice subsystem");
 						
 		injector = Guice.createInjector(
-				new ComponentLoaderModule(configureDefaultModules())
-				//, new ScanningLoaderModule<Module>(Module.class, "io.coursescheduler.scheduler.parse")
+				new ComponentLoaderModule(configureDefaultModules()),
+				new ScanningLoaderModule<Module>(Module.class, "io.coursescheduler.scheduler.parse")
 		);
 		log.info("Guice subsystem initialized");
 	}
@@ -328,7 +328,7 @@ public class Main {
 		Map<String, String> modules = new HashMap<String, String>();
 		
 		//default component module definitions
-		modules.put("preferences", "io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule");
+		modules.put("preferences", "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesModule");
 		
 		return modules;
 	}

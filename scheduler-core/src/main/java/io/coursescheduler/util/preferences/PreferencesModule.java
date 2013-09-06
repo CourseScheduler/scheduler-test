@@ -64,7 +64,7 @@ public abstract class PreferencesModule extends com.google.inject.AbstractModule
 	 *
 	 * @param preferencesFactoryClass the class corresponding to the desired implementation
 	 */
-	protected final void setPreferencesFactory(Class<PreferencesFactory> preferencesFactoryClass){
+	protected final void setPreferencesFactory(Class<? extends PreferencesFactory> preferencesFactoryClass){
 		setPreferencesFactory(preferencesFactoryClass.getName());
 	}
 
@@ -81,9 +81,12 @@ public abstract class PreferencesModule extends com.google.inject.AbstractModule
 	protected final void setPreferencesFactory(String preferencesFactoryClassName){
 		//check for a desired Preferences Factory class
 		log.debug("Checking for Preferences backend specified in {}", PREFERENCES_FACTORY_PROPERTY);
-		if(System.getProperty(PREFERENCES_FACTORY_PROPERTY) == null){
+		String factory = System.getProperty(PREFERENCES_FACTORY_PROPERTY);
+		if(factory == null){
 			System.setProperty(PREFERENCES_FACTORY_PROPERTY, preferencesFactoryClassName);
 			log.debug("No backend found in {}. Using default backend: {}", PREFERENCES_FACTORY_PROPERTY, preferencesFactoryClassName);
+		}else {
+			log.debug("Factory {} found in {}", factory, PREFERENCES_FACTORY_PROPERTY);
 		}
 	}
 }
