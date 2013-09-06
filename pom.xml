@@ -160,6 +160,13 @@
 				<version>7.0</version>
 			</dependency>
 			
+			<!-- Reflections Toolset -->
+			<dependency>
+				 <groupId>org.reflections</groupId>
+				 <artifactId>reflections</artifactId>
+				 <version>0.9.9-RC1</version>
+			 </dependency>
+			
 			<!-- Google Guice IoC Multibindings -->
 			<dependency>
 				<groupId>com.google.inject.extensions</groupId>
@@ -227,6 +234,12 @@
 			<systemPath>${java.home}/lib/javaws.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
+			
+		<!-- Reflections Toolset -->
+		<dependency>
+			 <groupId>org.reflections</groupId>
+			 <artifactId>reflections</artifactId>
+		 </dependency>
 		
 		<!-- Google Guice IoC Multibindings -->
 		<dependency>

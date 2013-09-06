@@ -1,7 +1,8 @@
 package Scheduler;
 
 import io.coursescheduler.scheduler.parse.xml.SectionBasedXMLParser;
-import io.coursescheduler.util.guice.Guicer;
+import io.coursescheduler.util.guice.component.ComponentLoaderModule;
+import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 
 import java.awt.Component;
@@ -30,8 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
@@ -312,9 +311,11 @@ public class Main {
 	 */
 	private static void initializeGuice(){
 		log.info("Preparing to initialize Guice subsystem");
-		Guicer guicer = new Guicer(configureDefaultModules());
 						
-		injector = guicer.initialize();
+		injector = Guice.createInjector(
+				new ComponentLoaderModule(configureDefaultModules())
+				//, new ScanningLoaderModule<Module>(Module.class, "io.coursescheduler.scheduler.parse")
+		);
 		log.info("Guice subsystem initialized");
 	}
 	
