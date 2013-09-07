@@ -1,9 +1,9 @@
 /**
-  * @(#)XMLParser.java
+  * @(#)XMLParserTool.java
   *
   * A generic interface for XML parsers that contains general XML processing methods. Most methods accept
   * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
-  * elements. Consult the documentation for the specific XMLParser implementation for more
+  * elements. Consult the documentation for the specific XMLParserTool implementation for more
   * information on the content of the Preferences node. 
   * 
   * Implementations are not required to be thread-safe and as such should not be shared between threads.
@@ -35,9 +35,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.xml;
+package io.coursescheduler.scheduler.parse.tools.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.tools.ParserTool;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 /**
  * A generic interface for XML parsers that contains general XML processing methods. Most methods accept
  * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
- * elements. Consult the documentation for the specific XMLParser implementation for more
+ * elements. Consult the documentation for the specific XMLParserTool implementation for more
  * information on the content of the Preferences node. 
  * 
  * Implementations are not required to be thread-safe and as such should not be shared between threads.
@@ -61,7 +62,7 @@ import org.w3c.dom.NodeList;
  * @author Mike Reinhold
  *
  */
-public interface XMLParser {
+public interface XMLParserTool extends ParserTool{
 	
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node

@@ -33,6 +33,8 @@ package io.coursescheduler.util.preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.AbstractModule;
+
 /**
  * Define a base Guice module for java.util.Preferences factory implementations. Contains helper
  * methods for ensuring that the Guice module can rugister its Properties Factory implementation 
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Mike Reinhold
  *
  */
-public abstract class PreferencesModule extends com.google.inject.AbstractModule {
+public abstract class PreferencesModule extends AbstractModule {
 
 	/**
 	 * Instance specific logger

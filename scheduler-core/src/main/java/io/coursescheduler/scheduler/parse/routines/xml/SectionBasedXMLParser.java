@@ -26,13 +26,14 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.xml;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.SectionBasedParser;
-import io.coursescheduler.scheduler.parse.xml.xpath.XPathParser;
+import io.coursescheduler.scheduler.parse.routines.SectionBasedParser;
+import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
+import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +109,7 @@ public class SectionBasedXMLParser extends SectionBasedParser {
 
 	private Preferences profile;
 	
-	private XMLParser parser;
+	private XMLParserTool parser;
 	
 	private SectionBasedXMLParser(){
 		super();
@@ -123,7 +124,7 @@ public class SectionBasedXMLParser extends SectionBasedParser {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		doc = builder.parse(input);
 		this.profile = profile;
-		parser = new XPathParser();
+		parser = new XPathParserTool();
 	}
 
 	@Override

@@ -1,11 +1,11 @@
 /**
-  * @(#)XPathParser.java
+  * @(#)XPathParserTool.java
   *
-  * XML Parser that performs the heavy lifting of parsing out data elements based on a Preferences node that 
+  * XML ParserTool that performs the heavy lifting of parsing out data elements based on a Preferences node that 
   * contains data element names mapped to XPath expressions.
   *
-  * The methods of this XML Parser takes a {@link java.util.prefs.Prefenences} node that contains the 
-  * invocation specific configuration elements. In particular, this XML Parser implementation requires
+  * The methods of this XML ParserTool takes a {@link java.util.prefs.Prefenences} node that contains the 
+  * invocation specific configuration elements. In particular, this XML ParserTool implementation requires
   * a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the data element name and the value
   * is the XPath expression that is used to retrieve the data for that element.
   *
@@ -39,10 +39,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.xml.xpath;
+package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.xml.AbstractXMLParser;
+import io.coursescheduler.scheduler.parse.tools.xml.AbstractXMLParserTool;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -63,12 +63,12 @@ import org.w3c.dom.NodeList;
 import com.google.inject.Inject;
 
 /**
- * XML Parser that performs the heavy lifting of parsing out data elements based on a Preferences node that 
+ * XML ParserTool that performs the heavy lifting of parsing out data elements based on a Preferences node that 
  * contains data element names mapped to XPath expressions.
  *
- * The methods of this XML Parser takes a {@link java.util.prefs.Prefenences} node that contains the 
+ * The methods of this XML ParserTool takes a {@link java.util.prefs.Prefenences} node that contains the 
  * invocation specific configuration elements. In particular, the data retrieval methods of this XML 
- * Parser implementation requires a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the 
+ * ParserTool implementation requires a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the 
  * data element name and the value is the XPath expression that is used to retrieve the data for that 
  * element.
  *  
@@ -82,10 +82,45 @@ import com.google.inject.Inject;
  * @author Mike Reinhold
  *
  */
-public class XPathParser extends AbstractXMLParser {
+public class XPathParserTool extends AbstractXMLParserTool {
 
 	/**
-	 * The preferences configuration node used by the XPath Parser to retrieve data elements. Every entry
+	 * ParserTool internal name used in configuration and in binding to uniquely identify
+	 * the parser module. It must be unique among all other ParserTool modules or else it
+	 * will not be available for use by data retrieval routines.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_INTERNAL_NAME = "xml-xpath";
+	
+	/**
+	 * ParserTool external name which is displayed to the end user. This must be unique
+	 * among all other ParserTool modules or else the user will not be able to properly
+	 * differentiate between parser modules.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_FRIENDLY_NAME = "XPath XML ParserTool";
+	
+	/**
+	 * Short description of the parser module. 
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_SHORT_DESCRIPTION = "An XML parser that uses XPath 1.0 expressions";
+	
+	/**
+	 * Long description of the parser module.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_LONG_DESCRIPTION = "An XML parser that uses XPath 1.0 expressions "
+			+ "against well formed XML documents. This XPath parser uses the Oracle XPath implementation "
+			+ "native to the JVM to pull data elements out of the XML document efficiently using highly"
+			+ "targeted statements.";
+	
+	/**
+	 * The preferences configuration node used by the XPath ParserTool to retrieve data elements. Every entry
 	 * in the preferences node should map from a data element name to an XPath query that retrieves that
 	 * element.
 	 */
@@ -97,23 +132,55 @@ public class XPathParser extends AbstractXMLParser {
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * The XPath instance used for this XPath XML Parser. XPath instances are inherently not thread-
-	 * safe, as such the XPathParser class in not thread-safe.
+	 * The XPath instance used for this XPath XML ParserTool. XPath instances are inherently not thread-
+	 * safe, as such the XPathParserTool class in not thread-safe.
 	 */
 	private XPath xPath;
 	
 	/**
-	 * Create a new XPath XML Parser for retrieving DOM nodes.
+	 * Create a new XPath XML ParserTool for retrieving DOM nodes.
 	 */
 	@Inject
-	public XPathParser() {
+	public XPathParserTool() {
 		super();
 		
 		this.xPath = XPathFactory.newInstance().newXPath();
 	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.ParserTool#getInternalName()
+	 */
+	@Override
+	public String getInternalName() {
+		return PARSER_INTERNAL_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.ParserTool#getUserFriendlyName()
+	 */
+	@Override
+	public String getUserFriendlyName() {
+		return PARSER_FRIENDLY_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.ParserTool#getShortDescription()
+	 */
+	@Override
+	public String getShortDescription() {
+		return PARSER_SHORT_DESCRIPTION;
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.ParserTool#getLongDescription()
+	 */
+	@Override
+	public String getLongDescription() {
+		return PARSER_LONG_DESCRIPTION;
+	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
 	 */
 	@Override
 	public NodeList retrieveNodeList(Node node, Preferences settings, String key) throws ParseException {
@@ -122,7 +189,7 @@ public class XPathParser extends AbstractXMLParser {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
@@ -153,7 +220,7 @@ public class XPathParser extends AbstractXMLParser {
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.xml.XMLParser#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException{

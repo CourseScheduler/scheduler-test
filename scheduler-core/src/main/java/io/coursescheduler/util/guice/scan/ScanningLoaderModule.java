@@ -34,7 +34,13 @@
   */
 package io.coursescheduler.util.guice.scan;
 
+import java.util.concurrent.ForkJoinPool;
+
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,18 +96,27 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 	 */
 	@Override
 	protected void configure() {
-		long start = System.currentTimeMillis();
+		long outerStart = System.currentTimeMillis();
 		log.debug("Processing package scanned Guice modules");
 		for(String pack: packages) {
+			long start = System.currentTimeMillis();
 			log.debug("Searching package {} for implementations of {}", pack, parentType.getName());
-			Reflections reflections = new Reflections(pack);
+			Reflections reflections = new Reflections(new ConfigurationBuilder()
+				.filterInputsBy(new FilterBuilder().includePackage(pack))
+				.setUrls(ClasspathHelper.forPackage(pack))
+				.setScanners(new SubTypesScanner())
+				.setExecutorService(new ForkJoinPool())
+			);
 			
 			for(Class<? extends M> clazz: reflections.getSubTypesOf(parentType)) {
 				log.info("Found module {} while scanning package {}", clazz, pack);
 				installModule(clazz);
 			}
+
+			long end = System.currentTimeMillis();
+			log.info("Finished processing package {} modules is {} milliseconds", pack, (end - start));
 		}
 		long end = System.currentTimeMillis();
-		log.info("Finished processing standard modules is {} milliseconds", (end - start));
+		log.info("Finished processing package scanned modules is {} milliseconds", (end - outerStart));
 	}
 }

@@ -1,6 +1,6 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.parse.xml.SectionBasedXMLParser;
+import io.coursescheduler.scheduler.parse.routines.xml.SectionBasedXMLParser;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
@@ -20,6 +20,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -314,7 +315,7 @@ public class Main {
 						
 		injector = Guice.createInjector(
 				new ComponentLoaderModule(configureDefaultModules()),
-				new ScanningLoaderModule<Module>(Module.class, "io.coursescheduler.scheduler.parse")
+				new ScanningLoaderModule<AbstractModule>(AbstractModule.class, "io.coursescheduler.scheduler.parse")
 		);
 		log.info("Guice subsystem initialized");
 	}

@@ -1,7 +1,7 @@
 /**
-  * @(#)SectionBasedParser.java
+  * @(#)ParserTool.java
   *
-  * TODO FILE PURPOSE
+  * Interface for all parser types and modules to provide common ancestor and functionality
   *
   * @author Mike Reinhold
   * 
@@ -26,32 +26,42 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse;
-
-import java.util.concurrent.RecursiveAction;
+package io.coursescheduler.scheduler.parse.tools;
 
 /**
- * TODO Describe this type
+ * Interface for all parser types and modules to provide common ancestor and functionality
  *
  * @author Mike Reinhold
  *
  */
-public abstract class SectionBasedParser extends RecursiveAction {
+public interface ParserTool {
 	
 	/**
-	 * TODO Describe this field
+	 * The internal name for this ParserTool module for using this ParserTool in configuration
+	 *
+	 * @return the internal name
 	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * TODO Describe this field
-	 */
-	public static final String COURSE_SETTINGS_NODE = "course";
+	public String getInternalName();
 	
 	/**
-	 * TODO Describe this field
+	 * The external, user friendly name for this ParserTool module for seleccting this ParserTool
+	 * in the user interface
+	 *
+	 * @return the user friendly name
 	 */
-	public static final String SECTION_SETTINGS_NODE = "section";
+	public String getUserFriendlyName();
 	
+	/**
+	 * Provide a short description of the ParserTool module
+	 *
+	 * @return a short description
+	 */
+	public String getShortDescription();
 	
+	/**
+	 * Provide a longer description of the ParserTool module and its intended use case
+	 *
+	 * @return a long description
+	 */
+	public String getLongDescription();
 }
