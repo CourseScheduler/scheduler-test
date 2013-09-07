@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -314,8 +313,8 @@ public class Main {
 		log.info("Preparing to initialize Guice subsystem");
 						
 		injector = Guice.createInjector(
-				new ComponentLoaderModule(configureDefaultModules()),
-				new ScanningLoaderModule<AbstractModule>(AbstractModule.class, "io.coursescheduler.scheduler.parse")
+				ComponentLoaderModule.of(configureDefaultModules()),
+				ScanningLoaderModule.of(AbstractModule.class, "io.coursescheduler.scheduler.parse")
 		);
 		log.info("Guice subsystem initialized");
 	}

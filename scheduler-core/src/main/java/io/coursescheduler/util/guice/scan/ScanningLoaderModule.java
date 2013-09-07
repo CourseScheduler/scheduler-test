@@ -78,13 +78,25 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 	private Class<M> parentType;
 	
 	/**
+	 * Construct a new Guice Scanning Loader Module which will scan the specified packages for subtypes
+	 * of the Guice Module class (or subclass) corresponding to the generic type M
+	 *
+	 * @param parentType the class to use as the parent type for modules loaded from the specified packages
+	 * @param packages one or more package names as strings in which to search
+	 * @return the newly constructed ScanningLoaderModule
+	 */
+	public static <M extends Module> ScanningLoaderModule<M> of(Class<M> parentType, String...packages){
+		return new ScanningLoaderModule<M>(parentType, packages);
+	}
+	
+	/**
 	 * Create a new Guice Scanning Loader Module which will scan the specified packages for subtypes
 	 * of the Guice Module class (or subclass) corresponding to the generic type M 
 	 *
 	 * @param parentType the class to use as the parent type for modules loaded from the specified packages
-	 * @param packages one or more package names as strings
+	 * @param packages one or more package names as strings in which to search
 	 */
-	public ScanningLoaderModule(Class<M> parentType, String... packages) {
+	protected ScanningLoaderModule(Class<M> parentType, String... packages) {
 		super();
 		
 		this.parentType = parentType;

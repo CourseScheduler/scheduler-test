@@ -85,8 +85,22 @@ public class ComponentLoaderModule extends ModuleLoaderModule {
 	 * @see io.coursescheduler.util.guice.component.STANDARD_MODULES_BASE_PROPERTY
 	 *
 	 * @param defaultModules a map of the component names and the default implementation modules
+	 * @return the newly constructed ComponentLoaderModule
 	 */
-	public ComponentLoaderModule(Map<String, String> defaultModules) {
+	public static ComponentLoaderModule of(Map<String, String> defaultModules) {
+		return new ComponentLoaderModule(defaultModules);
+	}
+	
+	/**
+	 * Create a new Guice module loader that builds and installs Guice modules based on the provided map of component
+	 * names and default implementations. These implementations can be overridden by setting Java system properties as
+	 * specified by the {@link #STANDARD_MODULES_BASE_PROPERTY} system property prefix. 
+	 * 
+	 * @see io.coursescheduler.util.guice.component.STANDARD_MODULES_BASE_PROPERTY
+	 *
+	 * @param defaultModules a map of the component names and the default implementation modules
+	 */
+	protected ComponentLoaderModule(Map<String, String> defaultModules) {
 		super();
 		
 		this.defaultModules = defaultModules;
