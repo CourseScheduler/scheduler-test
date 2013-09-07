@@ -37,7 +37,7 @@ import com.google.inject.AbstractModule;
 
 /**
  * Define a base Guice module for java.util.Preferences factory implementations. Contains helper
- * methods for ensuring that the Guice module can rugister its Properties Factory implementation 
+ * methods for ensuring that the Guice module can register its Properties Factory implementation 
  * properly as part of its module configuration.
  *
  * @author Mike Reinhold
@@ -55,20 +55,6 @@ public abstract class PreferencesModule extends AbstractModule {
 	 * that should be used by the application
 	 */
 	protected static final String PREFERENCES_FACTORY_PROPERTY = "java.util.prefs.PreferencesFactory";
-	
-	/**
-	 * Check if the Java system property ({@link #PREFERENCES_FACTORY_PROPERTY}) for the default Preferences Factory
-	 * has been set (by the calling application or on the command line). If so, let the JVM use the Preferences Factory 
-	 * specified therein. Otherwise, use the preferences factory class passed to this method as the Preferences Factory.
-	 * 
-	 * Implementations of this abstract module should call this method with its Preferences Factory implementation as a 
-	 * parameter to ensure that the factory is properly registered
-	 *
-	 * @param preferencesFactoryClass the class corresponding to the desired implementation
-	 */
-	protected final void setPreferencesFactory(Class<? extends PreferencesFactory> preferencesFactoryClass){
-		setPreferencesFactory(preferencesFactoryClass.getName());
-	}
 
 	/**
 	 * Check if the Java system property ({@link #PREFERENCES_FACTORY_PROPERTY}) for the default Preferences Factory

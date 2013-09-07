@@ -47,10 +47,9 @@ public class StandardPropertiesPreferencesModule extends PreferencesModule {
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule#configure()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void configure() {
-		setPreferencesFactory((Class<? extends PreferencesFactory>) StandardPropertiesFilePreferencesFactory.class);
+		setPreferencesFactory(StandardPropertiesFilePreferencesFactory.class.getName());
 		
 		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
 		bind(PreferencesFactory.class)
