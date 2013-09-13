@@ -1,5 +1,5 @@
 /**
-  * @(#)SectionBasedParser.java
+  * @(#)AbstractSectionBasedParser.java
   *
   * TODO FILE PURPOSE
   *
@@ -28,6 +28,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
+import java.util.concurrent.RecursiveAction;
 
 /**
  * TODO Describe this type
@@ -35,17 +36,12 @@ package io.coursescheduler.scheduler.parse.routines;
  * @author Mike Reinhold
  *
  */
-public interface SectionBasedParser {
-
-	/**
-	 * TODO Describe this field
-	 */
-	public static final String COURSE_SETTINGS_NODE = "course";
+public abstract class AbstractSectionBasedParser extends RecursiveAction {
 	
 	/**
 	 * TODO Describe this field
 	 */
-	public static final String SECTION_SETTINGS_NODE = "section";
+	private static final long serialVersionUID = 1L;
 	
 	
 }

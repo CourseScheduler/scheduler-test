@@ -29,6 +29,7 @@
 package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
@@ -46,11 +47,12 @@ public class XPathModule extends AbstractModule {
 	 */
 	@Override
 	protected void configure() {
-		//get a map binder from the internal name to the ParserTool class
+		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
 		MapBinder<String, ParserTool> parserBinder = MapBinder.newMapBinder(binder(), String.class, ParserTool.class);
-		
-		//set the binding for the XPathParserTool
 		parserBinder.addBinding(XPathParserTool.PARSER_INTERNAL_NAME).to(XPathParserTool.class);
+
+		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
+		MapBinder<String, XMLParserTool> xmlParserBinder = MapBinder.newMapBinder(binder(), String.class, XMLParserTool.class);
+		xmlParserBinder.addBinding(XPathParserTool.PARSER_INTERNAL_NAME).to(XPathParserTool.class);
 	}
-	
 }

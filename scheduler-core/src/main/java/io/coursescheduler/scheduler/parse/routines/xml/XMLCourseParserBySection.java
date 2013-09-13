@@ -29,6 +29,7 @@
 package io.coursescheduler.scheduler.parse.routines.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.routines.AbstractSectionBasedParser;
 import io.coursescheduler.scheduler.parse.routines.SectionBasedParser;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
@@ -48,7 +49,7 @@ import org.w3c.dom.Node;
  * @author Mike Reinhold
  *
  */
-public class XMLCourseParserBySection extends SectionBasedParser {
+public class XMLCourseParserBySection extends AbstractSectionBasedParser {
 	
 	/**
 	 * Serial Version UID

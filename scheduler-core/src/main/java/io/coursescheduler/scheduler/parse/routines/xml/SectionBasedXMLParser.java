@@ -31,6 +31,7 @@ package io.coursescheduler.scheduler.parse.routines.xml;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.routines.AbstractSectionBasedParser;
 import io.coursescheduler.scheduler.parse.routines.SectionBasedParser;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
@@ -65,7 +66,7 @@ import org.xml.sax.SAXException;
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLParser extends SectionBasedParser {
+public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 	
 	/**
 	 * TODO Describe this field
