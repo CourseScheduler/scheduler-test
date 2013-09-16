@@ -109,12 +109,12 @@
 	<!-- Managed dependencies -->
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- Required to support JNLP specific functions -->
+			
+			<!-- Java WebStart library -->
 			<dependency>
-				<groupId>javax</groupId>
-				<artifactId>jnlp</artifactId>
-				<version>1.6.0</version>
+				<groupId>javax.jnlp</groupId>
+				<artifactId>jnlp-api</artifactId>
+				<version>7.0</version>
 			</dependency>
 
 			<!-- Unit Test suite -->
@@ -153,13 +153,6 @@
 				<version>1.0.13</version>
 			</dependency>
 			
-			<!-- Java WebStart library -->
-			<dependency>
-				<groupId>javax.jnlp</groupId>
-				<artifactId>jnlp-api</artifactId>
-				<version>7.0</version>
-			</dependency>
-			
 			<!-- Reflections Toolset -->
 			<dependency>
 				 <groupId>org.reflections</groupId>
@@ -195,6 +188,14 @@
 	<!-- Basic dependencies -->
 	<dependencies>
 		
+		<!-- Java WebStart library -->		
+		<dependency>
+			<groupId>javax.jnlp</groupId>
+			<artifactId>jnlp-api</artifactId>
+			<systemPath>${java.home}/lib/javaws.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		
 		<!-- Unit Test suite -->
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -225,14 +226,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-		</dependency>
-		
-		<!-- Java WebStart library -->		
-		<dependency>
-			<groupId>javax.jnlp</groupId>
-			<artifactId>jnlp-api</artifactId>
-			<systemPath>${java.home}/lib/javaws.jar</systemPath>
-			<scope>system</scope>
 		</dependency>
 			
 		<!-- Reflections Toolset -->
