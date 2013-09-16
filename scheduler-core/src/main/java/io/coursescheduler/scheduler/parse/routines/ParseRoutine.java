@@ -1,7 +1,8 @@
 /**
-  * @(#)AbstractSectionBasedParser.java
+  * @(#)ParseRoutine.java
   *
-  * TODO FILE PURPOSE
+  * Interface for describing Parse routines and the methods tthat must be supported
+  * by said parse routines.
   *
   * @author Mike Reinhold
   * 
@@ -28,20 +29,13 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
-import java.util.concurrent.RecursiveAction;
-
 /**
- * TODO Describe this type
+ * Interface for describing Parse routines and the methods tthat must be supported
+ * by said parse routines.
  *
  * @author Mike Reinhold
  *
  */
-public abstract class AbstractSectionBasedParser extends RecursiveAction implements ParseRoutine {
-	
-	/**
-	 * TODO Describe this field
-	 */
-	private static final long serialVersionUID = 1L;
-	
+public interface ParseRoutine {
 	
 }
