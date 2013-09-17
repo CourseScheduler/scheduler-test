@@ -38,7 +38,7 @@ package io.coursescheduler.scheduler.parse.routines;
 public abstract class CourseBasedCourseParserRoutine extends CourseParserRoutine {
 
 	/**
-	 * TODO Describe this field
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
 

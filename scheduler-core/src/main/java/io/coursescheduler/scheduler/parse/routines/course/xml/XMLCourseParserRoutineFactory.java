@@ -1,7 +1,7 @@
 /**
   * @(#)XMLCourseParserRoutineFactory.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for XML Course parser routines
   *
   * @author Mike Reinhold
   * 
@@ -36,7 +36,7 @@ import com.google.inject.assistedinject.Assisted;
 import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 
 /**
- * TODO Describe this type
+ * Factory interface for XML Course parser routines
  *
  * @author Mike Reinhold
  *
@@ -44,10 +44,16 @@ import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 public interface XMLCourseParserRoutineFactory extends CourseParserRoutineFactory {
 
 	/**
-	 * TODO Describe this method
-	 *
-	 * @param input
-	 * @param profile
+	 * Parser Routine internal name used in configuration and in binding to uniquely identify
+	 * the parser module. It must be unique among all other Parser Routine modules or else it
+	 * will not be available for use by data retrieval routines.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-xml";
+	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
 	public XMLCourseParserRoutine createSectionBasedParser(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);

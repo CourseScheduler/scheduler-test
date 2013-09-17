@@ -39,7 +39,7 @@ import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
 public class TextCourseParserRoutine extends CourseParserRoutine {
 	
 	/**
-	 * TODO Describe this field
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
 

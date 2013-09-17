@@ -1,7 +1,7 @@
 /**
   * @(#)CourseParserRoutineFactory.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for Course parser routines
   *
   * @author Mike Reinhold
   * 
@@ -34,18 +34,15 @@ import java.util.prefs.Preferences;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * TODO Describe this type
+ * Factory interface for Course parser routines
  *
  * @author Mike Reinhold
  *
  */
 public interface CourseParserRoutineFactory extends ParserRoutineFactory {
 
-	/**
-	 * TODO Describe this method
-	 *
-	 * @param input
-	 * @param profile
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
 	public CourseParserRoutine createSectionBasedParser(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);

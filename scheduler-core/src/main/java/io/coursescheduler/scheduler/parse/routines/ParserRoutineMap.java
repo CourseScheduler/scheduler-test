@@ -40,8 +40,16 @@ import com.google.inject.Inject;
  */
 public class ParserRoutineMap {
 	
+	/**
+	 * TODO Describe this field
+	 */
 	private Map<String, ParserRoutineFactory> parserFactories; 
 	
+	/**
+	 * TODO Describe this constructor
+	 *
+	 * @param parserFactories
+	 */
 	@Inject
 	public ParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories) {
 		super();
@@ -49,6 +57,12 @@ public class ParserRoutineMap {
 		this.parserFactories = parserFactories;
 	}
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param key
+	 * @return
+	 */
 	public ParserRoutineFactory getFactory(String key) {
 		return parserFactories.get(key);
 	}

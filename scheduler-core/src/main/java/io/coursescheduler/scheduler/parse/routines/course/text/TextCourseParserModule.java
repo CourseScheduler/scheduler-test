@@ -1,7 +1,7 @@
 /**
   * @(#)TextCourseParserModule.java
   *
-  * TODO FILE PURPOSE
+  * Guice module for the Text Course parser plugin binding
   *
   * @author Mike Reinhold
   * 
@@ -37,7 +37,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 
 /**
- * TODO Describe this type
+ * Guice module for the Text Course parser plugin binding
  *
  * @author Mike Reinhold
  *
@@ -58,7 +58,7 @@ public class TextCourseParserModule extends AbstractModule {
 		
 		//add a mapped binding from the ParseRouting class to the implementation classes 
 		MapBinder<String, ParserRoutineFactory> routineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
-		routineBinder.addBinding("course-text").toProvider(getProvider(TextCourseParserRoutineFactory.class));
+		routineBinder.addBinding(TextCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(TextCourseParserRoutineFactory.class));
 	}
 	
 }

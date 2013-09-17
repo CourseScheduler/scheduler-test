@@ -1,7 +1,8 @@
 /**
   * @(#)CourseParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * Interface for describing Course Parser routines and the methods that must be supported
+  * by said parse routines.
   *
   * @author Mike Reinhold
   * 
@@ -29,7 +30,8 @@
 package io.coursescheduler.scheduler.parse.routines;
 
 /**
- * TODO Describe this type
+ * Interface for describing Course Parser routines and the methods that must be supported
+ * by said parse routines.
  *
  * @author Mike Reinhold
  *
@@ -37,7 +39,7 @@ package io.coursescheduler.scheduler.parse.routines;
 public abstract class CourseParserRoutine extends ParserRoutine {
 
 	/**
-	 * TODO Describe this field
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
 	
