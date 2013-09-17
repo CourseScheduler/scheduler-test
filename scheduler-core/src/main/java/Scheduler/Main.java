@@ -3,8 +3,9 @@ package Scheduler;
 import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.SectionBasedCourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.xml.section.XMLCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
@@ -284,10 +285,17 @@ public class Main {
 	private static void XMLTest(){
 		try{
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
-			ParserRoutine test = injector.getInstance(CourseParserRoutineFactory.class).createSectionBasedParser(
+			ParserRoutineMap routineMap = injector.getInstance(ParserRoutineMap.class);
+			
+			ParserRoutine test = routineMap.getFactory("course-xml").createSectionBasedParser(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering")
 			);
+			
+			/*ParserRoutine test = injector.getInstance(CourseParserRoutineFactory.class).createSectionBasedParser(
+					new FileInputStream("Data/ku_scheduler_2.xml"), 
+					prefFact.getSystemNode("profiles/kettering")
+			);*/
 			/*XMLCourseParserRoutine test = new XMLCourseParserRoutine(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering")

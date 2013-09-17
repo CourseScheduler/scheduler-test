@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml.section;
+package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;

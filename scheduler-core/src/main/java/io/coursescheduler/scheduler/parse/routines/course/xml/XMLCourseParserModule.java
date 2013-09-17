@@ -1,5 +1,5 @@
 /**
-  * @(#)SectionBasedXMLModule.java
+  * @(#)XMLCourseParserModule.java
   *
   * TODO FILE PURPOSE
   *
@@ -26,10 +26,9 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml.section;
+package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 
@@ -43,25 +42,23 @@ import com.google.inject.multibindings.MapBinder;
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLModule extends AbstractModule {
+public class XMLCourseParserModule extends AbstractModule {
 	
 	/* (non-Javadoc)
 	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
 	protected void configure() {
-		
-		
 		//install a module indicating that XMLCourseParserRoutine can be built from a factory with assisted inject
 		install(new FactoryModuleBuilder()
 			.implement(ParserRoutine.class, XMLCourseParserRoutine.class)
 			.implement(CourseParserRoutine.class, XMLCourseParserRoutine.class)
-			.build(CourseParserRoutineFactory.class)
+			.build(XMLCourseParserRoutineFactory.class)
 		);
 		
 		//add a mapped binding from the ParseRouting class to the implementation classes 
 		MapBinder<String, ParserRoutineFactory> routineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
-		routineBinder.addBinding("course-xml").toProvider(getProvider(CourseParserRoutineFactory.class));
+		routineBinder.addBinding("course-xml").toProvider(getProvider(XMLCourseParserRoutineFactory.class));
 	}
 	
 }
