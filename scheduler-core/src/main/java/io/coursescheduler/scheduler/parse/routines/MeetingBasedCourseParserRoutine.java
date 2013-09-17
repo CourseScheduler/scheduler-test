@@ -1,5 +1,5 @@
 /**
-  * @(#)SectionBasedParser.java
+  * @(#)SectionBasedCourseParserRoutine.java
   *
   * TODO FILE PURPOSE
   *
@@ -35,7 +35,12 @@ package io.coursescheduler.scheduler.parse.routines;
  * @author Mike Reinhold
  *
  */
-public interface SectionBasedParser {
+public abstract class MeetingBasedCourseParserRoutine extends CourseParserRoutine {
+
+	/**
+	 * TODO Describe this field
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * TODO Describe this field
@@ -47,5 +52,8 @@ public interface SectionBasedParser {
 	 */
 	public static final String SECTION_SETTINGS_NODE = "section";
 	
-	
+	/**
+	 * TODO Describe this field
+	 */
+	public static final String MEETING_SETTINGS_NODE = "meeting";
 }

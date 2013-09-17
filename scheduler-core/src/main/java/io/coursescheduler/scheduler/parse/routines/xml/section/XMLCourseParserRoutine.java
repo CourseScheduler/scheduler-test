@@ -1,5 +1,5 @@
 /**
-  * @(#)SectionBasedXMLParser.java
+  * @(#)XMLCourseParserRoutine.java
   *
   * TODO FILE PURPOSE
   *
@@ -26,13 +26,13 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.routines.xml.section;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.routines.AbstractSectionBasedParser;
-import io.coursescheduler.scheduler.parse.routines.SectionBasedParser;
+import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.SectionBasedCourseParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
 
@@ -60,13 +60,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 /**
  * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLParser extends AbstractSectionBasedParser {
+public class XMLCourseParserRoutine extends CourseParserRoutine {
 	
 	/**
 	 * TODO Describe this field
@@ -100,7 +103,7 @@ public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 	
 	
 	/**
-	 * Instance specifice logger
+	 * Instance specific logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
@@ -112,12 +115,13 @@ public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 	
 	private XMLParserTool parser;
 	
-	private SectionBasedXMLParser(){
+	XMLCourseParserRoutine(){
 		super();
 		courseDataSets = new ConcurrentHashMap<>();
 	}
 	
-	public SectionBasedXMLParser(InputStream input, Preferences profile) throws ParserConfigurationException, SAXException, IOException{
+	@AssistedInject
+	public XMLCourseParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
 		this();
 				
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -145,13 +149,13 @@ public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 	private Set<String> getCourseNames(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedParser.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
 			String courseID = node.getTextContent();
 			courses.add(courseID);
-			log.debug("Found section belonging to {}", courseID);
+			log.debug("Found row belonging to {}", courseID);
 		}
 
 		log.debug("Finished retrieving course IDs from source data set");
@@ -161,9 +165,9 @@ public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 	private RecursiveAction createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(COURSE_ID_VARIABLE, courseID);
-		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedParser.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
-		log.info("Found {} section elements for {}", list.getLength(), courseID);
+		log.info("Found {} rows for {}", list.getLength(), courseID);
 		
 		Node node;
 		ConcurrentMap<String, String> courseData = new ConcurrentHashMap<>();
@@ -175,7 +179,7 @@ public class SectionBasedXMLParser extends AbstractSectionBasedParser {
 			nodeList.add(node);
 		}
 		
-		return new XMLCourseParserBySection(nodeList, settings, courseID, courseData);
+		return new SectionBasedXMLCourseParserRoutine(nodeList, settings, courseID, courseData);
 	}
 	
 	private void executeBatches(Preferences settings, Set<String> courses) {

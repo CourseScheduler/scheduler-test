@@ -1,6 +1,10 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.parse.routines.xml.SectionBasedXMLParser;
+import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.SectionBasedCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.xml.section.XMLCourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
@@ -22,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import java.io.File;
@@ -279,12 +284,16 @@ public class Main {
 	private static void XMLTest(){
 		try{
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
-			SectionBasedXMLParser test = new SectionBasedXMLParser(
+			ParserRoutine test = injector.getInstance(CourseParserRoutineFactory.class).createSectionBasedParser(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering")
 			);
+			/*XMLCourseParserRoutine test = new XMLCourseParserRoutine(
+					new FileInputStream("Data/ku_scheduler_2.xml"), 
+					prefFact.getSystemNode("profiles/kettering")
+			);*/
 			new ForkJoinPool().invoke(test);
-			printTestResults(test.getCourseDataSets());
+			//printTestResults(test.getCourseDataSets());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -314,7 +323,9 @@ public class Main {
 						
 		injector = Guice.createInjector(
 				ComponentLoaderModule.of(configureDefaultModules()),
-				ScanningLoaderModule.of(AbstractModule.class, "io.coursescheduler.scheduler.parse")
+				ScanningLoaderModule.of(AbstractModule.class, 
+					"io.coursescheduler.scheduler.parse"
+				)
 		);
 		log.info("Guice subsystem initialized");
 	}

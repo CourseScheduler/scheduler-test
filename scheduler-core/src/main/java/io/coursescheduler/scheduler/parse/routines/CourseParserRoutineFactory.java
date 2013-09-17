@@ -1,8 +1,7 @@
 /**
-  * @(#)ParseRoutine.java
+  * @(#)CourseParserRoutineFactory.java
   *
-  * Interface for describing Parse routines and the methods tthat must be supported
-  * by said parse routines.
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -29,13 +28,25 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
+import java.io.InputStream;
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.Assisted;
+
 /**
- * Interface for describing Parse routines and the methods tthat must be supported
- * by said parse routines.
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public interface ParseRoutine {
-	
+public interface CourseParserRoutineFactory extends ParserRoutineFactory {
+
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param input
+	 * @param profile
+	 */
+	@Override
+	public CourseParserRoutine createSectionBasedParser(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 }
