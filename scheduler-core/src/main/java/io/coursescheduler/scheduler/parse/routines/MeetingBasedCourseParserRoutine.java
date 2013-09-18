@@ -1,7 +1,8 @@
 /**
   * @(#)SectionBasedCourseParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * Class for describing course parsers that are designed to work against input sources that are
+  * formatted based on the Meeting information
   *
   * @author Mike Reinhold
   * 
@@ -30,7 +31,8 @@ package io.coursescheduler.scheduler.parse.routines;
 
 
 /**
- * TODO Describe this type
+ * Class for describing course parsers that are designed to work against input sources that are
+ * formatted based on the Meeting information
  *
  * @author Mike Reinhold
  *
@@ -41,19 +43,4 @@ public abstract class MeetingBasedCourseParserRoutine extends CourseParserRoutin
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * TODO Describe this field
-	 */
-	public static final String COURSE_SETTINGS_NODE = "course";
-	
-	/**
-	 * TODO Describe this field
-	 */
-	public static final String SECTION_SETTINGS_NODE = "section";
-	
-	/**
-	 * TODO Describe this field
-	 */
-	public static final String MEETING_SETTINGS_NODE = "meeting";
 }

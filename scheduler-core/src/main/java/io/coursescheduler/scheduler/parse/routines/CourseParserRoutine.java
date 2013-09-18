@@ -30,8 +30,19 @@
 package io.coursescheduler.scheduler.parse.routines;
 
 /**
- * Interface for describing Course Parser routines and the methods that must be supported
- * by said parse routines.
+ * Interface for describing general Course parser routines. Parser routines that only work with
+ * source data organized by a particular data type should subclass the correct child class based
+ * on the expected data format. For instance, course parser routines that expect the input stream
+ * to be formatted based on the meeting time information (where each row / line / element / 
+ * organizational unit is a meeting time) should subclass  {@link MeetingBasedCourseParserRoutine}
+ * while parser routiness that work with data organized by the course id should subclass 
+ * {@link CourseBasedCourseParserRoutine}.
+ * 
+ * If the parser routine is capable of properly processing data organized by any level of the 
+ * course data, course, section, or meeting, it should subclass this class ({@link CourseParserRoutine})
+ * to indicate that any level of processing is allowed. This will be reflected in configuration that
+ * the subclass is capable of processing an input stream formatted based on any level of the course
+ * data.
  *
  * @author Mike Reinhold
  *
@@ -42,5 +53,20 @@ public abstract class CourseParserRoutine extends ParserRoutine {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Preferences node name for the course specific parser settings
+	 */
+	public static final String COURSE_SETTINGS_NODE = "course";
+	
+	/**
+	 * Preferences node name for the section specific parser settings
+	 */
+	public static final String SECTION_SETTINGS_NODE = "section";
+	
+	/**
+	 * Preferences node name for the meeting specific parser settings
+	 */
+	public static final String MEETING_SETTINGS_NODE = "meeting";
 	
 }

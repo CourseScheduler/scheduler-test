@@ -47,6 +47,6 @@ public interface ParserRoutineFactory {
 	 * @param input
 	 * @param profile
 	 */
-	public ParserRoutine createSectionBasedParser(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	public ParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 		
 }

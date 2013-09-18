@@ -56,6 +56,6 @@ public interface XMLCourseParserRoutineFactory extends CourseParserRoutineFactor
 	 * @see io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
-	public XMLCourseParserRoutine createSectionBasedParser(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	public XMLCourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 	
 }
