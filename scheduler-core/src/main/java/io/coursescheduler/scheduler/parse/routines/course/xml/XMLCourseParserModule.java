@@ -29,6 +29,7 @@
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 
@@ -56,9 +57,13 @@ public class XMLCourseParserModule extends AbstractModule {
 			.build(XMLCourseParserRoutineFactory.class)
 		);
 		
-		//add a mapped binding from the ParseRouting class to the implementation classes 
-		MapBinder<String, ParserRoutineFactory> routineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
-		routineBinder.addBinding(XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserRoutineFactory.class));
+		//add a mapped binding from the ParserRouting class to the implementation classes 
+		MapBinder<String, ParserRoutineFactory> parseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
+		parseRoutineBinder.addBinding(XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserRoutineFactory.class));
+
+		//add a mapped binding for the CourseParserRoutine class to the implementation class
+		MapBinder<String, CourseParserRoutineFactory> courseParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, CourseParserRoutineFactory.class);
+		courseParseRoutineBinder.addBinding(XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserRoutineFactory.class));
 	}
 	
 }

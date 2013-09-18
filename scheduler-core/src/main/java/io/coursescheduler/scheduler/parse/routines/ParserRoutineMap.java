@@ -46,15 +46,22 @@ public class ParserRoutineMap {
 	private Map<String, ParserRoutineFactory> parserFactories; 
 	
 	/**
+	 * TODO Describe this field
+	 */
+	private Map<String, CourseParserRoutineFactory> courseParserFactories;
+	
+	/**
 	 * TODO Describe this constructor
 	 *
 	 * @param parserFactories
+	 * @param courseParserFactories
 	 */
 	@Inject
-	public ParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories) {
+	public ParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories, Map<String, CourseParserRoutineFactory> courseParserFactories) {
 		super();
 		
 		this.parserFactories = parserFactories;
+		this.courseParserFactories = courseParserFactories;
 	}
 	
 	/**
@@ -63,8 +70,18 @@ public class ParserRoutineMap {
 	 * @param key
 	 * @return
 	 */
-	public ParserRoutineFactory getFactory(String key) {
+	public ParserRoutineFactory getParserRoutineFactory(String key) {
 		return parserFactories.get(key);
+	}
+	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param key
+	 * @return
+	 */
+	public CourseParserRoutineFactory getCourseParserRoutineFactory(String key) {
+		return courseParserFactories.get(key);
 	}
 	
 }

@@ -285,9 +285,9 @@ public class Main {
 	private static void XMLTest(){
 		try{
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
-			ParserRoutineMap routineMap = injector.getInstance(ParserRoutineMap.class);
+			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
 			
-			ParserRoutine test = routineMap.getFactory("course-xml").createSectionBasedParser(
+			ParserRoutine test = parseRoutineMap.getParserRoutineFactory("course-xml").createSectionBasedParser(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering")
 			);
