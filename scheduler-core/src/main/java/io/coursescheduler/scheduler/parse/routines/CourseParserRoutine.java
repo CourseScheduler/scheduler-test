@@ -29,6 +29,9 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Interface for describing general Course parser routines. Parser routines that only work with
  * source data organized by a particular data type should subclass the correct child class based
@@ -56,17 +59,48 @@ public abstract class CourseParserRoutine extends ParserRoutine {
 
 	/**
 	 * Preferences node name for the course specific parser settings
+	 * 
+	 * Value: {@value}
 	 */
 	public static final String COURSE_SETTINGS_NODE = "course";
 	
 	/**
 	 * Preferences node name for the section specific parser settings
+	 * 
+	 * Value: {@value}
 	 */
 	public static final String SECTION_SETTINGS_NODE = "section";
 	
 	/**
 	 * Preferences node name for the meeting specific parser settings
+	 * 
+	 * Value: {@value}
 	 */
 	public static final String MEETING_SETTINGS_NODE = "meeting";
 	
+	/**
+	 * Map of the course id to the map of course data (represented by the course data element 
+	 * indexed-name and the corresponding value)
+	 */
+	private Map<String, Map<String, String>> courseDataSets;
+	
+	/**
+	 * Construct a new CourseParserRoutine and initialize the course data set map
+	 *
+	 */
+	protected CourseParserRoutine() {
+		courseDataSets = new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * Return the map of course data sets. This map is guaranteed to be thread safe, although
+	 * it is up to the the users of the course data set map to ensure that the inner maps stored
+	 * against the course ID is also thread safe.
+	 * 
+	 * @return the courseDataSets map of course IDs to map of course data elements and values
+	 */
+	public Map<String, Map<String, String>> getCourseDataSets() {
+		return courseDataSets;
+	}
+
 }

@@ -1,7 +1,7 @@
 /**
   * @(#)XMLCourseParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * A general XML parsing routine for extracting course data from XML formatted documents
   *
   * @author Mike Reinhold
   * 
@@ -64,7 +64,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 /**
- * TODO Describe this type
+ * A general XML parsing routine for extracting course data from XML formatted documents
  *
  * @author Mike Reinhold
  *
@@ -72,57 +72,62 @@ import com.google.inject.assistedinject.AssistedInject;
 public class XMLCourseParserRoutine extends CourseParserRoutine {
 	
 	/**
-	 * TODO Describe this field
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * TODO Describe this field
-	 */
-	private static final String BATCH_SIZE_PROPERTY = "batch.size";
 	
 	/**
-	 * TODO Describe this field
+	 * Course name query to find all course names in the source document
 	 */
 	private static final String COURSE_NAME_FULL_LIST_PROPERTY = "query-all";
 	
 	/**
-	 * TODO Describe this field
+	 * Course name query to find all nodes in the source document that match
+	 * the course ID passed into the query via the Course ID substitution 
+	 * placeholder ({@link #COURSE_ID_VARIABLE}
 	 */
 	private static final String COURSE_NAME_SINGLE_PROPERTY = "query-single";
 	
 	/**
-	 * TODO Describe this field
+	 * Course ID placeholder used in the {@link #COURSE_NAME_SINGLE_PROPERTY} expression
+	 * to substitute the correct course id into the XML search expression
 	 */
 	private static final String COURSE_ID_VARIABLE = "${course.id}";
-	
-	/**
-	 * TODO Describe this field
-	 */
-	private static final String GENERAL_SETTINGS_NODE = "general";
-	
 	
 	/**
 	 * Instance specific logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
+	/**
+	 * XML Document for this XMLCourseParserRoutine to process
+	 */
 	private Document doc;
-	
-	private Map<String, Map<String, String>> courseDataSets;
 
+	/**
+	 * The {@link java.util.prefs.Preferences} node containing the configuration for this XMLCourseParserRoutine
+	 */
 	private Preferences profile;
 	
+	/**
+	 * The XML Parser Tool that will be used to process the XML document to extract nodes
+	 */
 	private XMLParserTool parser;
 	
-	XMLCourseParserRoutine(){
-		super();
-		courseDataSets = new ConcurrentHashMap<>();
-	}
-	
+	/**
+	 * Create a new XMLCourseParserRoutine instance using the specified input stream and the preferences node
+	 * containing the configuration necessary to process the course data from the XML document represented by
+	 * the input stream
+	 *
+	 * @param input the input stream from which the XML document can be obtained
+	 * @param profile the Preferences node that contains the configuration necessary to parse the xml document
+	 * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies the configuration requested.
+	 * @throws SAXException if any parse error occurs
+	 * @throws IOException if any io error occurs
+	 */
 	@AssistedInject
 	public XMLCourseParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
-		this();
+		super();
 				
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true); // never forget this!
@@ -132,21 +137,31 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 		parser = new XPathParserTool();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.RecursiveAction#compute()
+	 */
 	@Override
 	protected void compute() {
 		log.info("Starting to parse the XML input");
 		long start = System.currentTimeMillis();
 		try {
-			executeBatches(profile, getCourseNames(profile));
+			executeBatches(profile, getCourseIDs(profile));
 		} catch (Exception e) {
 			log.error("Exception retrieving course names", e);
 		}
 		
 		long end = System.currentTimeMillis();
-		log.info("Retrieved course data for {} courses in {} milliseconds", courseDataSets.size(), (end - start));
+		log.info("Retrieved course data for {} courses in {} milliseconds", getCourseDataSets().size(), (end - start));
 	}
 	
-	private Set<String> getCourseNames(Preferences settings) throws ParseException{
+	/**
+	 * Retrieve the set of course IDs found within the XML document
+	 *
+	 * @param settings the preferences node containing the parser routine configuration
+	 * @return a set containing the course ids retrieved from the XML document
+	 * @throws ParseException if there is an issue parsing the course IDs from the document
+	 */
+	private Set<String> getCourseIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
 		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
@@ -162,7 +177,15 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 		return courses;
 	}
 	
-	private RecursiveAction createCourseTask(Preferences settings, String courseID) throws ParseException{
+	/**
+	 * Create a new sub-task for processing the specified course ID using the specified preferences node
+	 *
+	 * @param settings the preferences node containing the parser routine configuration
+	 * @param courseID the course ID for which this task will retrieve data
+	 * @return the sub-task which will process the course data 
+	 * @throws ParseException if there is an issue retrieving the list of nodes
+	 */
+	private CourseParserRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(COURSE_ID_VARIABLE, courseID);
 		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
@@ -173,7 +196,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 		ConcurrentMap<String, String> courseData = new ConcurrentHashMap<>();
 		List<Node> nodeList = new ArrayList<Node>();
 		
-		courseDataSets.put(courseID, courseData);
+		getCourseDataSets().put(courseID, courseData);
 		for(int item = 0; item < list.getLength(); item++){
 			node = list.item(item).cloneNode(true);
 			nodeList.add(node);
@@ -182,6 +205,15 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 		return new SectionBasedXMLCourseParserRoutine(nodeList, settings, courseID, courseData);
 	}
 	
+	/**
+	 * Build and execute a sub-task per course ID, batching the sub-tasks into task groups based on 
+	 * the configured batch size.
+	 * 
+	 * This method blocks until all batches have completed processing (in any completion state, including failure)
+	 *
+	 * @param settings the preferences node containing the parser routine configuration
+	 * @param courses the set of course IDs in the document that should be processed in batch
+	 */
 	private void executeBatches(Preferences settings, Set<String> courses) {
 		Preferences generalSettings = settings.node(GENERAL_SETTINGS_NODE);
 		int batchSize = generalSettings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
@@ -220,12 +252,5 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 			action.join();
 		}
 		log.info("All batches finished");
-	}
-	
-	/**
-	 * @return the courseDataSets
-	 */
-	public Map<String, Map<String, String>> getCourseDataSets() {
-		return courseDataSets;
 	}
 }
