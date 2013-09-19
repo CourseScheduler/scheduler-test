@@ -30,6 +30,8 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
+
 import com.google.inject.ImplementedBy;
 
 

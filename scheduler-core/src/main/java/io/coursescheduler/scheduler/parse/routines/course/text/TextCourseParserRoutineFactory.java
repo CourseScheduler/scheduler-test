@@ -33,7 +33,7 @@ import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
 
 /**
  * Factory interface for Text Course parser routines

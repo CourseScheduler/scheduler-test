@@ -28,10 +28,10 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;

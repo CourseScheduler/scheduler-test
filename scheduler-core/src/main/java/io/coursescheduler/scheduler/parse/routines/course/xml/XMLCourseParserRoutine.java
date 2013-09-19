@@ -31,8 +31,8 @@ package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.SectionBasedCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
 

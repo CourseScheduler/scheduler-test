@@ -2,7 +2,7 @@
   * @(#)SectionBasedCourseParserRoutine.java
   *
   * Class for describing course parsers that are designed to work against input sources that are
-  * formatted based on the Section information
+  * formatted based on the Meeting information
   *
   * @author Mike Reinhold
   * 
@@ -27,21 +27,20 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse.routines.course;
 
 
 /**
  * Class for describing course parsers that are designed to work against input sources that are
- * formatted based on the Section information
+ * formatted based on the Meeting information
  *
  * @author Mike Reinhold
  *
  */
-public abstract class SectionBasedCourseParserRoutine extends CourseParserRoutine {
+public abstract class MeetingBasedCourseParserRoutine extends CourseParserRoutine {
 
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = 1L;	
-	
+	private static final long serialVersionUID = 1L;
 }

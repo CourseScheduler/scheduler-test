@@ -1,8 +1,7 @@
 /**
-  * @(#)SectionBasedCourseParserRoutine.java
+  * @(#)CourseParserRoutineFactory.java
   *
-  * Class for describing course parsers that are designed to work against input sources that are
-  * formatted based on the Meeting information
+  * Factory interface for Course parser routines
   *
   * @author Mike Reinhold
   * 
@@ -27,20 +26,26 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse.routines.course;
 
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+
+import java.io.InputStream;
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.Assisted;
 
 /**
- * Class for describing course parsers that are designed to work against input sources that are
- * formatted based on the Meeting information
+ * Factory interface for Course parser routines
  *
  * @author Mike Reinhold
  *
  */
-public abstract class MeetingBasedCourseParserRoutine extends CourseParserRoutine {
+public interface CourseParserRoutineFactory extends ParserRoutineFactory {
 
-	/**
-	 * Serial Version UID
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
 	 */
-	private static final long serialVersionUID = 1L;
+	@Override
+	public CourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 }

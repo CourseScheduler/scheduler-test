@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course.text;
 
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 
 /**
  * A general text parser routine for extracting course data out of different types of formatted text

@@ -1,10 +1,10 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
-import io.coursescheduler.scheduler.parse.routines.SectionBasedCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
