@@ -48,7 +48,7 @@ import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFacto
 public class StandardPropertiesPreferencesModule extends PreferencesModule {
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	Logger log = LoggerFactory.getLogger(getClass().getName());
 	

@@ -127,7 +127,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	private static final String CODES_PREFERENCES_NODE = "codes";
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

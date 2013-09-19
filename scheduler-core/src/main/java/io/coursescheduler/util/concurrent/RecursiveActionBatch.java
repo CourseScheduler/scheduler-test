@@ -54,7 +54,7 @@ public class RecursiveActionBatch extends RecursiveAction {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

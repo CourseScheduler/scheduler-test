@@ -96,7 +96,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 	private static final String DEFAULT_PATH_SYSTEM = ".";
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	

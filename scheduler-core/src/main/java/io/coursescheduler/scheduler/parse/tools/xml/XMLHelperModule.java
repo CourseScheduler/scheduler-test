@@ -49,7 +49,7 @@ import com.google.inject.throwingproviders.ThrowingProviderBinder;
 public class XMLHelperModule extends AbstractModule {
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	Logger log = LoggerFactory.getLogger(getClass().getName());
 	

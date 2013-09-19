@@ -68,7 +68,7 @@ public class ComponentLoaderModule extends ModuleLoaderModule {
 	public static final String STANDARD_MODULES_BASE_PROPERTY = "io.coursescheduler.util.guice.component.modules.";
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

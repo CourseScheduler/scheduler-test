@@ -64,7 +64,7 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 	private static final String DEFAULT_ROOT_USER = "/";
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 

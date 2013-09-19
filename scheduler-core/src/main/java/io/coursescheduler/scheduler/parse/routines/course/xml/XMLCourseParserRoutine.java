@@ -94,7 +94,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	private static final String COURSE_ID_VARIABLE = "${course.id}";
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

@@ -63,7 +63,7 @@ import io.coursescheduler.util.guice.ModuleLoaderModule;
 public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

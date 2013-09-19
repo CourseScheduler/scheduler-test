@@ -56,7 +56,7 @@ public class SectionBasedXMLCourseParserRoutine extends SectionBasedCourseParser
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

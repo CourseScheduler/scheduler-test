@@ -46,7 +46,7 @@ import com.google.inject.AbstractModule;
 public abstract class PreferencesModule extends AbstractModule {
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	Logger log = LoggerFactory.getLogger(getClass().getName());
 	

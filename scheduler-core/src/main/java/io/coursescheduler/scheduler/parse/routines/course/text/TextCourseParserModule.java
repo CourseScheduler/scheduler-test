@@ -49,7 +49,7 @@ import com.google.inject.multibindings.MapBinder;
 public class TextCourseParserModule extends AbstractModule {
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	Logger log = LoggerFactory.getLogger(getClass().getName());
 	

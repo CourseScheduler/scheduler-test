@@ -60,7 +60,7 @@ import com.google.inject.Module;
 public class ServiceLoaderModule<M extends Module> extends ModuleLoaderModule {
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	

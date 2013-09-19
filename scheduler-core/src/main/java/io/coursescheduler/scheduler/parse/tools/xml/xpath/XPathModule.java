@@ -46,7 +46,7 @@ import com.google.inject.multibindings.MapBinder;
 public class XPathModule extends AbstractModule {
 	
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	Logger log = LoggerFactory.getLogger(getClass().getName());
 		

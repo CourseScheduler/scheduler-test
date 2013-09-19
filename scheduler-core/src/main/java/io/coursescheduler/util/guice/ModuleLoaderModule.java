@@ -49,7 +49,7 @@ import com.google.inject.Module;
 public abstract class ModuleLoaderModule extends AbstractModule {
 
 	/**
-	 * Instance specific logger
+	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
