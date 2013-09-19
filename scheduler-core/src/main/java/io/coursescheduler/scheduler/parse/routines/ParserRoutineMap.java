@@ -1,7 +1,9 @@
 /**
   * @(#)ParserRoutineMap.java
   *
-  * TODO FILE PURPOSE
+  * ParserRoutineFactory mapping interface for retrieving registered ParserRoutineFactory instances based on
+  * the implementation key. This allows for other classes that need a ParserRoutine instance to be
+  * decoupled from the specific binding organization of the ParserRoutines
   *
   * @author Mike Reinhold
   * 
@@ -28,60 +30,37 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
-import java.util.Map;
+import com.google.inject.ImplementedBy;
 
-import com.google.inject.Inject;
 
 /**
- * TODO Describe this type
+ * ParserRoutineFactory mapping interface for retrieving registered ParserRoutineFactory instances based on
+ * the implementation key. This allows for other classes that need a ParserRoutine instance to be
+ * decoupled from the specific binding organization of the ParserRoutines
+ * 
+ * Default implementation is {@link io.coursescheduler.scheduler.parse.routines.MapBoundParserRoutineMap} however
+ * this can be overridden in a module by binding an alternative implementation
  *
  * @author Mike Reinhold
  *
  */
-public class ParserRoutineMap {
-	
-	/**
-	 * TODO Describe this field
-	 */
-	private Map<String, ParserRoutineFactory> parserFactories; 
-	
-	/**
-	 * TODO Describe this field
-	 */
-	private Map<String, CourseParserRoutineFactory> courseParserFactories;
-	
-	/**
-	 * TODO Describe this constructor
-	 *
-	 * @param parserFactories
-	 * @param courseParserFactories
-	 */
-	@Inject
-	public ParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories, Map<String, CourseParserRoutineFactory> courseParserFactories) {
-		super();
+@ImplementedBy(MapBoundParserRoutineMap.class)
+public interface ParserRoutineMap {
 		
-		this.parserFactories = parserFactories;
-		this.courseParserFactories = courseParserFactories;
-	}
+	/**
+	 * Get a general purpose ParserRoutineFactory based on the specified parser routine key.
+	 *
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
+	 */
+	public ParserRoutineFactory getParserRoutineFactory(String key);
 	
 	/**
-	 * TODO Describe this method
+	 * Get a CourseParserRoutineFactory for parsing course data streams based on the specified parser routine key.
 	 *
-	 * @param key
-	 * @return
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
 	 */
-	public ParserRoutineFactory getParserRoutineFactory(String key) {
-		return parserFactories.get(key);
-	}
-	
-	/**
-	 * TODO Describe this method
-	 *
-	 * @param key
-	 * @return
-	 */
-	public CourseParserRoutineFactory getCourseParserRoutineFactory(String key) {
-		return courseParserFactories.get(key);
-	}
+	public CourseParserRoutineFactory getCourseParserRoutineFactory(String key);
 	
 }
