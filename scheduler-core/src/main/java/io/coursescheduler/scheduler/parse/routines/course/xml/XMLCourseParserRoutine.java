@@ -33,8 +33,9 @@ import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
+import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
-import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,8 +50,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
@@ -119,6 +118,8 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	 * containing the configuration necessary to process the course data from the XML document represented by
 	 * the input stream
 	 *
+	 * @param toolMap the ParserTool mapping instance to use for retrieving a ParserTool
+	 * @param builderProvider a provider for getting a DocumentBuilder instance which is used to create the XML document from the input stream
 	 * @param input the input stream from which the XML document can be obtained
 	 * @param profile the Preferences node that contains the configuration necessary to parse the xml document
 	 * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies the configuration requested.
@@ -126,15 +127,12 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	 * @throws IOException if any io error occurs
 	 */
 	@AssistedInject
-	public XMLCourseParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
+	public XMLCourseParserRoutine(ParserToolMap toolMap, DocumentBuilderProvider builderProvider, @Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
 		super();
-				
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true); // never forget this!
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		doc = builder.parse(input);
+		
+		doc = builderProvider.get().parse(input);
 		this.profile = profile;
-		parser = new XPathParserTool();
+		parser = toolMap.getXMLParserTool("xml-xpath");
 	}
 
 	/* (non-Javadoc)

@@ -29,6 +29,9 @@
   */
 package io.coursescheduler.util.preferences.properties.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Singleton;
 
 import io.coursescheduler.util.preferences.PreferencesFactory;
@@ -44,6 +47,11 @@ import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFacto
  */
 public class XMLPropertiesFilePreferencesModule extends	PreferencesModule {
 	
+	/**
+	 * Instance specific logger
+	 */
+	Logger log = LoggerFactory.getLogger(getClass().getName());
+	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.util.preferences.properties.PropertiesPreferencesModule#configure()
 	 */
@@ -52,6 +60,11 @@ public class XMLPropertiesFilePreferencesModule extends	PreferencesModule {
 		setPreferencesFactory(XMLPropertiesFilePreferencesFactory.class.getName());			
 		
 		//PreferencesFactory will be implemented by a singleton PreferencesPropertiesFactor
+		log.debug("Binding {} to {} in scope {}", new Object[] {
+				PreferencesFactory.class,
+				PropertiesPreferencesFactory.class,
+				Singleton.class
+		});
 		bind(PreferencesFactory.class)
 			.to(PropertiesPreferencesFactory.class)
 			.in(Singleton.class);

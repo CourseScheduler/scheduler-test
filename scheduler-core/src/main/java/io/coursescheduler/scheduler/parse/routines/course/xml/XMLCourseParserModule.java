@@ -28,6 +28,9 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
@@ -45,23 +48,43 @@ import com.google.inject.multibindings.MapBinder;
  */
 public class XMLCourseParserModule extends AbstractModule {
 	
+	/**
+	 * Instance specific logger
+	 */
+	Logger log = LoggerFactory.getLogger(getClass().getName());
+	
 	/* (non-Javadoc)
 	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
 	protected void configure() {
 		//install a module indicating that XMLCourseParserRoutine can be built from a factory with assisted inject
+		log.debug("Installing FactoryModuleBuilder for {} with implementations {}, {}",
+				XMLCourseParserRoutineFactory.class,
+				XMLCourseParserRoutine.class + " for " + ParserRoutine.class,
+				XMLCourseParserRoutine.class + " for " + CourseParserRoutine.class
+		);
 		install(new FactoryModuleBuilder()
 			.implement(ParserRoutine.class, XMLCourseParserRoutine.class)
 			.implement(CourseParserRoutine.class, XMLCourseParserRoutine.class)
 			.build(XMLCourseParserRoutineFactory.class)
 		);
 		
-		//add a mapped binding from the ParserRouting class to the implementation classes 
+		//add a mapped binding from the ParserRouting class to the implementation classes
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				ParserRoutineFactory.class,
+				XMLCourseParserRoutineFactory.class,
+				XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
+		});  
 		MapBinder<String, ParserRoutineFactory> parseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
 		parseRoutineBinder.addBinding(XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserRoutineFactory.class));
 
 		//add a mapped binding for the CourseParserRoutine class to the implementation class
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				ParserRoutineFactory.class,
+				XMLCourseParserRoutineFactory.class,
+				XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
+		}); 
 		MapBinder<String, CourseParserRoutineFactory> courseParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, CourseParserRoutineFactory.class);
 		courseParseRoutineBinder.addBinding(XMLCourseParserRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserRoutineFactory.class));
 	}

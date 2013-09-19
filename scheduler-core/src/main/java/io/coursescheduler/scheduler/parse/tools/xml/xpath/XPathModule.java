@@ -28,6 +28,9 @@
   */
 package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.coursescheduler.scheduler.parse.tools.ParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 
@@ -41,6 +44,11 @@ import com.google.inject.multibindings.MapBinder;
  *
  */
 public class XPathModule extends AbstractModule {
+	
+	/**
+	 * Instance specific logger
+	 */
+	Logger log = LoggerFactory.getLogger(getClass().getName());
 		
 	/* (non-Javadoc)
 	 * @see com.google.inject.AbstractModule#configure()
@@ -48,10 +56,20 @@ public class XPathModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				ParserTool.class,
+				XPathParserTool.class,
+				XPathParserTool.PARSER_INTERNAL_NAME
+		});
 		MapBinder<String, ParserTool> parserBinder = MapBinder.newMapBinder(binder(), String.class, ParserTool.class);
 		parserBinder.addBinding(XPathParserTool.PARSER_INTERNAL_NAME).to(XPathParserTool.class);
 
 		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				XMLParserTool.class,
+				XPathParserTool.class,
+				XPathParserTool.PARSER_INTERNAL_NAME
+		});
 		MapBinder<String, XMLParserTool> xmlParserBinder = MapBinder.newMapBinder(binder(), String.class, XMLParserTool.class);
 		xmlParserBinder.addBinding(XPathParserTool.PARSER_INTERNAL_NAME).to(XPathParserTool.class);
 	}

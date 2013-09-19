@@ -159,6 +159,13 @@
 				 <artifactId>reflections</artifactId>
 				 <version>0.9.9-RC1</version>
 			 </dependency>
+		
+			<!-- Google Guice Core -->
+			<dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>3.0</version>
+			</dependency>
 			
 			<!-- Google Guice IoC Multibindings -->
 			<dependency>
@@ -180,7 +187,14 @@
 				<artifactId>guice-grapher</artifactId>
 				<version>3.0</version>
 			</dependency>
-            
+			
+			<!-- Google Guice Throwing Provider -->
+            <dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-throwingproviders</artifactId>
+				<version>3.0</version>
+			</dependency>
+			
 		</dependencies>
 		
 	</dependencyManagement>
@@ -234,6 +248,12 @@
 			 <artifactId>reflections</artifactId>
 		 </dependency>
 		
+		<!-- Google Guice Core -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+		</dependency>
+		
 		<!-- Google Guice IoC Multibindings -->
 		<dependency>
 			<groupId>com.google.inject.extensions</groupId>
@@ -250,7 +270,13 @@
 		<dependency>
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-grapher</artifactId>
-		</dependency>          
+		</dependency>
+			
+		<!-- Google Guice Throwing Provider -->
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-throwingproviders</artifactId>
+		</dependency>    
 		
 	</dependencies>
 	
