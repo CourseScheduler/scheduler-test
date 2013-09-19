@@ -1,11 +1,8 @@
 package Scheduler;
 
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
@@ -27,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import java.io.File;
@@ -287,21 +283,12 @@ public class Main {
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
 			
-			ParserRoutine test = parseRoutineMap.getParserRoutineFactory("course-xml").createParserRoutine(
+			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering")
 			);
-			
-			/*ParserRoutine test = injector.getInstance(CourseParserRoutineFactory.class).createSectionBasedParser(
-					new FileInputStream("Data/ku_scheduler_2.xml"), 
-					prefFact.getSystemNode("profiles/kettering")
-			);*/
-			/*XMLCourseParserRoutine test = new XMLCourseParserRoutine(
-					new FileInputStream("Data/ku_scheduler_2.xml"), 
-					prefFact.getSystemNode("profiles/kettering")
-			);*/
 			new ForkJoinPool().invoke(test);
-			//printTestResults(test.getCourseDataSets());
+			printTestResults(test.getCourseDataSets());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

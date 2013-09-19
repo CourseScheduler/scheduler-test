@@ -295,8 +295,8 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	 */
 	protected void retrieveDataElementIndex(Node child, Preferences settings, String attributePath, String keyPath, String key, int item, Map<String, String> data) throws ParseException, BackingStoreException {
 		log.debug("Getting code subnode: {}", key);
-		Preferences codes = settings.node(CODES_PREFERENCES_NODE); 
-		Preferences subCodes = codes.node(key);
+		Preferences codes = settings.node(key); 
+		Preferences subCodes = codes.node(CODES_PREFERENCES_NODE);
 		int subNodeCount = 0;
 		
 		try {
@@ -314,7 +314,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 		
 		if(subNodeCount > 0){
 			log.debug("Sub codes exist for node {}, processing", key);
-			retrieveData(child, subCodes, attributePath, keyPath + "." + item, data);
+			retrieveData(child, codes, attributePath, keyPath + "." + item, data);
 		}else{					
 			String itemKey = keyPath + "." + item;
 			String value = child.getTextContent();

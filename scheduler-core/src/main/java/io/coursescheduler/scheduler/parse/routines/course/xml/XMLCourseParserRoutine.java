@@ -32,7 +32,6 @@ package io.coursescheduler.scheduler.parse.routines.course.xml;
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
@@ -162,7 +161,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	private Set<String> getCourseIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(CourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
@@ -186,7 +185,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	private CourseParserRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(COURSE_ID_VARIABLE, courseID);
-		NodeList list = parser.retrieveNodeList(doc, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(CourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);
 		
@@ -217,8 +216,8 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 		int batchSize = generalSettings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
 		log.info("Using batch size of {}", batchSize);
 
-		List<RecursiveAction> batches = new ArrayList<RecursiveAction>();
-		List<RecursiveAction> coursesBatch = new ArrayList<RecursiveAction>();
+		List<RecursiveAction> batches = new ArrayList<>();
+		List<RecursiveAction> coursesBatch = new ArrayList<>();
 		int coursesBatched = 0;
 		
 		for(String courseID: courses) {
