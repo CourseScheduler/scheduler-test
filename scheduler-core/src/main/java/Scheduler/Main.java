@@ -25,10 +25,19 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.grapher.GrapherModule;
+import com.google.inject.grapher.InjectorGrapher;
+import com.google.inject.grapher.graphviz.GraphvizModule;
+import com.google.inject.grapher.graphviz.GraphvizRenderer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +47,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.prefs.BackingStoreException;
 import java.util.Properties;
 
 
@@ -273,8 +283,6 @@ public class Main {
 				
 				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
 			}
-			
-			
 		}		
 	}
 	
@@ -310,7 +318,7 @@ public class Main {
 	}
 	
 	/**
-	 * Initialize the Guice injector with the 
+	 * Initialize the Guice injector
 	 *
 	 */
 	private static void initializeGuice(){
@@ -323,6 +331,24 @@ public class Main {
 				)
 		);
 		log.info("Guice subsystem initialized");
+		
+		//runtime shutdown hook to output object graph
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    @Override
+		    public void run() {
+		    	String outputFileName = "tmp/model.dot";
+				try (PrintWriter out = new PrintWriter(new File(outputFileName), "UTF-8")){
+			        Injector grapher = Guice.createInjector(new GrapherModule(), new GraphvizModule());
+			        GraphvizRenderer renderer = grapher.getInstance(GraphvizRenderer.class);
+			        renderer.setOut(out).setRankdir("TB");
+	
+			        grapher.getInstance(InjectorGrapher.class).of(injector).graph();
+				} catch (IOException e) {
+					log.error("Unable to write object graph to file {}", outputFileName, e);
+				}
+		    }
+		});
+		log.info("Registered shutdown hook to export Guice object model");
 	}
 	
 	/**
@@ -335,7 +361,6 @@ public class Main {
 		
 		//default component module definitions
 		modules.put("preferences", "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesModule");
-		
 		return modules;
 	}
 	
@@ -358,6 +383,27 @@ public class Main {
 		injector.injectMembers(Main.prefs);
 		prefs.migrate();
 		log.info("Preferences initialization complete");
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    @Override
+		    public void run() {
+				PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
+		    	String systemFile = "tmp/system.xml";
+		    	String userFile = "tmp/user.xml";
+		    	
+		    	try {
+		    		prefFact.getSystemNode("").exportSubtree(new FileOutputStream(systemFile));
+		    	} catch (Exception e) {
+		    		log.error("Error encountered exporting system preferences to {}", systemFile, e);
+		    	}
+		    	try {
+		    		prefFact.getUserNode("").exportSubtree(new FileOutputStream(userFile));
+				} catch (Exception e) {
+					log.error("Error encountered exporting user preferences to {}", userFile, e);
+				}
+		    }
+		});
+		log.info("Registered shutdown hook to export settings");
 	}
 	
 	/**

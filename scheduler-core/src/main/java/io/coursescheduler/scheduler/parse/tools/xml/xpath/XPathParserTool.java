@@ -305,6 +305,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 			if(subNodeCount == 0) {
 				log.debug("No sub code entries exist for node {}, removing", key);
 				subCodes.removeNode();
+				codes.removeNode();
 			}
 		} catch(IllegalStateException e) {
 			//node previously removed - ok for us since we have to load (or "create") a node 

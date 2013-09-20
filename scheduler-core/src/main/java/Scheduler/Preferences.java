@@ -38,15 +38,12 @@ import io.coursescheduler.util.preferences.PreferencesFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;					//to declare as serializeable
 import java.util.Calendar;						//to get date information
 import java.util.Date;
-import java.util.prefs.BackingStoreException;
 
 
 import com.google.inject.Inject;
@@ -148,43 +145,30 @@ public class Preferences implements Serializable {
 	 */
 	public void migrate(){
 		newPreferences = prefFact.getUserNode("legacy");
-		try {
-			if(newPreferences.get("migrateDate", null) == null){
-				this.setRatingsEnabled(ratingsEnabled);
-				this.setRateMyProfessorEnabled(rateMyProfessorEnabled);
-				this.setPreferred(preferred);
-				this.setLongestBreakPer(longestBreakPer);
-				this.setShortestBreakPer(shortestBreakPer);
-				this.setDayOff(dayOff);
-				this.setDaysOff(daysOff);
-				this.setUpdateMin(updateMin);
-				this.setDownloadUGrad(downloadUGrad);
-				this.setURL(URL);
-				this.setDownloadGrad(downloadGrad);
-				this.setOverrideGrad(overrideGrad);
-				this.setGradURL(gradURL);
-				this.setDownloadGradDist(downloadGradDist);
-				this.setOverrideGradDist(overrideGradDist);
-				this.setGradDistURL(gradDistURL);
-				this.setOverRideURL(overRideURL);
-				this.setSID(SID);
-				this.setColors(colors);
-				this.setGreyCodeLimit(greyCodeLimit);
-				this.setCurrentTerm(currentTerm);
-				
-				newPreferences.put("migrateDate", new Date().toString());
-				
-				newPreferences.exportNode(new FileOutputStream("config/export-user.xml"));
-			}
-		} catch (BackingStoreException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO CATCH STUB
-			e.printStackTrace();
+		if(newPreferences.get("migrateDate", null) == null){
+			this.setRatingsEnabled(ratingsEnabled);
+			this.setRateMyProfessorEnabled(rateMyProfessorEnabled);
+			this.setPreferred(preferred);
+			this.setLongestBreakPer(longestBreakPer);
+			this.setShortestBreakPer(shortestBreakPer);
+			this.setDayOff(dayOff);
+			this.setDaysOff(daysOff);
+			this.setUpdateMin(updateMin);
+			this.setDownloadUGrad(downloadUGrad);
+			this.setURL(URL);
+			this.setDownloadGrad(downloadGrad);
+			this.setOverrideGrad(overrideGrad);
+			this.setGradURL(gradURL);
+			this.setDownloadGradDist(downloadGradDist);
+			this.setOverrideGradDist(overrideGradDist);
+			this.setGradDistURL(gradDistURL);
+			this.setOverRideURL(overRideURL);
+			this.setSID(SID);
+			this.setColors(colors);
+			this.setGreyCodeLimit(greyCodeLimit);
+			this.setCurrentTerm(currentTerm);
+			
+			newPreferences.put("migrateDate", new Date().toString());
 		}
 	}
 

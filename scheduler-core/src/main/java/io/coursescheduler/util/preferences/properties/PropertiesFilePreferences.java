@@ -30,6 +30,7 @@ package io.coursescheduler.util.preferences.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -259,7 +260,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 			}
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.util.prefs.AbstractPreferences#keysSpi()
 	 */
@@ -298,7 +299,6 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 	protected void syncSpi() throws BackingStoreException {
 		synchronized (lock) {
 			File file = getBackingFile();
-			createBackingFilePath(file);
 			
 			//TODO how to handle if the object is dirty?
 			
@@ -306,6 +306,8 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 				try (FileInputStream fileInStream = new FileInputStream(file)){
 					load(properties, fileInStream);
 					clearDirty();
+				} catch (FileNotFoundException e) {
+					log.info("File {} does not exist - preferences could not be loaded", file);
 				} catch (IOException e) {
 					log.error("Unable to load preferences from disk", e);					
 					throw new BackingStoreException(e);
