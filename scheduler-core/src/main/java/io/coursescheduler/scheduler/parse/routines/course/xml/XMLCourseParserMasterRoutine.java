@@ -1,8 +1,10 @@
 /**
   * @(#)XMLCourseParserMasterRoutine.java
   *
-  * A general XML parsing routine for extracting course data from XML formatted documents
-  *
+  * A general XML parsing routine for extracting course data from XML formatted documents. This
+  * is the master XML parsing routine that performs the work of scheduling additional helper
+  * routines for individual courses
+  * 
   * @author Mike Reinhold
   * 
   * @license GNU General Public License version 3 (GPLv3)
@@ -62,7 +64,9 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 /**
- * A general XML parsing routine for extracting course data from XML formatted documents
+ * A general XML parsing routine for extracting course data from XML formatted documents. This
+ * is the master XML parsing routine that performs the work of scheduling additional helper
+ * routines for individual courses
  *
  * @author Mike Reinhold
  *
@@ -131,7 +135,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 		
 		doc = builderProvider.get().parse(input);
 		this.profile = profile;
-		parser = toolMap.getXMLParserTool("xml-xpath");
+		parser = toolMap.getXMLParserTool("xml-xpath"); // TODO use a configuration value instead
 	}
 
 	/* (non-Javadoc)
@@ -199,7 +203,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 			nodeList.add(node);
 		}
 		
-		return new SectionBasedXMLCourseParserRoutine(nodeList, settings, courseID, courseData);
+		return new SectionBasedXMLCourseParserRoutine(nodeList, settings, courseID, courseData); //TODO convert to injector created instance
 	}
 	
 	/**
