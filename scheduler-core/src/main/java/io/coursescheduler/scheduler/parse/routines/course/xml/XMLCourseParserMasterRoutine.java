@@ -33,6 +33,7 @@ package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.ParserConstants;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
@@ -165,7 +166,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private Set<String> getCourseIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings.node(CourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
@@ -189,7 +190,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private CourseParserRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(COURSE_ID_VARIABLE, courseID);
-		NodeList list = parser.retrieveNodeList(doc, settings.node(CourseParserRoutine.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);
 		
@@ -203,7 +204,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 			nodeList.add(node);
 		}
 		
-		return new SectionBasedXMLCourseParserRoutine(nodeList, settings, courseID, courseData); //TODO convert to injector created instance
+		return new SectionBasedXMLCourseParserHelperRoutine(nodeList, settings, courseID, courseData); //TODO convert to injector created instance
 	}
 	
 	/**

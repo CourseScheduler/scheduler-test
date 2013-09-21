@@ -1,5 +1,5 @@
 /**
-  * @(#)SectionBasedXMLCourseParserRoutine.java
+  * @(#)SectionBasedXMLCourseParserHelperRoutine.java
   *
   * TODO FILE PURPOSE
   *
@@ -29,7 +29,7 @@
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserConstants;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
 
@@ -48,7 +48,7 @@ import org.w3c.dom.Node;
  * @author Mike Reinhold
  *
  */
-public class SectionBasedXMLCourseParserRoutine extends SectionBasedCourseParserRoutine {
+public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHelperRoutine {
 	
 	/**
 	 * Serial Version UID
@@ -85,7 +85,7 @@ public class SectionBasedXMLCourseParserRoutine extends SectionBasedCourseParser
 	 */
 	private String id;
 	
-	public SectionBasedXMLCourseParserRoutine(List<Node> nodeList, Preferences settings, String courseID, ConcurrentMap<String, String> data) {
+	public SectionBasedXMLCourseParserHelperRoutine(List<Node> nodeList, Preferences settings, String courseID, ConcurrentMap<String, String> data) {
 		super();
 		
 		this.nodeList = nodeList;
@@ -124,7 +124,7 @@ public class SectionBasedXMLCourseParserRoutine extends SectionBasedCourseParser
 	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for {}", courseID);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(SectionBasedCourseParserRoutine.COURSE_SETTINGS_NODE), data);
+		parser.retrieveData(node, settings.node(ParserConstants.COURSE_SETTINGS_NODE), data);
 		long end = System.currentTimeMillis();
 		log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
 	}
@@ -132,7 +132,7 @@ public class SectionBasedXMLCourseParserRoutine extends SectionBasedCourseParser
 	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> data) throws ParseException {
 		log.debug("Capturing course data for section index {}", sectionIndex);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(SectionBasedCourseParserRoutine.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, data);
+		parser.retrieveData(node, settings.node(ParserConstants.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, data);
 		long end = System.currentTimeMillis();
 		log.debug("Capturing course data for section index {} in {} milliseconds", sectionIndex, (end - start));
 	}

@@ -58,27 +58,6 @@ public abstract class CourseParserRoutine extends ParserRoutine {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Preferences node name for the course specific parser settings
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String COURSE_SETTINGS_NODE = "course";
-	
-	/**
-	 * Preferences node name for the section specific parser settings
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String SECTION_SETTINGS_NODE = "section";
-	
-	/**
-	 * Preferences node name for the meeting specific parser settings
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String MEETING_SETTINGS_NODE = "meeting";
 	
 	/**
 	 * Map of the course id to the map of course data (represented by the course data element 
