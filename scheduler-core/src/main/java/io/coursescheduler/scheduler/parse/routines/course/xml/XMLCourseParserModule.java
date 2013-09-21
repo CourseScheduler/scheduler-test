@@ -57,7 +57,16 @@ public class XMLCourseParserModule extends AbstractModule {
 	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
-	protected void configure() {
+	protected void configure() {		
+		configureXMLCourseParserMasterRoutine();
+		configureSectionBasedXMLCourseParserHelperRoutine();
+	}
+	
+	/**
+	 * Perform all of the configuration steps necessary to properly bind the XMLCourseParserMasterRoutine class
+	 *
+	 */
+	private void configureXMLCourseParserMasterRoutine() {
 		//install a module indicating that XMLCourseParserMasterRoutine can be built from a factory with assisted inject
 		log.debug("Installing FactoryModuleBuilder for {} with implementations {}, {}",
 				XMLCourseParserMasterRoutineFactory.class,
@@ -89,4 +98,26 @@ public class XMLCourseParserModule extends AbstractModule {
 		courseParseRoutineBinder.addBinding(XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserMasterRoutineFactory.class));
 	}
 	
+	
+	/**
+	 * Perform all of the configuration steps necessary to properly bind the SectionBasedXMLCourseParserHelperRoutine class
+	 *
+	 */
+	private void configureSectionBasedXMLCourseParserHelperRoutine() {
+		//install a module indicating that SectionBasedXMLCourseParserHelperRoutine can be built from a factory with assisted inject
+		log.debug("Installing FactoryModuleBuilder for {} with implementations {}, {}, {}",
+				SectionBasedXMLCourseParserHelperRoutineFactory.class,
+				 SectionBasedXMLCourseParserHelperRoutine.class + " for " + ParserRoutine.class,
+				 SectionBasedXMLCourseParserHelperRoutine.class + " for " + CourseParserRoutine.class,
+				 SectionBasedXMLCourseParserHelperRoutine.class + " for " + XMLCourseParserHelperRoutine.class
+		);
+		install(new FactoryModuleBuilder()
+			.implement(ParserRoutine.class, SectionBasedXMLCourseParserHelperRoutine.class)
+			.implement(CourseParserRoutine.class, SectionBasedXMLCourseParserHelperRoutine.class)
+			.implement(XMLCourseParserHelperRoutine.class, SectionBasedXMLCourseParserHelperRoutine.class)
+			.build(SectionBasedXMLCourseParserHelperRoutineFactory.class)
+		);
+		
+		//TODO add mapped bindings for the implementation bindings specified
+	}	
 }

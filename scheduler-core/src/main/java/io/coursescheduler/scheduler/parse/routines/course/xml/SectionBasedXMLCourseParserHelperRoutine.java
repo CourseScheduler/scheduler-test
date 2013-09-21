@@ -42,6 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 /**
  * TODO Describe this type
  *
@@ -85,7 +88,16 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	 */
 	private String id;
 	
-	public SectionBasedXMLCourseParserHelperRoutine(List<Node> nodeList, Preferences settings, String courseID, ConcurrentMap<String, String> data) {
+	/**
+	 * TODO Describe this constructor
+	 *
+	 * @param nodeList
+	 * @param settings
+	 * @param courseID
+	 * @param data
+	 */
+	@AssistedInject
+	public SectionBasedXMLCourseParserHelperRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings") Preferences settings, @Assisted("courseid") String courseID, @Assisted("data") ConcurrentMap<String, String> data) {
 		super();
 		
 		this.nodeList = nodeList;
