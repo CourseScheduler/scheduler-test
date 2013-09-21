@@ -40,6 +40,12 @@ package io.coursescheduler.scheduler.parse;
  */
 public class ParserConstants {
 
+	/**
+	 * General configuration node for parser settings
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String GENERAL_SETTINGS_NODE = "general";
 
 	/**
 	 * Preferences node name for the course specific parser settings

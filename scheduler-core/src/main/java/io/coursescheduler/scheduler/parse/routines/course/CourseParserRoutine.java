@@ -29,7 +29,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.StreamParserRoutine;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,7 +52,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Mike Reinhold
  *
  */
-public abstract class CourseParserRoutine extends ParserRoutine {
+public abstract class CourseParserRoutine extends StreamParserRoutine {
 
 	/**
 	 * Serial Version UID

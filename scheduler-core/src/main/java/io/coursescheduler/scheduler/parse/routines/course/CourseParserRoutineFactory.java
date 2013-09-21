@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory;
 
 import java.io.InputStream;
 import java.util.prefs.Preferences;
@@ -41,7 +41,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Mike Reinhold
  *
  */
-public interface CourseParserRoutineFactory extends ParserRoutineFactory {
+public interface CourseParserRoutineFactory extends StreamParserRoutineFactory {
 
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)

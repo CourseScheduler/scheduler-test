@@ -46,13 +46,6 @@ public abstract class ParserRoutine extends RecursiveAction {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * General configuration node for ParserRoutine classes
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String GENERAL_SETTINGS_NODE = "general";
-
-	/**
 	 * Batch process size configuration property name
 	 * 
 	 * Value: {@value}

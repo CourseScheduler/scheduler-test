@@ -104,7 +104,7 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 		this.data = data;
 		this.id = courseID;
 		this.retrievalSettings = settings;
-		this.parser = new XPathParserTool();
+		this.parser = new XPathParserTool();	//TODO use a configuration value instead
 	}
 
 	/* (non-Javadoc)

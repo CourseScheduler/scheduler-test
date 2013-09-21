@@ -1,8 +1,7 @@
 /**
-  * @(#)CourseBasedCourseParserRoutineFactory.java
+  * @(#)StreamParserRoutine.java
   *
-  * Factory interface for CourseParserRoutines that parse data that is organized by the course level 
-  * of the data. 
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -27,15 +26,22 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course;
+package io.coursescheduler.scheduler.parse.routines;
+
 
 /**
- * Factory interface for CourseParserRoutines that parse data that is organized by the course level 
- * of the data. 
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public interface CourseBasedCourseParserRoutineFactory extends CourseParserRoutineFactory {
+public abstract class StreamParserRoutine extends ParserRoutine {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
 	
 }

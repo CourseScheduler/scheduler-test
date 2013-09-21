@@ -30,7 +30,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
  * An XML parsing routine for extracting course data from XML formatted documents. This
@@ -40,7 +40,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
  * @author Mike Reinhold
  *
  */
-public abstract class XMLCourseParserHelperRoutine extends CourseParserRoutine {
+public abstract class XMLCourseParserHelperRoutine extends ParserRoutine {
 
 	/**
 	 * Serial Version UID

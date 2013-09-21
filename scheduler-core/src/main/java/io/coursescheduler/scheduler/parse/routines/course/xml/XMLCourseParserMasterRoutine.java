@@ -187,7 +187,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	 * @return the sub-task which will process the course data 
 	 * @throws ParseException if there is an issue retrieving the list of nodes
 	 */
-	private CourseParserRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
+	private XMLCourseParserHelperRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(COURSE_ID_VARIABLE, courseID);
 		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
@@ -217,7 +217,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	 * @param courses the set of course IDs in the document that should be processed in batch
 	 */
 	private void executeBatches(Preferences settings, Set<String> courses) {
-		Preferences generalSettings = settings.node(GENERAL_SETTINGS_NODE);
+		Preferences generalSettings = settings.node(ParserConstants.GENERAL_SETTINGS_NODE);
 		int batchSize = generalSettings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
 		log.info("Using batch size of {}", batchSize);
 

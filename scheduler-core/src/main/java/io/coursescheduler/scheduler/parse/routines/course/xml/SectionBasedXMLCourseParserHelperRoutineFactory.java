@@ -36,15 +36,13 @@ import org.w3c.dom.Node;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.course.SectionBasedCourseParserRoutineFactory;
-
 /**
  * Factory interface for building a Section based XML Course Parser helper routine
  *
  * @author Mike Reinhold
  *
  */
-public interface SectionBasedXMLCourseParserHelperRoutineFactory extends SectionBasedCourseParserRoutineFactory, XMLCourseParserHelperRoutineFactory {
+public interface SectionBasedXMLCourseParserHelperRoutineFactory extends XMLCourseParserHelperRoutineFactory {
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserHelperRoutineFactory#createParserRoutine(java.util.List, java.util.prefs.Preferences, java.lang.String, java.util.concurrent.ConcurrentMap)

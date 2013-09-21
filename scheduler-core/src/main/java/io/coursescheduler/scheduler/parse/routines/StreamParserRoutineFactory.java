@@ -1,8 +1,7 @@
 /**
-  * @(#)SectionBasedCourseParserRoutine.java
+  * @(#)StreamParserRoutineFactory.java
   *
-  * Class for describing course parsers that are designed to work against input sources that are
-  * formatted based on the Course information
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -27,23 +26,28 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course;
+package io.coursescheduler.scheduler.parse.routines;
 
+import java.io.InputStream;
+import java.util.prefs.Preferences;
 
+import com.google.inject.assistedinject.Assisted;
 
 /**
- * Class for describing course parsers that are designed to work against input sources that are
- * formatted based on the Course information
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public abstract class CourseBasedCourseParserRoutine extends CourseParserRoutine {
+public interface StreamParserRoutineFactory extends ParserRoutineFactory {
 
 	/**
-	 * Serial Version UID
+	 * Create a new ParserRoutine intended to parse the specified input stream using settings contained
+	 * in the specified {@link java.util.prefs.Preferences} node corresponding to the ParserRoutine profile
+	 *
+	 * @param input the input stream containing the source data to parse
+	 * @param profile the Preferences node containing the settings for the ParserRoutine
 	 */
-	private static final long serialVersionUID = 1L;
-	
+	public ParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 	
 }

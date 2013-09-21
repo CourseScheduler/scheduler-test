@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 
 /**
  * Factory class for building helper XML parsing routines
@@ -44,7 +44,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFac
  * @author Mike Reinhold
  *
  */
-public interface XMLCourseParserHelperRoutineFactory extends CourseParserRoutineFactory {
+public interface XMLCourseParserHelperRoutineFactory extends ParserRoutineFactory {
 	
 	/**
 	 * Create a new XMLCourseParserHelperRoutine which will process the specified list of nodes,
