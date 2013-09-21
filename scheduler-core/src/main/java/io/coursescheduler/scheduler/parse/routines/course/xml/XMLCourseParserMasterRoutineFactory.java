@@ -1,5 +1,5 @@
 /**
-  * @(#)XMLCourseParserRoutineFactory.java
+  * @(#)XMLCourseParserMasterRoutineFactory.java
   *
   * Factory interface for XML Course parser routines
   *
@@ -41,7 +41,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFac
  * @author Mike Reinhold
  *
  */
-public interface XMLCourseParserRoutineFactory extends CourseParserRoutineFactory {
+public interface XMLCourseParserMasterRoutineFactory extends CourseParserRoutineFactory {
 
 	/**
 	 * Parser Routine internal name used in configuration and in binding to uniquely identify
@@ -56,6 +56,6 @@ public interface XMLCourseParserRoutineFactory extends CourseParserRoutineFactor
 	 * @see io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
-	public XMLCourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	public XMLCourseParserMasterRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 	
 }

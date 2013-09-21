@@ -1,5 +1,5 @@
 /**
-  * @(#)XMLCourseParserRoutine.java
+  * @(#)XMLCourseParserMasterRoutine.java
   *
   * A general XML parsing routine for extracting course data from XML formatted documents
   *
@@ -67,7 +67,7 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Mike Reinhold
  *
  */
-public class XMLCourseParserRoutine extends CourseParserRoutine {
+public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	
 	/**
 	 * Serial Version UID
@@ -98,12 +98,12 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * XML Document for this XMLCourseParserRoutine to process
+	 * XML Document for this XMLCourseParserMasterRoutine to process
 	 */
 	private Document doc;
 
 	/**
-	 * The {@link java.util.prefs.Preferences} node containing the configuration for this XMLCourseParserRoutine
+	 * The {@link java.util.prefs.Preferences} node containing the configuration for this XMLCourseParserMasterRoutine
 	 */
 	private Preferences profile;
 	
@@ -113,7 +113,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	private XMLParserTool parser;
 	
 	/**
-	 * Create a new XMLCourseParserRoutine instance using the specified input stream and the preferences node
+	 * Create a new XMLCourseParserMasterRoutine instance using the specified input stream and the preferences node
 	 * containing the configuration necessary to process the course data from the XML document represented by
 	 * the input stream
 	 *
@@ -126,7 +126,7 @@ public class XMLCourseParserRoutine extends CourseParserRoutine {
 	 * @throws IOException if any io error occurs
 	 */
 	@AssistedInject
-	public XMLCourseParserRoutine(ParserToolMap toolMap, DocumentBuilderProvider builderProvider, @Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
+	public XMLCourseParserMasterRoutine(ParserToolMap toolMap, DocumentBuilderProvider builderProvider, @Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
 		super();
 		
 		doc = builderProvider.get().parse(input);
