@@ -65,7 +65,7 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * The package names which should be searched for implementations of {@link #parentType}

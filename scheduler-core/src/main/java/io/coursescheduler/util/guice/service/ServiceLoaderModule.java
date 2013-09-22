@@ -62,7 +62,7 @@ public class ServiceLoaderModule<M extends Module> extends ModuleLoaderModule {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * The parent class for which sub-types should be searched. This allows for more selective 

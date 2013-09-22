@@ -65,12 +65,12 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * The list of document nodes to process
 	 */
-	private List<Node> nodeList;
+	private transient List<Node> nodeList;
 	
 	/**
 	 * Thread safe map for the course data
@@ -80,12 +80,12 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	/**
 	 * the Preferences node containing the settings for extracting data
 	 */
-	private Preferences retrievalSettings;
+	private transient Preferences retrievalSettings;
 	
 	/**
 	 * The XML Parser Tool that will assist in extracting data from the XML document
 	 */
-	private XMLParserTool parser;
+	private transient XMLParserTool parser;
 	
 	/**
 	 * Course ID that this instance is processing
@@ -152,7 +152,7 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for {}", courseID);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(ParserConstants.COURSE_SETTINGS_NODE), data);
+		parser.retrieveData(node, settings.node(ParserConstants.COURSE_SETTINGS_NODE), courseData);
 		long end = System.currentTimeMillis();
 		log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
 	}
@@ -163,13 +163,13 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	 * @param settings the preferences node with the parser tool configuration data
 	 * @param node the XML node on which the parser tool will execute
 	 * @param sectionIndex the index of this section in the course
-	 * @param data the thread safe map which will store the course data
+	 * @param courseData the thread safe map which will store the course data
 	 * @throws ParseException Factory interface for creating Stream Parser routines
 	 */
-	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> data) throws ParseException {
+	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for section index {}", sectionIndex);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(ParserConstants.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, data);
+		parser.retrieveData(node, settings.node(ParserConstants.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, courseData);
 		long end = System.currentTimeMillis();
 		log.debug("Capturing course data for section index {} in {} milliseconds", sectionIndex, (end - start));
 	}

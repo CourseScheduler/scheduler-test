@@ -56,7 +56,7 @@ public class RecursiveActionBatch extends RecursiveAction {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * The collection of actions which should be executed as a batch

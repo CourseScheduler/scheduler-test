@@ -70,7 +70,7 @@ public class ComponentLoaderModule extends ModuleLoaderModule {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * Map of component names to default implementation modules

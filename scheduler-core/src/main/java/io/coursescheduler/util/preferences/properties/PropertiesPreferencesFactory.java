@@ -66,7 +66,7 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	/**
 	 * The root Preferences node for the system specific instance of the 

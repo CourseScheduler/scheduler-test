@@ -129,7 +129,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * The XPath instance used for this XPath XML ParserTool. XPath instances are inherently not thread-

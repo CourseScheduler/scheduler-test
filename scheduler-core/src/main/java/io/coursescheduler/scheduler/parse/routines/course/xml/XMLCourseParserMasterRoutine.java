@@ -82,27 +82,27 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * XML Document for this XMLCourseParserMasterRoutine to process
 	 */
-	private Document doc;
+	private transient Document doc;
 
 	/**
 	 * The {@link java.util.prefs.Preferences} node containing the configuration for this XMLCourseParserMasterRoutine
 	 */
-	private Preferences profile;
+	private transient Preferences profile;
 	
 	/**
 	 * The XML Parser Tool that will be used to process the XML document to extract nodes
 	 */
-	private XMLParserTool parser;
+	private transient XMLParserTool parser;
 	
 	/**
 	 * Parser Helper Routine Factory for creating parser routines
 	 */
-	private XMLCourseParserHelperRoutineFactory parserHelperFactory;
+	private transient XMLCourseParserHelperRoutineFactory parserHelperFactory;
 	
 	/**
 	 * Create a new XMLCourseParserMasterRoutine instance using the specified input stream and the preferences node

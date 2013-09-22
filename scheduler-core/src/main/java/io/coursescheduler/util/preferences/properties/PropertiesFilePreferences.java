@@ -99,7 +99,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(this.getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
 	/**
 	 * The Properties object that stores the Preferences elements for this node

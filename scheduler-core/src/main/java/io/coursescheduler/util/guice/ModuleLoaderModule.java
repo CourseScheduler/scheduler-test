@@ -51,7 +51,7 @@ public abstract class ModuleLoaderModule extends AbstractModule {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * Retrieve the class corresponding to the specified name, create an instance of the Guice module, and
