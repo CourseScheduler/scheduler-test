@@ -35,9 +35,9 @@ import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserConstants;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
-import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
+import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,24 +80,6 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Course name query to find all course names in the source document
-	 */
-	private static final String COURSE_NAME_FULL_LIST_PROPERTY = "query-all";
-	
-	/**
-	 * Course name query to find all nodes in the source document that match
-	 * the course ID passed into the query via the Course ID substitution 
-	 * placeholder ({@link #COURSE_ID_VARIABLE}
-	 */
-	private static final String COURSE_NAME_SINGLE_PROPERTY = "query-single";
-	
-	/**
-	 * Course ID placeholder used in the {@link #COURSE_NAME_SINGLE_PROPERTY} expression
-	 * to substitute the correct course id into the XML search expression
-	 */
-	private static final String COURSE_ID_VARIABLE = "${course.id}";
-	
-	/**
 	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
@@ -118,25 +100,37 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private XMLParserTool parser;
 	
 	/**
+	 * Parser Helper Routine Factory for creating parser routines
+	 */
+	private XMLCourseParserHelperRoutineFactory parserHelperFactory;
+	
+	/**
 	 * Create a new XMLCourseParserMasterRoutine instance using the specified input stream and the preferences node
 	 * containing the configuration necessary to process the course data from the XML document represented by
 	 * the input stream
-	 *
+	 * 
+	 * @param helperMap the XMLCourseParserHelperRoutine mapping instance to use for retrieving the helper parser routine
 	 * @param toolMap the ParserTool mapping instance to use for retrieving a ParserTool
 	 * @param builderProvider a provider for getting a DocumentBuilder instance which is used to create the XML document from the input stream
 	 * @param input the input stream from which the XML document can be obtained
 	 * @param profile the Preferences node that contains the configuration necessary to parse the xml document
+	 *
 	 * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies the configuration requested.
 	 * @throws SAXException if any parse error occurs
 	 * @throws IOException if any io error occurs
 	 */
 	@AssistedInject
-	public XMLCourseParserMasterRoutine(ParserToolMap toolMap, DocumentBuilderProvider builderProvider, @Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
+	public XMLCourseParserMasterRoutine(XMLCourseParserHelperMap helperMap, XMLParserToolMap toolMap, DocumentBuilderProvider builderProvider, @Assisted("source") InputStream input, @Assisted("profile") Preferences profile) throws ParserConfigurationException, SAXException, IOException{
 		super();
 		
 		doc = builderProvider.get().parse(input);
 		this.profile = profile;
-		parser = toolMap.getXMLParserTool("xml-xpath"); // TODO use a configuration value instead
+		this.parser = toolMap.getXMLParserTool(
+			profile.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
+		);
+		parserHelperFactory = helperMap.getXMLCourseParserHelperRoutineFactory(
+			profile.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_HELPER_PROPERTY, null)
+		); 
 	}
 
 	/* (non-Javadoc)
@@ -166,7 +160,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private Set<String> getCourseIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), COURSE_NAME_FULL_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_FULL_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
@@ -189,8 +183,8 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	 */
 	private XMLCourseParserHelperRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put(COURSE_ID_VARIABLE, courseID);
-		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), COURSE_NAME_SINGLE_PROPERTY, replacements);
+		replacements.put(XMLParserConstants.COURSE_ID_VARIABLE, courseID);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);
 		
@@ -204,7 +198,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 			nodeList.add(node);
 		}
 		
-		return new SectionBasedXMLCourseParserHelperRoutine(nodeList, settings, courseID, courseData); //TODO convert to injector created instance
+		return parserHelperFactory.createParserRoutine(nodeList, settings, courseID, courseData);
 	}
 	
 	/**

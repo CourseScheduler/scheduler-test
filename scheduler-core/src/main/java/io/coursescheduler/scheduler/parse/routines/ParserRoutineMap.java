@@ -58,6 +58,14 @@ public interface ParserRoutineMap {
 	public ParserRoutineFactory getParserRoutineFactory(String key);
 	
 	/**
+	 * Get a StreamParserRoutineFactory for processing input streams based on the specified parser routine key.
+	 *
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
+	 */
+	public StreamParserRoutineFactory getStreamParserRoutineFactory(String key);
+	
+	/**
 	 * Get a CourseParserRoutineFactory for parsing course data streams based on the specified parser routine key.
 	 *
 	 * @param key the internal parser routine name used to reference the parser routine in configuration

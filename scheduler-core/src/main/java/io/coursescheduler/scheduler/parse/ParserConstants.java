@@ -31,7 +31,7 @@ package io.coursescheduler.scheduler.parse;
 
 /**
  * This class contains a number of general parser constants that can be used by 
- * on parser component implementation. Ideally, if parsers use these constants
+ * an parser component implementation. Ideally, if parsers use these constants
  * appropriately and consistently, it will be simpler to translate similar constructs
  * between parsers.
  *
@@ -67,4 +67,5 @@ public class ParserConstants {
 	 * Value: {@value}
 	 */
 	public static final String MEETING_SETTINGS_NODE = "meeting";
+	
 }

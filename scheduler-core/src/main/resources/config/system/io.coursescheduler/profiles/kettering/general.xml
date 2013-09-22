@@ -2,4 +2,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 	<entry key="batch.size">5</entry>
+	<entry key="xml-parser">xml-xpath</entry>
+	<entry key="xml-helper">course-xml-section-helper</entry>
 </properties>

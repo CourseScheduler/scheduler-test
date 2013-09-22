@@ -1,9 +1,10 @@
 /**
-  * @(#)ParserToolMap.java
+  * @(#)XMLParserToolMap.java
   *
-  * ParserTool mapping interface for retrieving registered ParserTool instances based on
+  * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on
   * the implementation key. This allows for other classes that need a ParserTool instance to be
-  * decoupled from the specific binding organization of the ParserTools
+  * decoupled from the specific binding organization of the ParserTools. This adds a XMLParserTool
+  * specific retrieval method.
   *
   * @author Mike Reinhold
   * 
@@ -28,14 +29,17 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse.tools.xml;
 
 import com.google.inject.ImplementedBy;
 
+import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
+
 /**
- * ParserTool mapping interface for retrieving registered ParserTool instances based on
+ * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on
  * the implementation key. This allows for other classes that need a ParserTool instance to be
- * decoupled from the specific binding organization of the ParserTools
+ * decoupled from the specific binding organization of the ParserTools. This adds a XMLParserTool
+ * specific retrieval method.
  * 
  * Default implementation is {@link io.coursescheduler.scheduler.parse.tools.MapBoundParserToolMap} however
  * this can be overridden in a module by binding an alternative implementation
@@ -43,15 +47,14 @@ import com.google.inject.ImplementedBy;
  * @author Mike Reinhold
  *
  */
-@ImplementedBy(MapBoundParserToolMap.class)
-public interface ParserToolMap {
-	
+@ImplementedBy(MapBoundXMLParserToolMap.class)
+public interface XMLParserToolMap extends ParserToolMap {
+
 	/**
-	 * Get a general purpose ParserTool based on the ParserTool internal name.
+	 * Get a XML ParserTool for extracting data from XML based on the ParserTool internal name
 	 *
 	 * @param key the internal name of the ParserTool 
 	 * @return a ParserTool instance for the internal name provided
 	 */
-	public ParserTool getParserTool(String key);
-	
+	public XMLParserTool getXMLParserTool(String key);
 }

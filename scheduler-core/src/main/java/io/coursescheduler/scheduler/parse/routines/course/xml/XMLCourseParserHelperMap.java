@@ -1,7 +1,7 @@
 /**
-  * @(#)StreamParserRoutine.java
+  * @(#)XMLCourseParserHelperMap.java
   *
-  * Stream parsers are specialized parse routines that process data from an inputstream
+  * Factory interface for XML Course Parser Helper routines
   *
   * @author Mike Reinhold
   * 
@@ -26,22 +26,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse.routines.course.xml;
 
+import com.google.inject.ImplementedBy;
 
 /**
- * Stream parsers are specialized parse routines that process data from an inputstream
+ * Factory interface for XML Course Parser Helper routines
  *
  * @author Mike Reinhold
  *
  */
-public abstract class StreamParserRoutine extends ParserRoutine {
+@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
+public interface XMLCourseParserHelperMap {
 
 	/**
-	 * Serial Version UID
+	 * Get a XMLCourseParserHelperRoutineFactory for extracting course data from an XML document
+	 *
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
 	 */
-	private static final long serialVersionUID = 1L;
-	
-
-	
+	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
 }

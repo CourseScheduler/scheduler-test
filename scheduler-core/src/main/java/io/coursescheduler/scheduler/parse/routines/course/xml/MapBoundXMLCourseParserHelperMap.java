@@ -1,5 +1,5 @@
 /**
-  * @(#)MapBoundParserToolMap.java
+  * @(#)MapBoundXMLCourseParserHelperMap.java
   *
   * Default ParserTool mapping class for retrieving registered ParserTool instances based on
   * the implementation key. This implementation uses the MapBinding characteristics of the ParserTools and  
@@ -28,13 +28,11 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import java.util.Map;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-
 
 /**
  * Default ParserTool mapping class for retrieving registered ParserTool instances based on
@@ -44,31 +42,31 @@ import com.google.inject.Provider;
  * @author Mike Reinhold
  *
  */
-public class MapBoundParserToolMap implements ParserToolMap {
-
-	/**
-	 * Map of ParseTool internal names to the Guice Providers used to create instances of the ParserTool
-	 */
-	private Map<String, Provider<ParserTool>> parserProviders;
+public class MapBoundXMLCourseParserHelperMap implements XMLCourseParserHelperMap {
 	
 	/**
-	 * Create a new MapBoundParserToolMap instance containing maps of the ParserTool internal names
-	 * to the Guice Providers that create those ParserTools
+	 * Map of the parser routine internal name to the XML Course Parser Helper routine factories 
+	 */
+	Map<String, XMLCourseParserHelperRoutineFactory> factories;
+	
+	/**
+	 * Create a new MapBoundXMLCourseParserHelperMap instance containing maps of the XMLCourseParserHelperRoutine
+	 * internal names to the factory instances that create those Parser Helpers
 	 *
-	 * @param parserProviders the map of ParserTool internal names to ParserTool Providers
-	 * @param xmlParserProviders the map of ParserTool internal names to XMLParserTool Providers
+	 * @param factories the map of internal names to 
 	 */
 	@Inject
-	public MapBoundParserToolMap(Map<String, Provider<ParserTool>> parserProviders) {
-		this.parserProviders = parserProviders;
+	public MapBoundXMLCourseParserHelperMap(Map<String, XMLCourseParserHelperRoutineFactory> factories) {
+		super();
+		
+		this.factories = factories;
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.ParserToolMap#getParserTool(java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserHelperMap#getXMLCourseParserHelperRoutineFactory(java.lang.String)
 	 */
 	@Override
-	public ParserTool getParserTool(String key) {
-		return parserProviders.get(key).get();
+	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key) {
+		return factories.get(key);
 	}
-	
 }

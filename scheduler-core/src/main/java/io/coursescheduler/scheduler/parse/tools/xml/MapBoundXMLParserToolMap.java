@@ -1,7 +1,7 @@
 /**
-  * @(#)MapBoundParserToolMap.java
+  * @(#)MapBoundXMLParserToolMap.java
   *
-  * Default ParserTool mapping class for retrieving registered ParserTool instances based on
+  * Default XMLParserTool mapping class for retrieving registered ParserTool instances based on
   * the implementation key. This implementation uses the MapBinding characteristics of the ParserTools and  
   * their providers in order to provide the keyed retrieval methods.
   *
@@ -28,28 +28,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse.tools.xml;
 
 import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import io.coursescheduler.scheduler.parse.tools.MapBoundParserToolMap;
+import io.coursescheduler.scheduler.parse.tools.ParserTool;
 
 /**
- * Default ParserTool mapping class for retrieving registered ParserTool instances based on
+ * Default XMLParserTool mapping class for retrieving registered ParserTool instances based on
  * the implementation key. This implementation uses the MapBinding characteristics of the ParserTools and  
  * their providers in order to provide the keyed retrieval methods.
  *
  * @author Mike Reinhold
  *
  */
-public class MapBoundParserToolMap implements ParserToolMap {
-
+public class MapBoundXMLParserToolMap extends MapBoundParserToolMap implements XMLParserToolMap{
+	
 	/**
-	 * Map of ParseTool internal names to the Guice Providers used to create instances of the ParserTool
+	 * Map of ParseTool internal names to the Guice Providers used to create instances of the XMLParserTool
 	 */
-	private Map<String, Provider<ParserTool>> parserProviders;
+	private Map<String, Provider<XMLParserTool>> xmlParserProviders;
 	
 	/**
 	 * Create a new MapBoundParserToolMap instance containing maps of the ParserTool internal names
@@ -59,16 +61,16 @@ public class MapBoundParserToolMap implements ParserToolMap {
 	 * @param xmlParserProviders the map of ParserTool internal names to XMLParserTool Providers
 	 */
 	@Inject
-	public MapBoundParserToolMap(Map<String, Provider<ParserTool>> parserProviders) {
-		this.parserProviders = parserProviders;
+	public MapBoundXMLParserToolMap(Map<String, Provider<ParserTool>> parserProviders, Map<String, Provider<XMLParserTool>> xmlParserProviders) {
+		super(parserProviders);
+		this.xmlParserProviders = xmlParserProviders;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.ParserToolMap#getParserTool(java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.tools.ParserToolMap#getXMLParserTool(java.lang.String)
 	 */
 	@Override
-	public ParserTool getParserTool(String key) {
-		return parserProviders.get(key).get();
+	public XMLParserTool getXMLParserTool(String key) {
+		return xmlParserProviders.get(key).get();
 	}
-	
 }

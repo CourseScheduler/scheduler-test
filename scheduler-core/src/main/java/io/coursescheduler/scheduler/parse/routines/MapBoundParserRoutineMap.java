@@ -52,6 +52,11 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	private Map<String, ParserRoutineFactory> parserFactories; 
 	
 	/**
+	 * Map of StreamParserRoutineFactories based on the ParserRoutine internal name
+	 */
+	private Map<String, StreamParserRoutineFactory> streamParserFactories;
+	
+	/**
 	 * Map of the CourseParserRoutineFactories based on the ParserRoutine internal name
 	 */
 	private Map<String, CourseParserRoutineFactory> courseParserFactories;
@@ -64,10 +69,11 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 * @param courseParserFactories map of internal names to factories for course data parser routines
 	 */
 	@Inject
-	public MapBoundParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories, Map<String, CourseParserRoutineFactory> courseParserFactories) {
+	public MapBoundParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories, Map<String, StreamParserRoutineFactory> streamParserFactories, Map<String, CourseParserRoutineFactory> courseParserFactories) {
 		super();
 		
 		this.parserFactories = parserFactories;
+		this.streamParserFactories = streamParserFactories;
 		this.courseParserFactories = courseParserFactories;
 	}
 	
@@ -77,6 +83,14 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	@Override
 	public ParserRoutineFactory getParserRoutineFactory(String key) {
 		return parserFactories.get(key);
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.routines.ParserRoutineMap#getStreamParserRoutineFactory(java.lang.String)
+	 */
+	@Override
+	public StreamParserRoutineFactory getStreamParserRoutineFactory(String key) {
+		return streamParserFactories.get(key);
 	}
 	
 	/* (non-Javadoc)

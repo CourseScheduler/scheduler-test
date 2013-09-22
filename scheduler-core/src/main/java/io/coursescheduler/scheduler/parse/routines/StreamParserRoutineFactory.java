@@ -1,7 +1,7 @@
 /**
   * @(#)StreamParserRoutineFactory.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for creating Stream Parser routines
   *
   * @author Mike Reinhold
   * 
@@ -34,7 +34,7 @@ import java.util.prefs.Preferences;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * TODO Describe this type
+ * Factory interface for creating Stream Parser routines
  *
  * @author Mike Reinhold
  *

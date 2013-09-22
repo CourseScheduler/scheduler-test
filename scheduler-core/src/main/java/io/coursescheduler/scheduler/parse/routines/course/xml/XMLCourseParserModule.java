@@ -129,6 +129,22 @@ public class XMLCourseParserModule extends AbstractModule {
 			.build(SectionBasedXMLCourseParserHelperRoutineFactory.class)
 		);
 		
-		//TODO add mapped bindings for the implementation bindings specified
+		//add a mapped binding for the ParserRoutine class to the implementation class
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				ParserRoutineFactory.class,
+				SectionBasedXMLCourseParserHelperRoutineFactory.class,
+				SectionBasedXMLCourseParserHelperRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
+		}); 
+		MapBinder<String, ParserRoutineFactory> parseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
+		parseRoutineBinder.addBinding(SectionBasedXMLCourseParserHelperRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(SectionBasedXMLCourseParserHelperRoutineFactory.class));
+		
+		//add a mapped binding for the XMLCourseParserHelperRoutine class to the implementation class
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				XMLCourseParserHelperRoutine.class,
+				SectionBasedXMLCourseParserHelperRoutineFactory.class,
+				SectionBasedXMLCourseParserHelperRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
+		}); 
+		MapBinder<String, XMLCourseParserHelperRoutineFactory> xmlParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, XMLCourseParserHelperRoutineFactory.class);
+		xmlParseRoutineBinder.addBinding(SectionBasedXMLCourseParserHelperRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(SectionBasedXMLCourseParserHelperRoutineFactory.class));
 	}	
 }

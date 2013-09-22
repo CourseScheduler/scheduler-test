@@ -43,6 +43,15 @@ import com.google.inject.assistedinject.Assisted;
  *
  */
 public interface SectionBasedXMLCourseParserHelperRoutineFactory extends XMLCourseParserHelperRoutineFactory {
+
+	/**
+	 * Parser Routine internal name used in configuration and in binding to uniquely identify
+	 * the parser module. It must be unique among all other Parser Routine modules or else it
+	 * will not be available for use by data retrieval routines.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-xml-section-helper";
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserHelperRoutineFactory#createParserRoutine(java.util.List, java.util.prefs.Preferences, java.lang.String, java.util.concurrent.ConcurrentMap)

@@ -1,7 +1,9 @@
 /**
   * @(#)SectionBasedXMLCourseParserHelperRoutine.java
   *
-  * TODO FILE PURPOSE
+  * Parser helper to perform organization specific extraction of course data from the XML document.
+  * This ParserHelperRoutine is designed for XML documents where the data elements are unique based
+  * on the section and each section element contains all the course data (duplicated per section).
   *
   * @author Mike Reinhold
   * 
@@ -31,7 +33,7 @@ package io.coursescheduler.scheduler.parse.routines.course.xml;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserConstants;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
-import io.coursescheduler.scheduler.parse.tools.xml.xpath.XPathParserTool;
+import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +48,9 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 /**
- * TODO Describe this type
+ * Parser helper to perform organization specific extraction of course data from the XML document.
+ * This ParserHelperRoutine is designed for XML documents where the data elements are unique based
+ * on the section and each section element contains all the course data (duplicated per section).
  *
  * @author Mike Reinhold
  *
@@ -64,47 +68,50 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * TODO Describe this field
+	 * The list of document nodes to process
 	 */
 	private List<Node> nodeList;
 	
 	/**
-	 * TODO Describe this field
+	 * Thread safe map for the course data
 	 */
 	private ConcurrentMap<String, String> data;
 	
 	/**
-	 * TODO Describe this field
+	 * the Preferences node containing the settings for extracting data
 	 */
 	private Preferences retrievalSettings;
 	
 	/**
-	 * TODO Describe this field
+	 * The XML Parser Tool that will assist in extracting data from the XML document
 	 */
 	private XMLParserTool parser;
 	
 	/**
-	 * TODO Describe this field
+	 * Course ID that this instance is processing
 	 */
 	private String id;
 	
 	/**
-	 * TODO Describe this constructor
+	 * Create a new SectionBasedXMLCourseParserHelperRoutine instance
 	 *
-	 * @param nodeList
-	 * @param settings
-	 * @param courseID
-	 * @param data
+	 * @param toolMap XMLParserToolMap for retrieving the correct XML tool
+	 * @param nodeList the list of XML document nodes to process
+	 * @param settings the preferences node containing the configuration for the parsing
+	 * @param courseID the course that is being retrieved
+	 * @param data thread safe map for storing the course data
 	 */
 	@AssistedInject
-	public SectionBasedXMLCourseParserHelperRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings") Preferences settings, @Assisted("courseid") String courseID, @Assisted("data") ConcurrentMap<String, String> data) {
+	public SectionBasedXMLCourseParserHelperRoutine(XMLParserToolMap toolMap, @Assisted("nodes") List<Node> nodeList, @Assisted("settings") Preferences settings, @Assisted("courseid") String courseID, @Assisted("data") ConcurrentMap<String, String> data) {
 		super();
 		
 		this.nodeList = nodeList;
 		this.data = data;
 		this.id = courseID;
 		this.retrievalSettings = settings;
-		this.parser = new XPathParserTool();	//TODO use a configuration value instead
+		this.parser = toolMap.getXMLParserTool(
+			settings.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
+		);
 	}
 
 	/* (non-Javadoc)
@@ -133,6 +140,15 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 		log.info("Finished processing course {} in {} milliseconds", id, (end - start));
 	}
 	
+	/**
+	 * Retrieve course related data from the XML node 
+	 *
+	 * @param settings the preferences node with the parser tool configuration data
+	 * @param node the XML node on which the parser tool will execute
+	 * @param courseID the course id for which data will be retrieved
+	 * @param courseData the thread safe map which will store the course data
+	 * @throws ParseException if there is an issue parsing the xml document 
+	 */
 	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for {}", courseID);
 		long start = System.currentTimeMillis();
@@ -141,6 +157,15 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 		log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
 	}
 	
+	/**
+	 * Retrieve the section data from the XML node
+	 *
+	 * @param settings the preferences node with the parser tool configuration data
+	 * @param node the XML node on which the parser tool will execute
+	 * @param sectionIndex the index of this section in the course
+	 * @param data the thread safe map which will store the course data
+	 * @throws ParseException Factory interface for creating Stream Parser routines
+	 */
 	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> data) throws ParseException {
 		log.debug("Capturing course data for section index {}", sectionIndex);
 		long start = System.currentTimeMillis();
