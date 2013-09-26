@@ -1,6 +1,5 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
@@ -22,6 +21,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -32,12 +32,10 @@ import com.google.inject.grapher.graphviz.GraphvizRenderer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.BackingStoreException;
 import java.util.Properties;
 
 
@@ -337,7 +334,7 @@ public class Main {
 		    @Override
 		    public void run() {
 		    	String outputFileName = "tmp/model.dot";
-				try (PrintWriter out = new PrintWriter(new File(outputFileName), "UTF-8")){
+				try (PrintWriter out = new PrintWriter(new File(outputFileName), Charsets.UTF_8.name())){
 			        Injector grapher = Guice.createInjector(new GrapherModule(), new GraphvizModule());
 			        GraphvizRenderer renderer = grapher.getInstance(GraphvizRenderer.class);
 			        renderer.setOut(out).setRankdir("TB");

@@ -195,6 +195,13 @@
 				<version>3.0</version>
 			</dependency>
 			
+			<!-- Google Guava -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>15.0</version>
+			</dependency>
+			
 		</dependencies>
 		
 	</dependencyManagement>
@@ -277,6 +284,12 @@
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-throwingproviders</artifactId>
 		</dependency>    
+			
+		<!-- Google Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 		
 	</dependencies>
 	
