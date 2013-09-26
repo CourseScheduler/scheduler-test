@@ -78,6 +78,8 @@ public abstract class CourseParserRoutine extends StreamParserRoutine {
 	 * it is up to the the users of the course data set map to ensure that the inner maps stored
 	 * against the course ID is also thread safe.
 	 * 
+	 * Calling this method prior to execution of the parser routine may result in invalid results
+	 * 
 	 * @return the courseDataSets map of course IDs to map of course data elements and values
 	 */
 	public Map<String, Map<String, String>> getCourseDataSets() {
