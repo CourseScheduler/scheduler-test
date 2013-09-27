@@ -194,10 +194,16 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	@Override
 	public NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
 		String query = settings.get(key, null);
+		log.trace("Performing placeholder substitution on string: {}", query);
 		
+		//ANALYZE is one pass though the replacements in this way good enough?
 		for(Entry<String, String> replacement: replacements.entrySet()) {
+			log.trace("Performing replacement of {} with {} in {}", new Object[] {replacement.getKey(), replacement.getValue(), query});
 			query = query.replaceAll(Pattern.quote(replacement.getKey()), replacement.getValue());
+			log.trace("Replacement of {} yielded {}", replacement.getKey(), query);
 		}
+		
+		log.debug("Substituted string is: {}", query);
 		
 		return retrieveNodeList(node, query);
 	}

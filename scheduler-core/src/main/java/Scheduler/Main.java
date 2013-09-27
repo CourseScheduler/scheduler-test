@@ -290,7 +290,7 @@ public class Main {
 			
 			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
 					new FileInputStream("Data/ku_scheduler_2.xml"), 
-					prefFact.getSystemNode("profiles/kettering")
+					prefFact.getSystemNode("profiles/kettering/parser")
 			);
 			new ForkJoinPool().invoke(test);
 			printTestResults(test.getCourseDataSets());
