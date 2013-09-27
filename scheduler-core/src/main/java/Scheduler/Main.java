@@ -1,5 +1,7 @@
 package Scheduler;
 
+import io.coursescheduler.scheduler.datasource.DataSource;
+import io.coursescheduler.scheduler.datasource.file.FileDataSource;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
@@ -31,7 +33,6 @@ import com.google.inject.grapher.graphviz.GraphvizModule;
 import com.google.inject.grapher.graphviz.GraphvizRenderer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -287,12 +288,18 @@ public class Main {
 		try{
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
+			ForkJoinPool threadPool = new ForkJoinPool();
+			
+			DataSource source = new FileDataSource(prefFact.getSystemNode("profiles/kettering/datasource"));
+			threadPool.invoke(source);
+			
 			
 			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
-					new FileInputStream("Data/ku_scheduler_2.xml"), 
+					source.getDataSourceAsInputStream(),
+					//new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering/parser")
 			);
-			new ForkJoinPool().invoke(test);
+			threadPool.invoke(test);
 			printTestResults(test.getCourseDataSets());
 		}catch(Exception e){
 			e.printStackTrace();

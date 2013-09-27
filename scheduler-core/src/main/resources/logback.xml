@@ -14,5 +14,6 @@
 	<include resource="io/coursescheduler/util/preferences/preferences.inc.xml" />     <!-- Preferences logging configuration -->
 	<include resource="io/coursescheduler/util/guice/guice.inc.xml" />     <!-- Guice logging configuration -->
 	<include resource="io/coursescheduler/scheduler/parse/parser.inc.xml" />     <!-- Parser logging configuration -->
+	<include resource="io/coursescheduler/scheduler/datasource/datasource.inc.xml" />     <!-- DataSource logging configuration -->
 	
 </configuration>

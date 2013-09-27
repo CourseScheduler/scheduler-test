@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="file-uri-template">file:///C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data/ku_scheduler_2.xml</entry>
+	<entry key="file-path-template">Data/ku_scheduler_2.xml</entry>
+	<entry key="file-save-copy">true</entry>
+	<entry key="file-copy-path-template">tmp/ku_scheduler_2.xml</entry>
+</properties>

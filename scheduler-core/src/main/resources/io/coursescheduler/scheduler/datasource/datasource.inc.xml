@@ -1,0 +1,26 @@
+<!-- io.coursescheduler.scheduler.datasource Logging configuration -->
+<included>
+
+	<!-- DataSource log file appender -->
+	<appender name="IO-CS-DATASOURCE" class="ch.qos.logback.classic.sift.SiftingAppender">
+	    <discriminator>
+	    	<key>profile</key>
+	    	<defaultValue>default</defaultValue>
+	    </discriminator>
+	    <sift>
+	        <appender class="ch.qos.logback.core.FileAppender">
+	            <file>${LOG_DIR}/io.coursescheduler/datasource/datasource-${profile}.log</file>
+				<append>false</append>
+	            <encoder>
+	                <pattern>${DEFAULT_PATTERN}</pattern>
+	            </encoder>
+	        </appender>
+	    </sift>
+	</appender>
+	
+	<!-- DataSource Logger -->
+	<logger name="io.coursescheduler.scheduler.datasource" level="info">
+		<appender-ref ref="IO-CS-DATASOURCE" />
+	</logger>
+	
+</included>

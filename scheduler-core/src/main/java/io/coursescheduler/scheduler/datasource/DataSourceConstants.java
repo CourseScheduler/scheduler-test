@@ -41,5 +41,11 @@ package io.coursescheduler.scheduler.datasource;
  *
  */
 public class DataSourceConstants {
-	
+
+	/**
+	 * General configuration node for data source settings
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String GENERAL_SETTINGS_NODE = "general";
 }

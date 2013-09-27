@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
+import io.coursescheduler.scheduler.datasource.DataSourceConstants;
 
 /**
  * Implement a File based data source
@@ -59,13 +60,22 @@ public class FileDataSource extends DataSource {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Preferences property for specifying the location of the file. This
-	 * property is required by the FileDataSource to refer to valid file 
-	 * (after placeholder replacement).
+	 * Preferences property for specifying the location of the file. Either
+	 * this property or the {@link #FILE_PATH_PROPERTY} must be set. The URI
+	 * property is checked first.
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String FILE_URI_PROPERTY = "file-uri";
+	public static final String FILE_URI_PROPERTY = "file-uri-template";
+
+	/**
+	 * Preferences property for specifying the location of the file. Either
+	 * this property or the {@link #FILE_URI_PROPERTY} must be set. The URI
+	 * property is checked first.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String FILE_PATH_PROPERTY = "file-path-template";
 	
 	/**
 	 * Preferences property for specifying if a copy of the file should be saved
@@ -73,7 +83,7 @@ public class FileDataSource extends DataSource {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String FILE_COPY_PROPERTY = "save-copy";
+	public static final String FILE_COPY_PROPERTY = "file-save-copy";
 	
 	/**
 	 * Preferences property for specifying the name of the temp copy of the data
@@ -81,7 +91,7 @@ public class FileDataSource extends DataSource {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String FILE_COPY_NAME_PROPERTY = "file-copy";
+	public static final String FILE_COPY_NAME_PROPERTY = "file-copy-path-template";
 	
 	/**
 	 * Component based logger
@@ -97,7 +107,17 @@ public class FileDataSource extends DataSource {
 	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
 	 *
-	 * @param settings the Preferences node containing the configuration for the File acccess
+	 * @param settings the Preferences node containing the configuration for the File access
+	 */
+	public FileDataSource(Preferences settings) {
+		super(settings);
+	}
+	
+	/**
+	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
+	 * and replacement values
+	 *
+	 * @param settings the Preferences node containing the configuration for the File access
 	 * @param replacements map of substitution placeholders to values
 	 */
 	public FileDataSource(Preferences settings, Map<String, String> replacements) {
@@ -114,7 +134,7 @@ public class FileDataSource extends DataSource {
 		try {
 			log.info("Retrieving input stream for file {}", file);
 			input = new FileInputStream(file);
-			log.info("Input stream for file {} acquired. {} bytes available without blocking IO", input.available());
+			log.info("Input stream for file {} acquired. {} bytes available without blocking IO", file, input.available());
 		} catch (FileNotFoundException e) {
 			log.error("Exception while retrieving input stream for data source", e);
 			throw e;
@@ -128,39 +148,56 @@ public class FileDataSource extends DataSource {
 	 */
 	@Override
 	protected void compute() {
-		String fileURITemplate = getSettings().get(FILE_URI_PROPERTY, null);
-		log.debug("Source file URI template: {}", fileURITemplate);
-		
-		String fileURI = performReplacements(fileURITemplate);
-		log.debug("Source file URI result: {}", fileURI);
+		log.info("Computing data source");
+		Preferences config = getSettings().node(DataSourceConstants.GENERAL_SETTINGS_NODE);
+		File source = null;
 		
 		try {
-			File source = new File(new URI(fileURI));
-			log.debug("Source file is {}", source);
+			log.info("Checking source file URI");
+			String fileURITemplate = config.get(FILE_URI_PROPERTY, null);
+			log.debug("Source file URI template: {}", fileURITemplate);
 			
-			if(getSettings().getBoolean(FILE_COPY_PROPERTY, false)) {
-				String targetFileTemplate = getSettings().get(FILE_COPY_NAME_PROPERTY, null);
-				log.debug("Temp target file template: {}", targetFileTemplate);
-				
-				String targetFile = performReplacements(targetFileTemplate);
-				log.debug("Temp target file: {}", targetFile);
-				
+			String fileURI = performReplacements(fileURITemplate);
+			log.debug("Source file URI result: {}", fileURI);
+		
+			source = new File(new URI(fileURI));
+		} catch (NullPointerException | URISyntaxException | IllegalArgumentException e) {
+			log.error("Unable to access file due to invalid file URI", e);
+			
+			log.info("Checking alternate source file path");
+			String filePathTemplate = config.get(FILE_PATH_PROPERTY, null);
+			log.debug("Source file path template: {}", filePathTemplate);
+			
+			String filePath = performReplacements(filePathTemplate);
+			log.debug("Source file path result: {}", filePath);
+		
+			source = new File(filePath);
+		}
+		log.debug("Source file is {}", source);
+		
+		if(config.getBoolean(FILE_COPY_PROPERTY, false)) {
+			String targetFileTemplate = config.get(FILE_COPY_NAME_PROPERTY, null);
+			log.debug("Temp target file template: {}", targetFileTemplate);
+			
+			String targetFile = performReplacements(targetFileTemplate);
+			log.debug("Temp target file: {}", targetFile);
+
+			try {
 				File target = new File(targetFile);
 				log.debug("Temp target file is {}", target);
+			
+				log.info("Temp copy requested, preparing to copy {} to {}", source, target);
+				Files.copy(source, target);
+				file = target;
+			} catch (NullPointerException | IOException e) {
+				log.error("Exception copying data source file to temporary file", e);
 				
-				try {
-					log.info("Temp copy requested, preparing to copy {} to {}", source, target);
-					Files.copy(source, target);
-					file = target;
-				} catch (IOException e) {
-					log.error("Exception copying data source file to temporary file", e);
-				}
-			}else {
-				log.info("Temp copy not requested");
+				log.debug("Using source without temp copy");
 				file = source;
 			}
-		} catch (URISyntaxException e) {
-			log.error("Unable to access file due to invalid file URI", e);
+		}else {
+			log.info("Temp copy not requested");
+			file = source;
 		}
 
 		log.info("Using file {} as data source", file);

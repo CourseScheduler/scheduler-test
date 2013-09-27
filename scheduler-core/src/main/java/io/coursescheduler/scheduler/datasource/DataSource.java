@@ -30,6 +30,7 @@ package io.coursescheduler.scheduler.datasource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.RecursiveAction;
@@ -66,6 +67,19 @@ public abstract class DataSource extends RecursiveAction {
 	 * Map of the substitution placeholders to values
 	 */
 	private Map<String, String> replacements;
+	
+	/**
+	 * Create a new DataSource using the specified Preferences node and map of placeholders
+	 * and replacement values
+	 *
+	 * @param settings the Preferences node containing the configuration for the data source access
+	 */
+	public DataSource(Preferences settings) {
+		super();
+		
+		this.settings = settings;
+		this.replacements = new HashMap<>();
+	}
 	
 	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
