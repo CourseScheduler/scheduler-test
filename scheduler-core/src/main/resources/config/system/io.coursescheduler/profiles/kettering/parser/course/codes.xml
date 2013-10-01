@@ -6,10 +6,12 @@
 	<entry key="course.title">Title</entry>
 	<entry key="course.id">CourseID</entry>
 	<entry key="course.term">AssociatedTerm</entry>
-	<entry key="course.registration">RegistrationTerm</entry>
 	<entry key="course.catalog.url">CatalogEntryURL</entry>
 	<entry key="course.credits">Credits</entry>
-	<entry key="course.description">Description</entry>
-	<entry key="course.standing.minimum">MinimumClassStanding</entry>
 	<entry key="course.levels">Levels/Levels_ROW/Student</entry>
+	<entry key="course.description">CrseInfo/CrseInfo_ROW/Description</entry>
+	<entry key="course.terms.offered">CrseInfo/CrseInfo_ROW/TermsOffered</entry>
+	<entry key="course.standing.minimum">CrseInfo/CrseInfo_ROW/Standing</entry>
+	<entry key="course.prerequisites">CrseInfo/CrseInfo_ROW/Prerequisites</entry>
+	<entry key="course.corequisites">CrseInfo/CrseInfo_ROW/Corequisites</entry>
 </properties>
