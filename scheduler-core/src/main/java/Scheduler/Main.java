@@ -290,7 +290,15 @@ public class Main {
 			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
 			ForkJoinPool threadPool = new ForkJoinPool();
 			
-			DataSource source = new FileDataSource(prefFact.getSystemNode("profiles/kettering/datasource"));
+			//TODO replace with a real "replacements" object that includes helper methods
+			Map<String, String> replacements = new HashMap<>();
+			replacements.put("${dir.data}","Data");
+			replacements.put("${dir.tmp}", "tmp");
+			replacements.put("${source.file}", "ku_scheduler_3.xml");
+			replacements.put("${source.path}", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
+			replacements.put("${source.protocol}", "file");
+			
+			DataSource source = new FileDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);
 			threadPool.invoke(source);
 			
 			
