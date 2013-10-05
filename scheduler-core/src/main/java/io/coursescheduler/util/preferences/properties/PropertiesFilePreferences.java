@@ -81,6 +81,15 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 	public static final String PROPERTY_PATH_SYSTEM = "io.coursescheduler.util.preferences.path.system";
 	
 	/**
+	 * The system properties entry for specifying that the Preferences node should lazy load child nodes
+	 * instead of eagerly loading them. This property should contain a boolean value. The default value is 
+	 * false 
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String PROPERTY_LAZY_LOAD = "io.coursescheduler.util.preferences.lazy";
+	
+	/**
 	 * The default filesystem path for the user preferences tree if the 
 	 * io.coursescheduler.util.preferences.path.user system property is not set.
 	 * 
@@ -156,8 +165,8 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		propertiesFileParent = (PropertiesFilePreferences)parent;
 		nodeName = name;
 		rootNode = false;
-		
-		initializeProperties();
+
+		initialize();
 	}
 	
 	/**
@@ -176,16 +185,27 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		rootNode = true;
 		systemNode = !isUserNode;
 		
-		initializeProperties();
+		initialize();
 	}
 
+	/**
+	 * Initialize the Preferences node by loading its values into memory and, if lazy loading
+	 * is not enabled, by loading its child nodes as well.
+	 *
+	 */
+	private void initialize() {
+		initializeProperties();
+		initializeChildren();
+	}
+	
 	/**
 	 * Initialize the in-memory properties by sync'ing against the backing file
 	 * on disk. If the Preferences node is new (no backing file exists), flush
 	 * the properties instance back to disk if the "create immediately" setting
-	 * is set.	 *
+	 * is set.
 	 */
 	private void initializeProperties(){
+		log.debug("Preparing to initialize properties for node {}", getNodeName());
 		try{
 			sync();
 		} catch (BackingStoreException e) {
@@ -196,6 +216,39 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 			flush();
 		} catch (BackingStoreException e) {
 			log.error("Unable to flush preferences from memory to disk", e);
+		}
+	}
+	
+	/**
+	 * Perform eager loading of the children of this node, unless lazy loading
+	 * has been specified by setting the system property {@link #PROPERTY_LAZY_LOAD}
+	 * to {@link Boolean#TRUE}
+	 */
+	private void initializeChildren() {
+		if(!this.isRootNode()) {
+			if(!Boolean.getBoolean(PROPERTY_LAZY_LOAD)) {
+				log.debug("Preparing to load child nodes for node {}", getNodeName());
+				
+				File dir = new File(getBackingFile().getParentFile().getPath() + "/" + getNodeName());
+				String fullExtension = "." + getFileExtension();
+						
+				if(dir.isDirectory() && dir.exists()) {
+					log.debug("Searching {} for files matching PropertiesFilePereferences extension {}", dir.getPath(), fullExtension);	
+					for(String fileName: dir.list(new PropertiesFileFilter(fullExtension))) {
+						log.debug("Found existing child node data in file {}", fileName);
+						String child = fileName.substring(0, fileName.length() - fullExtension.length());
+						
+						log.info("Loading child node {}", child);
+						this.node(child);
+					}
+				}else {
+					log.debug("{} is not a directory or does not exist", dir.getPath());
+				}
+			}else {
+				log.debug("Lazy loading specified. Child nodes will not be loaded until the Preferences node is directly requested");
+			}
+		}else {
+			log.debug("Root node skipped for eagerly loading children");
 		}
 	}
 	
@@ -300,7 +353,9 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		synchronized (lock) {
 			File file = getBackingFile();
 			
-			//TODO how to handle if the object is dirty?
+			if(isDirty()) {
+				log.warn("Sync from disk requested when unflushed changes exist");
+			}
 			
 			if(!newNode){
 				try (FileInputStream fileInStream = new FileInputStream(file)){
