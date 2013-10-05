@@ -114,6 +114,7 @@ public abstract class DataSource extends RecursiveAction {
 	public String performReplacements(String input) {
 		String value = input;
 		log.trace("Performing placeholder substitution on string: {}", input);
+		//TODO change to StrSubstitutor based variable substitution
 		
 		//ANALYZE is one pass though the replacements in this way good enough?
 		for(Entry<String, String> replacement: replacements.entrySet()) {

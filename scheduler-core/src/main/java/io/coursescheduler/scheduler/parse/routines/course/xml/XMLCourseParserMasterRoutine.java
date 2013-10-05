@@ -184,6 +184,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private XMLCourseParserHelperRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(XMLParserConstants.COURSE_ID_VARIABLE, courseID);
+		//TODO change to StrSubstitutor based variable substitution - remove the replacements concept from the ParserTool classes
 		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);

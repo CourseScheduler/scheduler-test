@@ -292,19 +292,19 @@ public class Main {
 			
 			//TODO replace with a real "replacements" object that includes helper methods
 			Map<String, String> replacements = new HashMap<>();
-			replacements.put("${dir.data}","Data");
-			replacements.put("${dir.tmp}", "tmp");
+			replacements.put("${dir.data}","Data");		//TODO move these directory variables to a directory variable map class
+			replacements.put("${dir.tmp}", "tmp");		//TODO move these directory variables to a directory variable map class
 			replacements.put("${source.file}", "ku_scheduler_3.xml");
 			replacements.put("${source.path}", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
 			replacements.put("${source.protocol}", "file");
 			
+			//TODO convert this to an injected instantiation
 			DataSource source = new FileDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);
 			threadPool.invoke(source);
 			
 			
 			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
 					source.getDataSourceAsInputStream(),
-					//new FileInputStream("Data/ku_scheduler_2.xml"), 
 					prefFact.getSystemNode("profiles/kettering/parser")
 			);
 			threadPool.invoke(test);
