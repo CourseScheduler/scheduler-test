@@ -45,6 +45,7 @@ import com.google.common.io.Files;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceConstants;
+import io.coursescheduler.util.text.StrSubstitutionFactory;
 
 /**
  * Implement a File based data source
@@ -108,20 +109,11 @@ public class FileDataSource extends DataSource {
 	 * and replacement values
 	 *
 	 * @param settings the Preferences node containing the configuration for the File access
-	 */
-	public FileDataSource(Preferences settings) {
-		super(settings);
-	}
-	
-	/**
-	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
-	 * and replacement values
-	 *
-	 * @param settings the Preferences node containing the configuration for the File access
+	 * @param substitutionFactory factory instance for creating StrSubstitution instances
 	 * @param replacements map of substitution placeholders to values
 	 */
-	public FileDataSource(Preferences settings, Map<String, String> replacements) {
-		super(settings, replacements);
+	public FileDataSource(Preferences settings, StrSubstitutionFactory substitutionFactory, Map<String, String> replacements) {
+		super(settings, substitutionFactory, replacements);
 	}
 	
 	/* (non-Javadoc)
@@ -132,9 +124,15 @@ public class FileDataSource extends DataSource {
 		FileInputStream input;
 		
 		try {
+			long start = System.currentTimeMillis();
 			log.info("Retrieving input stream for file {}", file);
 			input = new FileInputStream(file);
-			log.info("Input stream for file {} acquired. {} bytes available without blocking IO", file, input.available());
+			long end = System.currentTimeMillis();
+			log.info("Input stream for file {} acquired in {} ms. {} bytes available without blocking IO", new Object[] {
+				file, 
+				end - start, 
+				input.available()
+			});
 		} catch (FileNotFoundException e) {
 			log.error("Exception while retrieving input stream for data source", e);
 			throw e;

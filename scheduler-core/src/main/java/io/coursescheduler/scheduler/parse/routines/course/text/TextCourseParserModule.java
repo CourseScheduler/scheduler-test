@@ -60,9 +60,9 @@ public class TextCourseParserModule extends AbstractModule {
 	protected void configure() {
 		//install a module indicating that TextCourseParserRoutine can be built from a factory with assisted inject
 		log.debug("Installing FactoryModuleBuilder for {} with implementations {}, {}",
-				TextCourseParserRoutineFactory.class,
-				TextCourseParserRoutine.class + " for " + ParserRoutine.class,
-				TextCourseParserRoutine.class + " for " + CourseParserRoutine.class
+			TextCourseParserRoutineFactory.class,
+			TextCourseParserRoutine.class + " for " + ParserRoutine.class,
+			TextCourseParserRoutine.class + " for " + CourseParserRoutine.class
 		);
 		install(new FactoryModuleBuilder()
 			.implement(ParserRoutine.class, TextCourseParserRoutine.class)

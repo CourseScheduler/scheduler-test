@@ -28,6 +28,8 @@
   */
 package io.coursescheduler.scheduler.datasource;
 
+import io.coursescheduler.util.text.StrSubstitutionFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -37,8 +39,12 @@ import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 /**
  * Base class for data source implementations to access data for processing
@@ -64,35 +70,24 @@ public abstract class DataSource extends RecursiveAction {
 	private Preferences settings;
 	
 	/**
-	 * Map of the substitution placeholders to values
+	 * TODO Describe this field
 	 */
-	private Map<String, String> replacements;
+	private StrSubstitutor replacer;
 	
 	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
 	 *
 	 * @param settings the Preferences node containing the configuration for the data source access
-	 */
-	public DataSource(Preferences settings) {
-		super();
-		
-		this.settings = settings;
-		this.replacements = new HashMap<>();
-	}
-	
-	/**
-	 * Create a new DataSource using the specified Preferences node and map of placeholders
-	 * and replacement values
-	 *
-	 * @param settings the Preferences node containing the configuration for the data source access
+	 * @param substitutionFactory factory instance for creating StrSubstitution instances
 	 * @param replacements map of substitution placeholders to values
 	 */
-	public DataSource(Preferences settings, Map<String, String> replacements) {
+	@AssistedInject
+	public DataSource(Preferences settings, StrSubstitutionFactory substitutionFactory, @Assisted("localVars") Map<String, String> replacements) {
 		super();
 		
 		this.settings = settings;
-		this.replacements = replacements;
+		this.replacer = substitutionFactory.createSubstitutor(replacements);
 	}
 	
 	/**
@@ -114,15 +109,7 @@ public abstract class DataSource extends RecursiveAction {
 	public String performReplacements(String input) {
 		String value = input;
 		log.trace("Performing placeholder substitution on string: {}", input);
-		//TODO change to StrSubstitutor based variable substitution
-		
-		//ANALYZE is one pass though the replacements in this way good enough?
-		for(Entry<String, String> replacement: replacements.entrySet()) {
-			log.trace("Performing replacement of {} with {} in {}", new Object[] {replacement.getKey(), replacement.getValue(), value});
-			value = value.replaceAll(Pattern.quote(replacement.getKey()), replacement.getValue());
-			log.trace("Replacement of {} yielded {}", replacement.getKey(), value);
-		}
-		
+		value = replacer.replace(value);		
 		log.debug("Substituted string is: {}", value);
 		return value;
 	}

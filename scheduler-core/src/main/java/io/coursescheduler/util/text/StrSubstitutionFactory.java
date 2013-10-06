@@ -1,7 +1,8 @@
 /**
-  * @(#)StrSubstitutorFactory.java
+  * @(#)StrSubstitutionFactory.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
+  * a StrSubstitutionFactory.
   *
   * @author Mike Reinhold
   * 
@@ -28,52 +29,32 @@
   */
 package io.coursescheduler.util.text;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * TODO Describe this type
+ * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
+ * a StrSubstitutionFactory.
+ * 
+ * Default implementation is {@link io.coursescheduler.util.text.DefaultStrSubstitutionFactory}. This can
+ * be overridden by specifying an alternate binding in a module.
  *
  * @author Mike Reinhold
  *
  */
-public class StrSubstitutorFactory {
-	
-	/**
-	 * Component based logger
-	 */
-	private final Logger log = LoggerFactory.getLogger(getClass().getName());
-	
-	/**
-	 * Map of the global variables that this factory will use when constructing Substitutors.
-	 * This map is fixed at time of StrSubstitutorFactory creation.
-	 */
-	private Map<String, String> globalVars;
-	
-	/**
-	 * Create a new StrSubstitutorFactory that is capable of creating StrSubstitutors with both
-	 * global and local variables for replacement
-	 *
-	 */
-	//TODO inject this class and build the global vars
-	public StrSubstitutorFactory() {
-		super();
-		
-		//TODO add parameters for global variable sources
-	}
+@ImplementedBy(DefaultStrSubstitutorFactory.class)
+public interface StrSubstitutionFactory {
+
 	
 	/**
 	 * Create a new String Substitutor that uses only global variables for replacement
 	 *
 	 * @return a StrSubstitutor that has mappings for global variables 
 	 */
-	public StrSubstitutor createSubstitutor() {
-		return createSubstitutor(null);
-	}
+	public StrSubstitutor createSubstitutor();
 	
 	/**
 	 * Create a new String Substitutor that uses both global and locally provided variables
@@ -82,20 +63,5 @@ public class StrSubstitutorFactory {
 	 * @param localVars the local variables that should be included
 	 * @return a StrSubstitutor that has mappings for global and local variables
 	 */
-	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {
-		Map<String, String> vars = new HashMap<String, String>();
-		
-		log.debug("Adding {} global variables to the string substitutor", globalVars.size());
-		vars.putAll(globalVars);
-		
-		log.debug("Adding {} local variables to the string substitutor", localVars.size());
-		vars.putAll(localVars);
-		
-		StrSubstitutor replacer = new StrSubstitutor(vars);
-		
-		log.debug("Enabling recursive variable substitution");
-		replacer.setEnableSubstitutionInVariables(true);
-		
-		return replacer;
-	}
+	public StrSubstitutor createSubstitutor(Map<String, String> localVars);
 }

@@ -35,6 +35,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFac
 import java.util.Map;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Default ParserRoutineFactory mapping class for retrieving registered ParserRoutineFactory instances based on
@@ -49,17 +50,17 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	/**
 	 * Map of ParserRoutineFactories based on the ParserRoutine internal name
 	 */
-	private Map<String, ParserRoutineFactory> parserFactories; 
+	private Map<String, Provider<ParserRoutineFactory>> parserFactories; 
 	
 	/**
 	 * Map of StreamParserRoutineFactories based on the ParserRoutine internal name
 	 */
-	private Map<String, StreamParserRoutineFactory> streamParserFactories;
+	private Map<String, Provider<StreamParserRoutineFactory>> streamParserFactories;
 	
 	/**
 	 * Map of the CourseParserRoutineFactories based on the ParserRoutine internal name
 	 */
-	private Map<String, CourseParserRoutineFactory> courseParserFactories;
+	private Map<String, Provider<CourseParserRoutineFactory>> courseParserFactories;
 	
 	/**
 	 * Create a new ParserRoutineMap containing Maps of the parser routine names to the factory instances that
@@ -69,7 +70,7 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 * @param courseParserFactories map of internal names to factories for course data parser routines
 	 */
 	@Inject
-	public MapBoundParserRoutineMap(Map<String, ParserRoutineFactory> parserFactories, Map<String, StreamParserRoutineFactory> streamParserFactories, Map<String, CourseParserRoutineFactory> courseParserFactories) {
+	public MapBoundParserRoutineMap(Map<String, Provider<ParserRoutineFactory>> parserFactories, Map<String, Provider<StreamParserRoutineFactory>> streamParserFactories, Map<String, Provider<CourseParserRoutineFactory>> courseParserFactories) {
 		super();
 		
 		this.parserFactories = parserFactories;
@@ -82,7 +83,7 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 */
 	@Override
 	public ParserRoutineFactory getParserRoutineFactory(String key) {
-		return parserFactories.get(key);
+		return parserFactories.get(key).get();
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +91,7 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 */
 	@Override
 	public StreamParserRoutineFactory getStreamParserRoutineFactory(String key) {
-		return streamParserFactories.get(key);
+		return streamParserFactories.get(key).get();
 	}
 	
 	/* (non-Javadoc)
@@ -98,7 +99,7 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 */
 	@Override
 	public CourseParserRoutineFactory getCourseParserRoutineFactory(String key) {
-		return courseParserFactories.get(key);
+		return courseParserFactories.get(key).get();
 	}
 	
 }
