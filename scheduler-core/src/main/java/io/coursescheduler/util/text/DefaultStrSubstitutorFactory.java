@@ -43,7 +43,7 @@ import com.google.inject.Inject;
  * @author Mike Reinhold
  *
  */
-public class DefaultStrSubstitutorFactory implements StrSubstitutionFactory {
+public class DefaultStrSubstitutorFactory implements StrSubstitutorFactory {
 	
 	/**
 	 * Component based logger
@@ -71,7 +71,7 @@ public class DefaultStrSubstitutorFactory implements StrSubstitutionFactory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.text.StrSubstitutionFactory#createSubstitutor()
+	 * @see io.coursescheduler.util.text.StrSubstitutorFactory#createSubstitutor()
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor() {
@@ -79,7 +79,7 @@ public class DefaultStrSubstitutorFactory implements StrSubstitutionFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.text.StrSubstitutionFactory#createSubstitutor(java.util.Map)
+	 * @see io.coursescheduler.util.text.StrSubstitutorFactory#createSubstitutor(java.util.Map)
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {

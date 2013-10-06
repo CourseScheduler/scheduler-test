@@ -2,13 +2,11 @@ package Scheduler;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
-import io.coursescheduler.scheduler.datasource.file.FileDataSource;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
-import io.coursescheduler.util.text.DefaultStrSubstitutorFactory;
 
 import java.awt.Component;
 
@@ -62,7 +60,7 @@ public class Main {
 	
 	protected static final String author = new String("Mike Reinhold");
 	protected static final String maintain = new String("Mike Reinhold");
-	protected static final String email = new String("kuscheduler@gmail.com");
+	protected static final String email = new String("support@coursescheduler.io");
 	protected static final String contributers = new String(
 		"Phil DeMonaco, Alex Thomson, Ryan Murphy, Vlad Patryshev, Rob MacGrogan");
 	
@@ -301,16 +299,18 @@ public class Main {
 			replacements.put("source.path", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
 			replacements.put("source.protocol", "file");
 			
-			//TODO convert this to an injected instantiation
-			DataSource source = new FileDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), new DefaultStrSubstitutorFactory(), replacements);
-			threadPool.invoke(source);
+			//Run the data source
+			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);
+			threadPool.invoke(source);			
 			
-			
+			//Run the parser
 			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
 					source.getDataSourceAsInputStream(),
 					prefFact.getSystemNode("profiles/kettering/parser")
 			);
 			threadPool.invoke(test);
+			
+			//Print the results
 			printTestResults(test.getCourseDataSets());
 		}catch(Exception e){
 			e.printStackTrace();

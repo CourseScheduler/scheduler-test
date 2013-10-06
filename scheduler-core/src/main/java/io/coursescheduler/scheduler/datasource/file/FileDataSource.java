@@ -42,10 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceConstants;
-import io.coursescheduler.util.text.StrSubstitutionFactory;
+import io.coursescheduler.util.text.StrSubstitutorFactory;
 
 /**
  * Implement a File based data source
@@ -107,13 +109,13 @@ public class FileDataSource extends DataSource {
 	/**
 	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
-	 *
-	 * @param settings the Preferences node containing the configuration for the File access
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
+	 * @param settings the Preferences node containing the configuration for the File access
 	 * @param replacements map of substitution placeholders to values
 	 */
-	public FileDataSource(Preferences settings, StrSubstitutionFactory substitutionFactory, Map<String, String> replacements) {
-		super(settings, substitutionFactory, replacements);
+	@AssistedInject
+	public FileDataSource(StrSubstitutorFactory substitutionFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
+		super(substitutionFactory, settings, replacements);
 	}
 	
 	/* (non-Javadoc)

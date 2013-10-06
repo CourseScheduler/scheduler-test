@@ -28,16 +28,13 @@
   */
 package io.coursescheduler.scheduler.datasource;
 
-import io.coursescheduler.util.text.StrSubstitutionFactory;
+import io.coursescheduler.util.text.StrSubstitutorFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
@@ -70,20 +67,19 @@ public abstract class DataSource extends RecursiveAction {
 	private Preferences settings;
 	
 	/**
-	 * TODO Describe this field
+	 * String substitutor that will perform variable replacement in configuration elements 
 	 */
 	private StrSubstitutor replacer;
 	
 	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
-	 *
-	 * @param settings the Preferences node containing the configuration for the data source access
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
+	 * @param settings the Preferences node containing the configuration for the data source access
 	 * @param replacements map of substitution placeholders to values
 	 */
 	@AssistedInject
-	public DataSource(Preferences settings, StrSubstitutionFactory substitutionFactory, @Assisted("localVars") Map<String, String> replacements) {
+	public DataSource(StrSubstitutorFactory substitutionFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
 		super();
 		
 		this.settings = settings;

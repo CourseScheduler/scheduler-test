@@ -28,6 +28,11 @@
   */
 package io.coursescheduler.scheduler.datasource.file;
 
+import java.util.Map;
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.Assisted;
+
 import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 
 /**
@@ -47,4 +52,9 @@ public interface FileDataSourceFactory extends DataSourceFactory {
 	 */
 	public static final String DATA_SOURCE_INTERNAL_NAME = "file-uri";
 	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.datasource.DataSourceFactory#createDataSource(java.util.prefs.Preferences, java.util.Map)
+	 */
+	@Override
+	public FileDataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements);
 }

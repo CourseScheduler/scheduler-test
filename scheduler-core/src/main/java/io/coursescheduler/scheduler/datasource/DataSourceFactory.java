@@ -28,6 +28,11 @@
   */
 package io.coursescheduler.scheduler.datasource;
 
+import java.util.Map;
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * Factory interface for Data Source implementations
  *
@@ -35,5 +40,14 @@ package io.coursescheduler.scheduler.datasource;
  *
  */
 public interface DataSourceFactory {
+	
+	/**
+	 * Create a new DataSource using the specified configuration node and the specified local variables
+	 *
+	 * @param settings the configuration node containing the settings for the DataSource
+	 * @param replacements the local variables that can be used for replacements
+	 * @return the DataSource
+	 */
+	public DataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements);
 	
 }

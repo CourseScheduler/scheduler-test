@@ -1,8 +1,8 @@
 /**
-  * @(#)StrSubstitutionFactory.java
+  * @(#)StrSubstitutorFactory.java
   *
   * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
-  * a StrSubstitutionFactory.
+  * a StrSubstitutorFactory.
   *
   * @author Mike Reinhold
   * 
@@ -37,7 +37,7 @@ import com.google.inject.ImplementedBy;
 
 /**
  * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
- * a StrSubstitutionFactory.
+ * a StrSubstitutorFactory.
  * 
  * Default implementation is {@link io.coursescheduler.util.text.DefaultStrSubstitutionFactory}. This can
  * be overridden by specifying an alternate binding in a module.
@@ -46,7 +46,7 @@ import com.google.inject.ImplementedBy;
  *
  */
 @ImplementedBy(DefaultStrSubstitutorFactory.class)
-public interface StrSubstitutionFactory {
+public interface StrSubstitutorFactory {
 
 	
 	/**
