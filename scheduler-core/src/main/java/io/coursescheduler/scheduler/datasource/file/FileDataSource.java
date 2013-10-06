@@ -99,7 +99,7 @@ public class FileDataSource extends DataSource {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * File that will be used as the Data Source

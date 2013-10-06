@@ -75,7 +75,7 @@ public class DefaultStrSubstitutorFactory implements StrSubstitutorFactory {
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor() {
-		return createSubstitutor(null);
+		return createSubstitutor(new HashMap<String, String>());
 	}
 
 	/* (non-Javadoc)
