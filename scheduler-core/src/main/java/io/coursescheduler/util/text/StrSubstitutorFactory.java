@@ -29,11 +29,16 @@
   */
 package io.coursescheduler.util.text;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.ImplementedBy;
+import com.google.inject.Inject;
 
 /**
  * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
@@ -46,15 +51,65 @@ import com.google.inject.ImplementedBy;
  *
  */
 @ImplementedBy(DefaultStrSubstitutorFactory.class)
-public interface StrSubstitutorFactory {
+public abstract class StrSubstitutorFactory {
+	
+	/**
+	 * Component based logger
+	 */
+	private final Logger log = LoggerFactory.getLogger(getClass().getName());
 
+	/**
+	 * Map of the global variables that this factory will use when constructing Substitutors.
+	 * This map is fixed at time of DefaultStrSubstitutorFactory creation.
+	 */
+	private Map<String, String> globalVars;
+	
+	/**
+	 * Create a new StrSubstitutorFactory using the specified sources for global variables
+	 *
+	 * @param globalSources the set of sources for global variables
+	 */
+	@Inject
+	public StrSubstitutorFactory(Set<GlobalSubstitutionVariableSource> globalSources) {
+		super();
+
+		globalVars = buildGlobalVars(globalSources);
+	}
+	
+	/**
+	 * Build the global variables from the set of global variable sources
+	 *
+	 * @param globalSources the set of sources for global variables
+	 * 
+	 * @return the map of global variables
+	 */
+	private Map<String, String> buildGlobalVars(Set<GlobalSubstitutionVariableSource> globalSources) {
+		Map<String, String> vars = new HashMap<>();
+		log.debug("Preparing to build global variables");
+		for(GlobalSubstitutionVariableSource source : globalSources) {
+			Map<String, String> sourceVars = source.getVariableMap();
+			vars.putAll(sourceVars);
+			log.trace("Found global var source {} with {} entries", source, sourceVars.size());
+		}
+		log.debug("Built global variable map with {} entries", vars.size());
+		return vars;
+	}
+	
+	/**
+	 * A map of the global variables and their values
+	 *
+	 * @return a map of the global variables
+	 */
+	protected Map<String, String> getGlobalVariables(){
+		return globalVars;
+	}
 	
 	/**
 	 * Create a new String Substitutor that uses only global variables for replacement
 	 *
 	 * @return a StrSubstitutor that has mappings for global variables 
 	 */
-	public StrSubstitutor createSubstitutor();
+	public abstract StrSubstitutor createSubstitutor();
 	
 	/**
 	 * Create a new String Substitutor that uses both global and locally provided variables
@@ -63,5 +118,5 @@ public interface StrSubstitutorFactory {
 	 * @param localVars the local variables that should be included
 	 * @return a StrSubstitutor that has mappings for global and local variables
 	 */
-	public StrSubstitutor createSubstitutor(Map<String, String> localVars);
+	public abstract StrSubstitutor createSubstitutor(Map<String, String> localVars);
 }

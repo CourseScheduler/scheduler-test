@@ -30,6 +30,7 @@ package io.coursescheduler.util.text;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ import com.google.inject.Inject;
  * @author Mike Reinhold
  *
  */
-public class DefaultStrSubstitutorFactory implements StrSubstitutorFactory {
+public class DefaultStrSubstitutorFactory extends StrSubstitutorFactory {
 	
 	/**
 	 * Component based logger
@@ -51,23 +52,13 @@ public class DefaultStrSubstitutorFactory implements StrSubstitutorFactory {
 	private final Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * Map of the global variables that this factory will use when constructing Substitutors.
-	 * This map is fixed at time of DefaultStrSubstitutorFactory creation.
-	 */
-	private Map<String, String> globalVars;
-	
-	/**
 	 * Create a new DefaultStrSubstitutorFactory that is capable of creating StrSubstitutors with both
 	 * global and local variables for replacement
 	 *
 	 */
 	@Inject
-	public DefaultStrSubstitutorFactory() {
-		super();
-		
-		globalVars = new HashMap<>();
-		
-		//TODO add parameters for global variable sources
+	public DefaultStrSubstitutorFactory(Set<GlobalSubstitutionVariableSource> globalSources) {
+		super(globalSources);
 	}
 	
 	/* (non-Javadoc)
@@ -85,8 +76,8 @@ public class DefaultStrSubstitutorFactory implements StrSubstitutorFactory {
 	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {
 		Map<String, String> vars = new HashMap<String, String>();
 		
-		log.debug("Adding {} global variables to the string substitutor", globalVars.size());
-		vars.putAll(globalVars);
+		log.debug("Adding {} global variables to the string substitutor", getGlobalVariables().size());
+		vars.putAll(getGlobalVariables());
 		
 		log.debug("Adding {} local variables to the string substitutor", localVars.size());
 		vars.putAll(localVars);
