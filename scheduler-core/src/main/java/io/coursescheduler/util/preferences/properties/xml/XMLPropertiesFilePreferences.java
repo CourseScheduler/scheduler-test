@@ -72,7 +72,7 @@ public class XMLPropertiesFilePreferences extends PropertiesFilePreferences {
 	 */
 	@Override
 	protected String getFileExtension() {
-		return "xml";
+		return "properties.xml";
 	}
 
 	/* (non-Javadoc)
