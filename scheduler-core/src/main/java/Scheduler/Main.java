@@ -292,19 +292,12 @@ public class Main {
 			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
 			DataSourceMap dataSourceMap = injector.getInstance(DataSourceMap.class);
 			ForkJoinPool threadPool = new ForkJoinPool();
-			StrSubstitutorFactory subsFactory = injector.getInstance(StrSubstitutorFactory.class);
 			
 			//TODO replace with a real "replacements" object that includes helper methods
 			Map<String, String> replacements = new HashMap<>();
-			replacements.put("dir.data","Data");		//TODO move these directory variables to a directory variable map class
-			replacements.put("dir.tmp", "tmp");		//TODO move these directory variables to a directory variable map class
 			replacements.put("source.file", "ku_scheduler_3.xml");
 			replacements.put("source.path", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
 			replacements.put("source.protocol", "file");
-			
-			StrSubstitutor subs = subsFactory.createSubstitutor();
-			String testEnv = subs.replace("${env.APPDATA}");
-			String testSyst = subs.replace("${system.os.arch}");
 			
 			//Run the data source
 			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);
@@ -385,6 +378,7 @@ public class Main {
 		
 		//default component module definitions
 		modules.put("preferences", "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesModule");
+		modules.put("directories", "io.coursescheduler.scheduler.directory.ApplicationDirectoryModule");
 		return modules;
 	}
 	
