@@ -344,7 +344,7 @@ public class Main {
 				ScanningLoaderModule.of(AbstractModule.class, 
 					"io.coursescheduler.scheduler.parse",
 					"io.coursescheduler.scheduler.datasource",
-					"io.coursescheduler.util.system"
+					"io.coursescheduler.util.variable"
 				)
 		);
 		log.info("Guice subsystem initialized");

@@ -26,12 +26,12 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.system;
+package io.coursescheduler.util.variable.system;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.coursescheduler.util.text.GlobalSubstitutionVariableSource;
+import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;

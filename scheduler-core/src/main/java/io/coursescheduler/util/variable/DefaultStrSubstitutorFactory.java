@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.text;
+package io.coursescheduler.util.variable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +62,7 @@ public class DefaultStrSubstitutorFactory extends StrSubstitutorFactory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.text.StrSubstitutorFactory#createSubstitutor()
+	 * @see io.coursescheduler.util.variable.StrSubstitutorFactory#createSubstitutor()
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor() {
@@ -70,7 +70,7 @@ public class DefaultStrSubstitutorFactory extends StrSubstitutorFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.text.StrSubstitutorFactory#createSubstitutor(java.util.Map)
+	 * @see io.coursescheduler.util.variable.StrSubstitutorFactory#createSubstitutor(java.util.Map)
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {

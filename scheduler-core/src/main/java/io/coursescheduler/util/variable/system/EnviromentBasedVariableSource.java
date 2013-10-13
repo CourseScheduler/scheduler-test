@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.system;
+package io.coursescheduler.util.variable.system;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.coursescheduler.util.text.GlobalSubstitutionVariableSource;
+import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
 
 /**
  * A Global Substitution Variable Source that retrieves environment variables for use in substitution
@@ -56,7 +56,7 @@ public class EnviromentBasedVariableSource implements GlobalSubstitutionVariable
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.text.SubstitutionVariableSource#getVariableMap()
+	 * @see io.coursescheduler.util.variable.SubstitutionVariableSource#getVariableMap()
 	 */
 	@Override
 	public Map<String, String> getVariableMap() {

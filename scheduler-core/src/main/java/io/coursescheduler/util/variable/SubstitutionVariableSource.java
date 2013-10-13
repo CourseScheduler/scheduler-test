@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.text;
+package io.coursescheduler.util.variable;
 
 import java.util.Map;
 

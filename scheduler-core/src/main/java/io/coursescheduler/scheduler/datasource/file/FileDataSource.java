@@ -47,7 +47,7 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceConstants;
-import io.coursescheduler.util.text.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.StrSubstitutorFactory;
 
 /**
  * Implement a File based data source

@@ -26,9 +26,9 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.system;
+package io.coursescheduler.util.variable.system;
 
-import io.coursescheduler.util.text.GlobalSubstitutionVariableSource;
+import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

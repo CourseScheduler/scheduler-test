@@ -27,7 +27,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.util.text;
+package io.coursescheduler.util.variable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ import com.google.inject.Inject;
  * Factory interface for StrSubstitution factory classes. Used to allow for multiple implementations of 
  * a StrSubstitutorFactory.
  * 
- * Default implementation is {@link io.coursescheduler.util.text.DefaultStrSubstitutionFactory}. This can
+ * Default implementation is {@link io.coursescheduler.util.variable.DefaultStrSubstitutionFactory}. This can
  * be overridden by specifying an alternate binding in a module.
  *
  * @author Mike Reinhold

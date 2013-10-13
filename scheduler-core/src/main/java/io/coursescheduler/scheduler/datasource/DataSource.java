@@ -28,7 +28,7 @@
   */
 package io.coursescheduler.scheduler.datasource;
 
-import io.coursescheduler.util.text.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.StrSubstitutorFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
