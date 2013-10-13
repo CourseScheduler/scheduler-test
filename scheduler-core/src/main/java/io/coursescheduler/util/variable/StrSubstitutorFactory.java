@@ -29,13 +29,10 @@
   */
 package io.coursescheduler.util.variable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.ImplementedBy;
 import com.google.inject.Inject;
@@ -53,55 +50,30 @@ import com.google.inject.Inject;
 @ImplementedBy(DefaultStrSubstitutorFactory.class)
 public abstract class StrSubstitutorFactory {
 	
-	/**
-	 * Component based logger
-	 */
-	private final Logger log = LoggerFactory.getLogger(getClass().getName());
 
 	/**
-	 * Map of the global variables that this factory will use when constructing Substitutors.
-	 * This map is fixed at time of DefaultStrSubstitutorFactory creation.
+	 * The map of namespaces to sources that provide access to Global Variables for substitution purposes
 	 */
-	private Map<String, String> globalVars;
-	
+	private Set<GlobalSubstitutionVariableSource> globalSources;
+
 	/**
 	 * Create a new StrSubstitutorFactory using the specified sources for global variables
 	 *
-	 * @param globalSources the set of sources for global variables
 	 */
 	@Inject
 	public StrSubstitutorFactory(Set<GlobalSubstitutionVariableSource> globalSources) {
 		super();
 
-		globalVars = buildGlobalVars(globalSources);
+		this.globalSources = globalSources;
 	}
 	
 	/**
-	 * Build the global variables from the set of global variable sources
-	 *
-	 * @param globalSources the set of sources for global variables
+	 * Return the map of sources for global variables.
 	 * 
-	 * @return the map of global variables
+	 * @return the global variable sources
 	 */
-	private Map<String, String> buildGlobalVars(Set<GlobalSubstitutionVariableSource> globalSources) {
-		Map<String, String> vars = new HashMap<>();
-		log.debug("Preparing to build global variables");
-		for(GlobalSubstitutionVariableSource source : globalSources) {
-			Map<String, String> sourceVars = source.getVariableMap();
-			vars.putAll(sourceVars);
-			log.trace("Found global var source {} with {} entries", source, sourceVars.size());
-		}
-		log.debug("Built global variable map with {} entries", vars.size());
-		return vars;
-	}
-	
-	/**
-	 * A map of the global variables and their values
-	 *
-	 * @return a map of the global variables
-	 */
-	protected Map<String, String> getGlobalVariables(){
-		return globalVars;
+	protected Set<GlobalSubstitutionVariableSource> getGlobalSources() {
+		return globalSources;
 	}
 	
 	/**

@@ -30,22 +30,24 @@
   */
 package io.coursescheduler.util.variable;
 
-import java.util.Map;
+import org.apache.commons.lang3.text.StrLookup;
+
 
 /**
- * Interface for classes that provide access to variables that can be used by the 
+ * Abstract base class for classes that provide access to variables that can be used by the 
  * StrSubstitutor. Implementations of this class may provide access to global or
  * scope localized variables. 
  *
  * @author Mike Reinhold
  *
  */
-public interface SubstitutionVariableSource {
+public abstract class SubstitutionVariableSource extends StrLookup<String> {
 	
 	/**
-	 * Return a map of the substitution variables. 
-	 *
-	 * @return the Map of keys and values encapsulated by this SubstitutionVariableSource
+	 * String that is used to separate the namespace from the variable name. This string
+	 * is used by global variables to ensure that global variables from different sources
+	 * do not collide.
 	 */
-	public Map<String, String> getVariableMap();
+	public static final String NAMESPACE_SEPARATOR = ".";
+	
 }

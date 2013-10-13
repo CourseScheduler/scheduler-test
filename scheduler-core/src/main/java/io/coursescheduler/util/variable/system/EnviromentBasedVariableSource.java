@@ -28,9 +28,7 @@
   */
 package io.coursescheduler.util.variable.system;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.lang3.text.StrLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,40 +40,44 @@ import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
  * @author Mike Reinhold
  *
  */
-public class EnviromentBasedVariableSource implements GlobalSubstitutionVariableSource {
+public class EnviromentBasedVariableSource extends GlobalSubstitutionVariableSource {
 	
 	/**
 	 * A string that is prepended to the property name in order to ensure that other global
 	 * variables are not aliased or overwritten by these properties. 
 	 */
-	private static final String VARIABLE_PREFIX = "env";
+	private static final String VARIABLE_PREFIX = "env" + NAMESPACE_SEPARATOR;
 	
 	/**
 	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
+	/**
+	 * Internal StrLookup instance that contains the non-prefixed lookup values for the
+	 * system environment
+	 */
+	private StrLookup<String> environment = StrLookup.mapLookup(System.getenv());
+
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.variable.SubstitutionVariableSource#getVariableMap()
+	 * @see org.apache.commons.lang3.text.StrLookup#lookup(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getVariableMap() {
-		Map<String, String> variables = new HashMap<>();
-		Map<String, String> env = System.getenv();
-		
-		log.debug("Building System Property variable map");
-		for(String property : env.keySet()) {
-			String newKey = VARIABLE_PREFIX + "." + property;
-			String value = env.get(property);
+	public String lookup(String variable) {
+		String value;
+		if(variable.startsWith(VARIABLE_PREFIX)) {
+			log.debug("Variable {} uses environment prefix", variable);
+			String envVariable = variable.substring(VARIABLE_PREFIX.length());
+			log.debug("Searching environment for variable {}", envVariable);
 			
-			log.trace("Adding Environment Variable {} to the system global variable map as {} with value {}", new Object[] {
-				property, newKey, value
-			});
-			variables.put(newKey, value);
+			value = environment.lookup(envVariable);
+			log.debug("Found value {} for environment variable {}", value, envVariable);
+		}else{
+			log.debug("Variable {} does not begin with the environment prefix {}, returning null", variable, VARIABLE_PREFIX);
+			value = null;
 		}
-		log.debug("Environment Variable map built with {} entries", variables.size());
 		
-		return variables;
+		return value;
 	}
 	
 }

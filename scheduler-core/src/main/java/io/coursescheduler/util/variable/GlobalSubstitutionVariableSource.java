@@ -32,7 +32,7 @@
 package io.coursescheduler.util.variable;
 
 /**
- * Interface extension for SubstitutionVariableSource that differentiates between global
+ * Class extension for SubstitutionVariableSource that differentiates between global
  * substitution variables and scope-local substitution variables. Global substitution
  * variables should be properly bound in the set binder for this interface so that the
  * variables can automatically be included
@@ -40,6 +40,6 @@ package io.coursescheduler.util.variable;
  * @author Mike Reinhold
  *
  */
-public interface GlobalSubstitutionVariableSource extends SubstitutionVariableSource {
+public abstract class GlobalSubstitutionVariableSource extends SubstitutionVariableSource {
 	
 }

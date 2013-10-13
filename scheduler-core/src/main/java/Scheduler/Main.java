@@ -7,6 +7,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.variable.StrSubstitutorFactory;
 
 import java.awt.Component;
 
@@ -20,6 +21,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -290,6 +292,7 @@ public class Main {
 			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
 			DataSourceMap dataSourceMap = injector.getInstance(DataSourceMap.class);
 			ForkJoinPool threadPool = new ForkJoinPool();
+			StrSubstitutorFactory subsFactory = injector.getInstance(StrSubstitutorFactory.class);
 			
 			//TODO replace with a real "replacements" object that includes helper methods
 			Map<String, String> replacements = new HashMap<>();
@@ -298,6 +301,10 @@ public class Main {
 			replacements.put("source.file", "ku_scheduler_3.xml");
 			replacements.put("source.path", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
 			replacements.put("source.protocol", "file");
+			
+			StrSubstitutor subs = subsFactory.createSubstitutor();
+			String testEnv = subs.replace("${env.APPDATA}");
+			String testSyst = subs.replace("${system.os.arch}");
 			
 			//Run the data source
 			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);

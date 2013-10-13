@@ -29,9 +29,11 @@
 package io.coursescheduler.util.variable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,15 +76,15 @@ public class DefaultStrSubstitutorFactory extends StrSubstitutorFactory {
 	 */
 	@Override
 	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {
-		Map<String, String> vars = new HashMap<String, String>();
+		Set<StrLookup<String>> sources = new HashSet<>();
 		
-		log.debug("Adding {} global variables to the string substitutor", getGlobalVariables().size());
-		vars.putAll(getGlobalVariables());
+		log.debug("Using {} global variable sources for variable lookup", getGlobalSources().size());
+		sources.addAll(getGlobalSources());
 		
-		log.debug("Adding {} local variables to the string substitutor", localVars.size());
-		vars.putAll(localVars);
+		log.debug("Using MapLookup instance for access to {} local variables", localVars.size());
+		sources.add(StrLookup.mapLookup(localVars));
 		
-		StrSubstitutor replacer = new StrSubstitutor(vars);
+		StrSubstitutor replacer = new StrSubstitutor(new DispatchingVariableSource(sources));
 		
 		log.debug("Enabling recursive variable substitution");
 		replacer.setEnableSubstitutionInVariables(true);

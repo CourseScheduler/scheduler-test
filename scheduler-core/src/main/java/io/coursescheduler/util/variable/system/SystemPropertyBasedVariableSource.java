@@ -28,9 +28,7 @@
   */
 package io.coursescheduler.util.variable.system;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.lang3.text.StrLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,39 +40,44 @@ import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
  * @author Mike Reinhold
  *
  */
-public class SystemPropertyBasedVariableSource implements GlobalSubstitutionVariableSource {
+public class SystemPropertyBasedVariableSource extends GlobalSubstitutionVariableSource {
 	
 	/**
 	 * A string that is prepended to the property name in order to ensure that other global
 	 * variables are not aliased or overwritten by these properties. 
 	 */
-	private static final String VARIABLE_PREFIX = "system";
+	private static final String VARIABLE_PREFIX = "system" + NAMESPACE_SEPARATOR;
 	
 	/**
 	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
+	/**
+	 * Internal StrLookup that contains the non-prefixed lookup values for the system  
+	 * properties
+	 */
+	StrLookup<String> properties = StrLookup.systemPropertiesLookup();
+
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.util.variable.SubstitutionVariableSource#getVariableMap()
+	 * @see org.apache.commons.lang3.text.StrLookup#lookup(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getVariableMap() {
-		Map<String, String> variables = new HashMap<>();
-		
-		log.debug("Building System Property variable map");
-		for(String property : System.getProperties().stringPropertyNames()) {
-			String newKey = VARIABLE_PREFIX + "." + property;
-			String value = System.getProperty(property);
+	public String lookup(String variable) {
+		String value;
+		if(variable.startsWith(VARIABLE_PREFIX)) {
+			log.debug("Variable {} uses system properties prefix", variable);
+			String sysVariable = variable.substring(VARIABLE_PREFIX.length());
+			log.debug("Searching system properties for variable {}", sysVariable);
 			
-			log.trace("Adding System Property {} to the system global variable map as {} with value {}", new Object[] {
-				property, newKey, value
-			});
-			variables.put(newKey, value);
+			value = properties.lookup(sysVariable);
+			log.debug("Found value {} for system properties variable {}", value, sysVariable);
+		}else{
+			log.debug("Variable {} does not begin with the system properties prefix {}, returning null", variable, VARIABLE_PREFIX);
+			value = null;
 		}
-		log.debug("System Property map built with {} entries", variables.size());
 		
-		return variables;
+		return value;
 	}
 	
 }
