@@ -29,7 +29,7 @@
 package io.coursescheduler.scheduler.datasource;
 
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
-import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableSource;
+import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,18 +86,25 @@ public abstract class DataSource extends RecursiveAction {
 	private StrSubstitutorFactory substitutorFactory;
 	
 	/**
+	 * Factory instance for creating Preferences based variable sources
+	 */
+	private PreferencesBasedVariableFactory prefSourceFactory;
+	
+	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
+	 * @param prefSourceFactory factory instance for creating PreferencesBasedVariableSource instances
 	 * @param settings the Preferences node containing the configuration for the data source access
 	 * @param replacements map of substitution placeholders to values
 	 */
 	@AssistedInject
-	public DataSource(StrSubstitutorFactory substitutionFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
+	public DataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
 		super();
 		
 		this.settings = settings;
 		this.substitutorFactory = substitutionFactory;
+		this.prefSourceFactory = prefSourceFactory;
 		this.replacements = replacements;
 		
 		setReplacerPreferencesNode(settings);
@@ -121,7 +128,7 @@ public abstract class DataSource extends RecursiveAction {
 	protected void setReplacerPreferencesNode(Preferences node) {
 		Set<StrLookup<String>> sources = new HashSet<>();
 		log.debug("Creating Preferences Variable Source from preferences node {}", node);
-		sources.add(new PreferencesBasedVariableSource(node));	//TODO change this to factory creation
+		sources.add(prefSourceFactory.createPreferencesVariableSource(node));
 		log.debug("Creating MapLookup Variable Source from map {}", replacements);
 		sources.add(StrLookup.mapLookup(replacements));
 		

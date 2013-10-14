@@ -33,6 +33,9 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 /**
@@ -58,7 +61,8 @@ public class PreferencesBasedVariableSource extends SubstitutionVariableSource {
 	 *
 	 * @param node the backing preferences node
 	 */
-	public PreferencesBasedVariableSource(Preferences node) {
+	@AssistedInject
+	public PreferencesBasedVariableSource(@Assisted("config") Preferences node) {
 		super();
 		
 		this.node = node;

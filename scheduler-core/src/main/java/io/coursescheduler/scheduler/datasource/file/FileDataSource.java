@@ -48,6 +48,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceConstants;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 /**
  * Implement a File based data source
@@ -110,12 +111,13 @@ public class FileDataSource extends DataSource {
 	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
+	 * @param prefSourceFactory factory instance for creating PreferencesBasedVariableSource instances
 	 * @param settings the Preferences node containing the configuration for the File access
 	 * @param replacements map of substitution placeholders to values
 	 */
 	@AssistedInject
-	public FileDataSource(StrSubstitutorFactory substitutionFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
-		super(substitutionFactory, settings, replacements);
+	public FileDataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
+		super(substitutionFactory, prefSourceFactory, settings, replacements);
 	}
 	
 	/* (non-Javadoc)
