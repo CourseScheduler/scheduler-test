@@ -5,4 +5,7 @@
 	<entry key="file-path-template">${dir.data}/${source.file}</entry>
 	<entry key="file-save-copy">true</entry>
 	<entry key="file-copy-path-template">${dir.tmp}/${source.file}</entry>
+	<entry key="source.file">ku_scheduler_3.xml</entry>
+	<entry key="source.path">/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data</entry>
+	<entry key="source.protocol">file</entry>
 </properties>

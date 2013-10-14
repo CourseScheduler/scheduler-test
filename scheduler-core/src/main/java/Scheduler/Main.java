@@ -295,9 +295,6 @@ public class Main {
 			
 			//TODO replace with a real "replacements" object that includes helper methods
 			Map<String, String> replacements = new HashMap<>();
-			replacements.put("source.file", "ku_scheduler_3.xml");
-			replacements.put("source.path", "/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data");
-			replacements.put("source.protocol", "file");
 			
 			//Run the data source
 			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);

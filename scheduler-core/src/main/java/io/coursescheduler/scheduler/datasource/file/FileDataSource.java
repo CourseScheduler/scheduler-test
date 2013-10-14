@@ -150,6 +150,7 @@ public class FileDataSource extends DataSource {
 	protected void compute() {
 		log.info("Computing data source");
 		Preferences config = getSettings().node(DataSourceConstants.GENERAL_SETTINGS_NODE);
+		setReplacerPreferencesNode(config);
 		File source = null;
 		
 		try {

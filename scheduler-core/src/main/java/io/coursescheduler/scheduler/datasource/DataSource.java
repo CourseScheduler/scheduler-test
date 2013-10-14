@@ -29,13 +29,17 @@
 package io.coursescheduler.scheduler.datasource;
 
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableSource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 
+import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,9 +71,19 @@ public abstract class DataSource extends RecursiveAction {
 	private Preferences settings;
 	
 	/**
+	 * Map of variable names and values
+	 */
+	private Map<String, String> replacements;
+
+	/**
 	 * String substitutor that will perform variable replacement in configuration elements 
 	 */
 	private StrSubstitutor replacer;
+	
+	/**
+	 * The substitutor factory which can be used to create new StrSubstitutor instances
+	 */
+	private StrSubstitutorFactory substitutorFactory;
 	
 	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
@@ -83,7 +97,10 @@ public abstract class DataSource extends RecursiveAction {
 		super();
 		
 		this.settings = settings;
-		this.replacer = substitutionFactory.createSubstitutor(replacements);
+		this.substitutorFactory = substitutionFactory;
+		this.replacements = replacements;
+		
+		setReplacerPreferencesNode(settings);
 	}
 	
 	/**
@@ -97,12 +114,37 @@ public abstract class DataSource extends RecursiveAction {
 	public abstract InputStream getDataSourceAsInputStream() throws IOException;
 	
 	/**
+	 * Update the preferences node used by the current string substituter instance
+	 *
+	 * @param node the new preferences node for variable reference
+	 */
+	protected void setReplacerPreferencesNode(Preferences node) {
+		Set<StrLookup<String>> sources = new HashSet<>();
+		log.debug("Creating Preferences Variable Source from preferences node {}", node);
+		sources.add(new PreferencesBasedVariableSource(node));	//TODO change this to factory creation
+		log.debug("Creating MapLookup Variable Source from map {}", replacements);
+		sources.add(StrLookup.mapLookup(replacements));
+		
+		this.replacer = substitutorFactory.createSubstitutor(sources);
+	}
+	
+	/**
+	 * Retrieve the current Map of variable names and values used by the replacer. 
+	 * Warning: modifications to htis map will be reflected by the string substitutor
+	 * 
+	 * @return the map of substitutions
+	 */
+	protected Map<String, String> getReplacements() {
+		return replacements;
+	}
+	
+	/**
 	 * Perform the string replacements and return the resultant value
 	 *
 	 * @param input the string upon which to perform the replacements
 	 * @return the updated string value
 	 */
-	public String performReplacements(String input) {
+	protected String performReplacements(String input) {
 		String value = input;
 		log.trace("Performing placeholder substitution on string: {}", input);
 		value = replacer.replace(value);		

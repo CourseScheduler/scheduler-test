@@ -78,11 +78,21 @@ public class DefaultStrSubstitutorFactory extends StrSubstitutorFactory {
 	public StrSubstitutor createSubstitutor(Map<String, String> localVars) {
 		Set<StrLookup<String>> sources = new HashSet<>();
 		
+		log.debug("Converting variable map containing {} local variables to a MapLookup local source", localVars.size());
+		sources.add(StrLookup.mapLookup(localVars));
+		
+		return createSubstitutor(sources);
+	}
+
+	@Override
+	public StrSubstitutor createSubstitutor(Set<StrLookup<String>> localSources) {
+		Set<StrLookup<String>> sources = new HashSet<>();
+		
 		log.debug("Using {} global variable sources for variable lookup", getGlobalSources().size());
 		sources.addAll(getGlobalSources());
 		
-		log.debug("Using MapLookup instance for access to {} local variables", localVars.size());
-		sources.add(StrLookup.mapLookup(localVars));
+		log.debug("Using {} local variable sources for variable lookup", localSources.size());
+		sources.addAll(localSources);
 		
 		StrSubstitutor replacer = new StrSubstitutor(new DispatchingVariableSource(sources));
 		

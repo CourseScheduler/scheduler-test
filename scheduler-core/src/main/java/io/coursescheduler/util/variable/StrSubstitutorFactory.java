@@ -32,6 +32,7 @@ package io.coursescheduler.util.variable;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import com.google.inject.ImplementedBy;
@@ -91,4 +92,14 @@ public abstract class StrSubstitutorFactory {
 	 * @return a StrSubstitutor that has mappings for global and local variables
 	 */
 	public abstract StrSubstitutor createSubstitutor(Map<String, String> localVars);
+	
+	/**
+	 * Create a new String Substitutor that uses both global and locally provided variables
+	 * for replacement
+	 *
+	 * @param localSources sources for local variables that should be included
+	 * @return a StrSubstitutor that has mappings for global and local variables
+	 */
+	public abstract StrSubstitutor createSubstitutor(Set<StrLookup<String>> localSources);
+	
 }
