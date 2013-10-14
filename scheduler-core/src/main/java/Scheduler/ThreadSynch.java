@@ -33,12 +33,11 @@ package Scheduler;								//declare as member of scheduler package
 /*********************************************************
  * The following imports are necessary for this class
 *********************************************************/
-import io.coursescheduler.scheduler.retrieval.BannerDynamicCourseRetrieval;
-
 import java.util.ArrayList;						//for storing lists
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;						//for the worker thread list
+
 import javax.swing.SwingWorker;					//the worker threads are SwingWorkers
 import javax.swing.ProgressMonitor;				//for monitoring the progress
 

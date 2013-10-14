@@ -42,8 +42,6 @@ package Scheduler;								//define as member of Scheduler package
  * Import Progress Monitor generic for monitoring downloads
  * Import JOption Pane for gui messages
 *********************************************************/
-import io.coursescheduler.scheduler.retrieval.BannerDynamicCourseRetrieval;
-
 import java.io.IOException;						//import IOExceptions
 import java.io.File;							//import File class
 import java.net.MalformedURLException;
@@ -52,6 +50,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;						//import scanner
+
 import javax.swing.JOptionPane;					//Import message pane
 
 
