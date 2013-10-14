@@ -60,7 +60,7 @@ public class XMLParserConstants {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String COURSE_ID_VARIABLE = "${course.id}";
+	public static final String COURSE_ID_VARIABLE = "course.id";
 
 	/**
 	 * Property for retrieving the ParserTool to use for extracting data from the data source

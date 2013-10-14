@@ -43,18 +43,22 @@ package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.tools.xml.AbstractXMLParserTool;
+import io.coursescheduler.util.variable.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -138,13 +142,25 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	private XPath xPath;
 	
 	/**
+	 * String substitution factory for creating String Substitutors
+	 */
+	private StrSubstitutorFactory subsFactory;
+	
+	/**
+	 * Preferences based variable factory for creating Preferences based variable sources
+	 */
+	private PreferencesBasedVariableFactory prefFactory;
+	
+	/**
 	 * Create a new XPath XML ParserTool for retrieving DOM nodes.
 	 */
 	@Inject
-	public XPathParserTool() {
+	public XPathParserTool(StrSubstitutorFactory subsFactory, PreferencesBasedVariableFactory prefFactory) {
 		super();
 		
 		this.xPath = XPathFactory.newInstance().newXPath();
+		this.subsFactory = subsFactory;
+		this.prefFactory = prefFactory;
 	}
 
 	/* (non-Javadoc)
@@ -188,26 +204,6 @@ public class XPathParserTool extends AbstractXMLParserTool {
 		return retrieveNodeList(node, query);
 	}
 	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
-	 */
-	@Override
-	public NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
-		String query = settings.get(key, null);
-		log.trace("Performing placeholder substitution on string: {}", query);
-		
-		//ANALYZE is one pass though the replacements in this way good enough?
-		for(Entry<String, String> replacement: replacements.entrySet()) {
-			log.trace("Performing replacement of {} with {} in {}", new Object[] {replacement.getKey(), replacement.getValue(), query});
-			query = query.replaceAll(Pattern.quote(replacement.getKey()), replacement.getValue());
-			log.trace("Replacement of {} yielded {}", replacement.getKey(), query);
-		}
-		
-		log.debug("Substituted string is: {}", query);
-		
-		return retrieveNodeList(node, query);
-	}
-	
 	/**
 	 * Execute the specified XPath expression on a DOM Node and return the resulting NodeList
 	 *
@@ -223,6 +219,28 @@ public class XPathParserTool extends AbstractXMLParserTool {
 			log.error("Exception retrieving node set from query {} starting at node {}", query, node, e);
 			throw new ParseException(e);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
+		String query = settings.get(key, null);
+		log.trace("Performing placeholder substitution on string: {}", query);
+		
+		//ANALYZE can we adjust the API so that we don't need to rebuild the replacer each time
+		Set<StrLookup<String>> sources = new HashSet<>();
+		log.trace("Creating MapLookup for {} variables", replacements.size());
+		sources.add(StrLookup.mapLookup(replacements));
+		log.trace("Creating Preferences Lookup for {}", settings);
+		sources.add(prefFactory.createPreferencesVariableSource(settings));
+		StrSubstitutor replacer = subsFactory.createSubstitutor(sources);
+		
+		query = replacer.replace(query);
+		log.debug("Substituted string is: {}", query);
+		
+		return retrieveNodeList(node, query);
 	}
 
 	/* (non-Javadoc)

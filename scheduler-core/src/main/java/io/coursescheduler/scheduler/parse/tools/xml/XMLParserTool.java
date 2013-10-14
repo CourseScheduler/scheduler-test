@@ -97,6 +97,7 @@ public interface XMLParserTool extends ParserTool{
 	 */
 	public abstract NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException;
 	
+	
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node
 	 * as determined by the key. This method uses the specified {@link org.w3c.dom.Node} as the starting point
@@ -112,7 +113,7 @@ public interface XMLParserTool extends ParserTool{
 	 * @throws ParseException if there is an issue processing the node retrieval
 	 */
 	public List<Node> retrieveNodes(Node node, Preferences settings, String key) throws ParseException;
-	
+
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node
 	 * as determined by the key. This method uses the specified {@link org.w3c.dom.Node} as the starting point

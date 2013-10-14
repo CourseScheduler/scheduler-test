@@ -68,7 +68,7 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
 	 */
-	public abstract NodeList retrieveNodeList(Node node, Preferences settings, String key) throws ParseException;
+	public abstract NodeList retrieveNodeList(Node node, Preferences settings, String key) throws ParseException;	
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)

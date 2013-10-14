@@ -90,7 +90,7 @@ public class RecursiveActionBatch extends RecursiveAction {
 		try {
 			execute();
 		}catch(Exception e) {
-			log.error("Exception occurred while processing batch actions. Other actions may have been cancelled as a result");
+			log.error("Exception occurred while processing batch actions. Other actions may have been cancelled as a result", e);
 		}	
 	}
 	
