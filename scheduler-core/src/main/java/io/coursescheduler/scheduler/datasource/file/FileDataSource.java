@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
@@ -48,6 +47,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceConstants;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 /**
@@ -113,10 +113,10 @@ public class FileDataSource extends DataSource {
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
 	 * @param prefSourceFactory factory instance for creating PreferencesBasedVariableSource instances
 	 * @param settings the Preferences node containing the configuration for the File access
-	 * @param replacements map of substitution placeholders to values
+	 * @param replacements variable source for local variables
 	 */
 	@AssistedInject
-	public FileDataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
+	public FileDataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") SubstitutionVariableSource replacements) {
 		super(substitutionFactory, prefSourceFactory, settings, replacements);
 	}
 	

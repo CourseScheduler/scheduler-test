@@ -29,12 +29,12 @@
 package io.coursescheduler.scheduler.datasource;
 
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
@@ -71,9 +71,9 @@ public abstract class DataSource extends RecursiveAction {
 	private Preferences settings;
 	
 	/**
-	 * Map of variable names and values
+	 * Variable source for the local replacements
 	 */
-	private Map<String, String> replacements;
+	private SubstitutionVariableSource replacements;
 
 	/**
 	 * String substitutor that will perform variable replacement in configuration elements 
@@ -96,10 +96,10 @@ public abstract class DataSource extends RecursiveAction {
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
 	 * @param prefSourceFactory factory instance for creating PreferencesBasedVariableSource instances
 	 * @param settings the Preferences node containing the configuration for the data source access
-	 * @param replacements map of substitution placeholders to values
+	 * @param replacements variable source for local substitution variables
 	 */
 	@AssistedInject
-	public DataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements) {
+	public DataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") SubstitutionVariableSource replacements) {
 		super();
 		
 		this.settings = settings;
@@ -129,8 +129,8 @@ public abstract class DataSource extends RecursiveAction {
 		Set<StrLookup<String>> sources = new HashSet<>();
 		log.debug("Creating Preferences Variable Source from preferences node {}", node);
 		sources.add(prefSourceFactory.createPreferencesVariableSource(node));
-		log.debug("Creating MapLookup Variable Source from map {}", replacements);
-		sources.add(StrLookup.mapLookup(replacements));
+		log.debug("Using local Variable Source", replacements);
+		sources.add(replacements);
 		
 		this.replacer = substitutorFactory.createSubstitutor(sources);
 	}
@@ -141,7 +141,7 @@ public abstract class DataSource extends RecursiveAction {
 	 * 
 	 * @return the map of substitutions
 	 */
-	protected Map<String, String> getReplacements() {
+	protected SubstitutionVariableSource getReplacements() {
 		return replacements;
 	}
 	

@@ -28,7 +28,8 @@
   */
 package io.coursescheduler.scheduler.datasource;
 
-import java.util.Map;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
+
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
@@ -48,6 +49,6 @@ public interface DataSourceFactory {
 	 * @param replacements the local variables that can be used for replacements
 	 * @return the DataSource
 	 */
-	public DataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements);
+	public DataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") SubstitutionVariableSource replacements);
 	
 }

@@ -28,12 +28,12 @@
   */
 package io.coursescheduler.scheduler.datasource.file;
 
-import java.util.Map;
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
 import io.coursescheduler.scheduler.datasource.DataSourceFactory;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 /**
  * Factory interface for File Data Source instances
@@ -56,5 +56,5 @@ public interface FileDataSourceFactory extends DataSourceFactory {
 	 * @see io.coursescheduler.scheduler.datasource.DataSourceFactory#createDataSource(java.util.prefs.Preferences, java.util.Map)
 	 */
 	@Override
-	public FileDataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") Map<String, String> replacements);
+	public FileDataSource createDataSource(@Assisted("config") Preferences settings, @Assisted("localVars") SubstitutionVariableSource replacements);
 }

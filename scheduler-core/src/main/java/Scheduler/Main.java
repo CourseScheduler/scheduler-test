@@ -7,6 +7,7 @@ import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.variable.MapVariableSource;
 
 import java.awt.Component;
 
@@ -295,7 +296,7 @@ public class Main {
 			Map<String, String> replacements = new HashMap<>();
 			
 			//Run the data source
-			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), replacements);
+			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), new MapVariableSource(replacements));
 			threadPool.invoke(source);			
 			
 			//Run the parser

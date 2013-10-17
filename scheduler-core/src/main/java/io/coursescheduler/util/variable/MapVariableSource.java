@@ -1,8 +1,7 @@
 /**
-  * @(#)Retriever.java
+  * @(#)MapVariableSource.java
   *
-  * Base class for retrieval of data from different sources and processing
-  * into application objects.
+  * Use a Map as a variable data source
   *
   * @author Mike Reinhold
   * 
@@ -27,22 +26,40 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.retrieval;
+package io.coursescheduler.util.variable;
 
-import java.util.concurrent.RecursiveAction;
+import java.util.Map;
 
 /**
- * Base class for retrieval of data from different sources and processing
- * into application objects.
+ * Use a Map as a variable data source
  *
  * @author Mike Reinhold
  *
  */
-public abstract class Retriever extends RecursiveAction {
+public class MapVariableSource extends SubstitutionVariableSource {
 	
 	/**
-	 * Serial Version UID
+	 * The map of variable names and values to use as a variable source
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private Map<String, String> map;
+	
+	/**
+	 * Create a new MapVariableSource that uses the specified map as a variable source
+	 *
+	 * @param map the backing map to use as a variable source
+	 */
+	public MapVariableSource(Map<String, String> map) {
+		super();
+		
+		this.map = map;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.commons.lang3.text.StrLookup#lookup(java.lang.String)
+	 */
+	@Override
+	public String lookup(String key) {
+		return map.get(key);
+	}
+	
 }
