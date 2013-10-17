@@ -1,13 +1,13 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
+import io.coursescheduler.scheduler.retrieval.Retriever;
+import io.coursescheduler.scheduler.retrieval.stream.SingleStreamRetrieval;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
-import io.coursescheduler.util.variable.MapVariableSource;
+import io.coursescheduler.util.variable.NullVariableSource;
 
 import java.awt.Component;
 
@@ -292,22 +292,9 @@ public class Main {
 			DataSourceMap dataSourceMap = injector.getInstance(DataSourceMap.class);
 			ForkJoinPool threadPool = new ForkJoinPool();
 			
-			//TODO replace with a real "replacements" object that includes helper methods
-			Map<String, String> replacements = new HashMap<>();
-			
-			//Run the data source
-			DataSource source = dataSourceMap.getDataSourceFactory("file-uri").createDataSource(prefFact.getSystemNode("profiles/kettering/datasource"), new MapVariableSource(replacements));
-			threadPool.invoke(source);			
-			
-			//Run the parser
-			ParserRoutine test = parseRoutineMap.getStreamParserRoutineFactory("course-xml").createParserRoutine(
-					source.getDataSourceAsInputStream(),
-					prefFact.getSystemNode("profiles/kettering/parser")
-			);
+			//TODO convert these instantiations to Guice powered instantiations
+			Retriever test = new SingleStreamRetrieval(parseRoutineMap, dataSourceMap, prefFact.getSystemNode("profiles/kettering/sample.file.retrieval"), new NullVariableSource());
 			threadPool.invoke(test);
-			
-			//Print the results
-			printTestResults(test.getDataSets());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

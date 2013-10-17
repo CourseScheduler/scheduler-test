@@ -30,12 +30,18 @@ package io.coursescheduler.scheduler.retrieval.stream;
 
 import java.util.prefs.Preferences;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.retrieval.Retriever;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 /**
  * Class implementing a simple, single stream data retrieval
@@ -51,19 +57,28 @@ public class SingleStreamRetrieval extends Retriever {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * TODO Describe this field
+	 * Preferences configuration entry for the data source
+	 * 
+	 * Value: {@value}
 	 */
-	public static final String DATA_SOURCE_IMPLEMENTATION_KEY = "";
+	public static final String DATA_SOURCE_CONFIG_NODE_PROPERTY= "config.datasource";
 	
 	/**
-	 * TODO Describe this field
+	 * Preferences configuration entry for the parse routine
+	 * 
+	 * Value: {@value}
 	 */
-	public static final String PARSER_ROUTINE_IMPLEMENTATION_KEY = "";
+	public static final String PARSE_ROUTINE_CONFIG_NODE_PROPERTY = "config.parseroutine";
+	
+	/**
+	 * Component based logger
+	 */
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
 	 * Map of the Parser Routine implementations that can be used to parse the data stream
 	 */
-	private ParserRoutineMap parserRoutineMap;
+	private ParserRoutineMap parseRoutineMap;
 	
 	/**
 	 * Map of the Data Source implementations that can be used to build a data stream
@@ -75,13 +90,19 @@ public class SingleStreamRetrieval extends Retriever {
 	 */
 	private Preferences config;
 	
+	/**
+	 * Variable source for local variables
+	 */
+	private SubstitutionVariableSource replacements;
+	
 	@AssistedInject
-	public SingleStreamRetrieval(ParserRoutineMap parserRoutineMap, DataSourceMap dataSourceMap, @Assisted("config") Preferences config) {
+	public SingleStreamRetrieval(ParserRoutineMap parserRoutineMap, DataSourceMap dataSourceMap, @Assisted("config") Preferences config, @Assisted("localVars") SubstitutionVariableSource replacements) {
 		super();
 		
-		this.parserRoutineMap = parserRoutineMap;
+		this.parseRoutineMap = parserRoutineMap;
 		this.dataSourceMap = dataSourceMap;
-		this.config = config; 
+		this.config = config;
+		this.replacements = replacements;
 	}
 	
 	/* (non-Javadoc)
@@ -89,8 +110,32 @@ public class SingleStreamRetrieval extends Retriever {
 	 */
 	@Override
 	protected void compute() {
-		// TODO METHOD STUB
+		//TODO evaluate finer grain exception handling
+		try {
 		
+			//Retrieve and run the data source
+			String dataSourceConfigNode = config.get(DATA_SOURCE_CONFIG_NODE_PROPERTY, null);
+			Preferences dataSourceConfig = config.node(dataSourceConfigNode);
+			String dataSourceImplementation = dataSourceConfig.get(IMPLEMENTATION_KEY_PROPERTY, null);
+			DataSource source = dataSourceMap.getDataSourceFactory(dataSourceImplementation).createDataSource(dataSourceConfig, replacements);
+			source.invoke();
+			
+			//Retrieve and execute the parser on the data stream
+			String parserRoutineConfigNode = config.get(PARSE_ROUTINE_CONFIG_NODE_PROPERTY, null);
+			Preferences parserRoutineConfig = config.node(parserRoutineConfigNode);
+			String parserRoutineImplementation = parserRoutineConfig.get(IMPLEMENTATION_KEY_PROPERTY, null);
+			ParserRoutine parser = parseRoutineMap.getStreamParserRoutineFactory(parserRoutineImplementation).createParserRoutine(
+					source.getDataSourceAsInputStream(),
+					parserRoutineConfig
+			);
+			parser.invoke();
+			
+			//Retrieve and use the data sink to persist the data
+			//TODO define the data sink, retrieve it, execute it
+			
+		}catch(Exception e) {
+			log.error("Exception encountered during stream retrieval", e);
+		}
 	}
 	
 }

@@ -126,10 +126,10 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 		doc = builderProvider.get().parse(input);
 		this.profile = profile;
 		this.parser = toolMap.getXMLParserTool(
-			profile.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
+			profile.get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
 		);
 		parserHelperFactory = helperMap.getXMLCourseParserHelperRoutineFactory(
-			profile.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_HELPER_PROPERTY, null)
+			profile.get(XMLParserConstants.PARSER_HELPER_PROPERTY, null)
 		); 
 	}
 
@@ -212,8 +212,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	 * @param courses the set of course IDs in the document that should be processed in batch
 	 */
 	private void executeBatches(Preferences settings, Set<String> courses) {
-		Preferences generalSettings = settings.node(ParserConstants.GENERAL_SETTINGS_NODE);
-		int batchSize = generalSettings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
+		int batchSize = settings.getInt(BATCH_SIZE_PROPERTY, Integer.MAX_VALUE);
 		log.info("Using batch size of {}", batchSize);
 
 		List<RecursiveAction> batches = new ArrayList<>();

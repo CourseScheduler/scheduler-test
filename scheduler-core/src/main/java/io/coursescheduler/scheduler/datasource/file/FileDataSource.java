@@ -45,7 +45,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
-import io.coursescheduler.scheduler.datasource.DataSourceConstants;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
@@ -151,13 +150,11 @@ public class FileDataSource extends DataSource {
 	@Override
 	protected void compute() {
 		log.info("Computing data source");
-		Preferences config = getSettings().node(DataSourceConstants.GENERAL_SETTINGS_NODE);
-		setReplacerPreferencesNode(config);
 		File source = null;
 		
 		try {
 			log.info("Checking source file URI");
-			String fileURITemplate = config.get(FILE_URI_PROPERTY, null);
+			String fileURITemplate = getSettings().get(FILE_URI_PROPERTY, null);
 			log.debug("Source file URI template: {}", fileURITemplate);
 			
 			String fileURI = performReplacements(fileURITemplate);
@@ -168,7 +165,7 @@ public class FileDataSource extends DataSource {
 			log.error("Unable to access file due to invalid file URI", e);
 			
 			log.info("Checking alternate source file path");
-			String filePathTemplate = config.get(FILE_PATH_PROPERTY, null);
+			String filePathTemplate = getSettings().get(FILE_PATH_PROPERTY, null);
 			log.debug("Source file path template: {}", filePathTemplate);
 			
 			String filePath = performReplacements(filePathTemplate);
@@ -178,8 +175,8 @@ public class FileDataSource extends DataSource {
 		}
 		log.debug("Source file is {}", source);
 		
-		if(config.getBoolean(FILE_COPY_PROPERTY, false)) {
-			String targetFileTemplate = config.get(FILE_COPY_NAME_PROPERTY, null);
+		if(getSettings().getBoolean(FILE_COPY_PROPERTY, false)) {
+			String targetFileTemplate = getSettings().get(FILE_COPY_NAME_PROPERTY, null);
 			log.debug("Temp target file template: {}", targetFileTemplate);
 			
 			String targetFile = performReplacements(targetFileTemplate);

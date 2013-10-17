@@ -1,8 +1,8 @@
 /**
-  * @(#)Retriever.java
+  * @(#)NullVariableSource.java
   *
-  * Base class for retrieval of data from different sources and processing
-  * into application objects.
+  * For those times when the API requires a SubstitutionVariableSource, but you really have nothing 
+  * to give it. You could do an empty map, but...
   *
   * @author Mike Reinhold
   * 
@@ -27,30 +27,23 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.retrieval;
-
-import java.util.concurrent.RecursiveAction;
+package io.coursescheduler.util.variable;
 
 /**
- * Base class for retrieval of data from different sources and processing
- * into application objects.
+ * For those times when the API requires a SubstitutionVariableSource, but you really have nothing 
+ * to give it. You could do an empty map, but...
  *
  * @author Mike Reinhold
  *
  */
-public abstract class Retriever extends RecursiveAction {
+public class NullVariableSource extends SubstitutionVariableSource {
 	
-	/**
-	 * Serial Version UID
+	/* (non-Javadoc)
+	 * @see org.apache.commons.lang3.text.StrLookup#lookup(java.lang.String)
 	 */
-	private static final long serialVersionUID = 1L;
-
-
-	/**
-	 * The name of the Preferences node entry that indicates the implementation key value
-	 * should be used for a particular data source or parser instantiation. 
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String IMPLEMENTATION_KEY_PROPERTY = "implementation.key";
+	@Override
+	public String lookup(String key) {
+		return null;
+	}
+	
 }

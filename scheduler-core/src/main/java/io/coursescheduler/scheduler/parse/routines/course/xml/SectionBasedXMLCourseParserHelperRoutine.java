@@ -110,7 +110,7 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 		this.id = courseID;
 		this.retrievalSettings = settings;
 		this.parser = toolMap.getXMLParserTool(
-			settings.node(ParserConstants.GENERAL_SETTINGS_NODE).get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
+			settings.get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
 		);
 	}
 
