@@ -1,7 +1,8 @@
 /**
   * @(#)Retriever.java
   *
-  * TODO FILE PURPOSE
+  * Base class for retrieval of data from different sources and processing
+  * into application objects.
   *
   * @author Mike Reinhold
   * 
@@ -28,15 +29,29 @@
   */
 package io.coursescheduler.scheduler.retrieval;
 
-import java.util.Queue;
-import java.util.concurrent.Callable;
+import java.util.concurrent.RecursiveAction;
 
 /**
- * TODO Describe this type
+ * Base class for retrieval of data from different sources and processing
+ * into application objects.
  *
  * @author Mike Reinhold
  *
  */
-public interface Retriever<T> extends Callable<Queue<T>>{
+public abstract class Retriever extends RecursiveAction {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * TODO Describe this field
+	 */
+	public static final String DATA_SOURCE_IMPLEMENTATION_KEY = "";
+	
+	/**
+	 * TODO Describe this field
+	 */
+	public static final String PARSER_ROUTINE_IMPLEMENTATION_KEY = "";
 }

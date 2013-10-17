@@ -29,6 +29,8 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveAction;
 
 /**
@@ -51,5 +53,31 @@ public abstract class ParserRoutine extends RecursiveAction {
 	 * Value: {@value}
 	 */
 	public static final String BATCH_SIZE_PROPERTY = "batch.size";
+
+	/**
+	 * Map of the data parsed by the parse routine (represented by the data element 
+	 * indexed-name and the corresponding value)
+	 */
+	private Map<String, Map<String, String>> dataSets;
 	
+	/**
+	 * Construct a new ParserRoutine and initialize the data set map
+	 *
+	 */
+	protected ParserRoutine() {
+		dataSets = new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * Return the map of data sets. This map is guaranteed to be thread safe, although
+	 * it is up to the the users of the data set map to ensure that the inner maps stored
+	 * against the key is also thread safe.
+	 * 
+	 * Calling this method prior to execution of the parser routine may result in invalid results
+	 * 
+	 * @return the dataSets map of keys to map of data elements and values
+	 */
+	public Map<String, Map<String, String>> getDataSets() {
+		return dataSets;
+	}
 }

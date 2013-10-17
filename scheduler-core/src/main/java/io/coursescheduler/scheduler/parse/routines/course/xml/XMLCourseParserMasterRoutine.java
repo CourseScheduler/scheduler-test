@@ -147,7 +147,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 		}
 		
 		long end = System.currentTimeMillis();
-		log.info("Retrieved course data for {} courses in {} milliseconds", getCourseDataSets().size(), (end - start));
+		log.info("Retrieved course data for {} courses in {} milliseconds", getDataSets().size(), (end - start));
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private XMLCourseParserHelperRoutine createCourseTask(Preferences settings, String courseID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(XMLParserConstants.COURSE_ID_VARIABLE, courseID);
-		//TODO change to StrSubstitutor based variable substitution - remove the replacements concept from the ParserTool classes
+
 		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);
@@ -193,7 +193,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 		ConcurrentMap<String, String> courseData = new ConcurrentHashMap<>();
 		List<Node> nodeList = new ArrayList<Node>();
 		
-		getCourseDataSets().put(courseID, courseData);
+		getDataSets().put(courseID, courseData);
 		for(int item = 0; item < list.getLength(); item++){
 			node = list.item(item).cloneNode(true);
 			nodeList.add(node);

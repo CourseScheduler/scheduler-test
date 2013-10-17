@@ -59,31 +59,4 @@ public abstract class CourseParserRoutine extends StreamParserRoutine {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Map of the course id to the map of course data (represented by the course data element 
-	 * indexed-name and the corresponding value)
-	 */
-	private Map<String, Map<String, String>> courseDataSets;
-	
-	/**
-	 * Construct a new CourseParserRoutine and initialize the course data set map
-	 *
-	 */
-	protected CourseParserRoutine() {
-		courseDataSets = new ConcurrentHashMap<>();
-	}
-
-	/**
-	 * Return the map of course data sets. This map is guaranteed to be thread safe, although
-	 * it is up to the the users of the course data set map to ensure that the inner maps stored
-	 * against the course ID is also thread safe.
-	 * 
-	 * Calling this method prior to execution of the parser routine may result in invalid results
-	 * 
-	 * @return the courseDataSets map of course IDs to map of course data elements and values
-	 */
-	public Map<String, Map<String, String>> getCourseDataSets() {
-		return courseDataSets;
-	}
-
 }

@@ -2,12 +2,11 @@ package Scheduler;
 
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
-import io.coursescheduler.util.variable.StrSubstitutorFactory;
 
 import java.awt.Component;
 
@@ -21,7 +20,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,14 +299,14 @@ public class Main {
 			threadPool.invoke(source);			
 			
 			//Run the parser
-			CourseParserRoutine test = parseRoutineMap.getCourseParserRoutineFactory("course-xml").createParserRoutine(
+			ParserRoutine test = parseRoutineMap.getStreamParserRoutineFactory("course-xml").createParserRoutine(
 					source.getDataSourceAsInputStream(),
 					prefFact.getSystemNode("profiles/kettering/parser")
 			);
 			threadPool.invoke(test);
 			
 			//Print the results
-			printTestResults(test.getCourseDataSets());
+			printTestResults(test.getDataSets());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -44,7 +44,7 @@ import com.google.inject.assistedinject.Assisted;
 public interface CourseParserRoutineFactory extends StreamParserRoutineFactory {
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
+	 * @see io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
 	public CourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
