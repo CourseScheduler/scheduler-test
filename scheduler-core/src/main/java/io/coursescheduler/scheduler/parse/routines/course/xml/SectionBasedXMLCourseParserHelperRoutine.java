@@ -31,7 +31,7 @@
 package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.ParserConstants;
+import io.coursescheduler.scheduler.parse.ParseConstants;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
 
@@ -152,7 +152,7 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	private void captureCourseData(Preferences settings, Node node, String courseID, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for {}", courseID);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(ParserConstants.COURSE_SETTINGS_NODE), courseData);
+		parser.retrieveData(node, settings.node(ParseConstants.COURSE_SETTINGS_NODE), courseData);
 		long end = System.currentTimeMillis();
 		log.debug("Finished processing course data for {} in {} milliseconds", courseID, (end - start));
 	}
@@ -169,7 +169,7 @@ public class SectionBasedXMLCourseParserHelperRoutine extends XMLCourseParserHel
 	private void captureSectionData(Preferences settings, Node node, int sectionIndex, Map<String, String> courseData) throws ParseException {
 		log.debug("Capturing course data for section index {}", sectionIndex);
 		long start = System.currentTimeMillis();
-		parser.retrieveData(node, settings.node(ParserConstants.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, courseData);
+		parser.retrieveData(node, settings.node(ParseConstants.SECTION_SETTINGS_NODE), "course.sections", "course.sections." + sectionIndex, courseData);
 		long end = System.currentTimeMillis();
 		log.debug("Capturing course data for section index {} in {} milliseconds", sectionIndex, (end - start));
 	}

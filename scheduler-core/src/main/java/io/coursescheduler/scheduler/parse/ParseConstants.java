@@ -1,5 +1,5 @@
 /**
-  * @(#)ParserConstants.java
+  * @(#)ParseConstants.java
   *
   * This class contains a number of general parser constants that can be used by 
   * on parser component implementation.
@@ -38,7 +38,7 @@ package io.coursescheduler.scheduler.parse;
  * @author Mike Reinhold
  *
  */
-public class ParserConstants {
+public class ParseConstants {
 
 	/**
 	 * General configuration node for parser settings

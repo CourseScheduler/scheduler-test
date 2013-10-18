@@ -1,13 +1,13 @@
 package Scheduler;
 
-import io.coursescheduler.scheduler.datasource.DataSourceMap;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.retrieval.Retriever;
-import io.coursescheduler.scheduler.retrieval.stream.SingleStreamRetrieval;
+import io.coursescheduler.scheduler.retrieval.RetrieverFactory;
+import io.coursescheduler.scheduler.retrieval.RetrieverMap;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 import io.coursescheduler.util.variable.NullVariableSource;
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 import java.awt.Component;
 
@@ -287,13 +287,15 @@ public class Main {
 	
 	private static void XMLTest(){
 		try{
-			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
-			ParserRoutineMap parseRoutineMap = injector.getInstance(ParserRoutineMap.class);
-			DataSourceMap dataSourceMap = injector.getInstance(DataSourceMap.class);
 			ForkJoinPool threadPool = new ForkJoinPool();
+			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			
-			//TODO convert these instantiations to Guice powered instantiations
-			Retriever test = new SingleStreamRetrieval(parseRoutineMap, dataSourceMap, prefFact.getSystemNode("profiles/kettering/sample.file.retrieval"), new NullVariableSource());
+			SubstitutionVariableSource variableSource = new NullVariableSource();
+			java.util.prefs.Preferences retrieverConfig = prefFact.getSystemNode("profiles/kettering/sample.file.retrieval");
+			RetrieverMap retrieverMap = injector.getInstance(RetrieverMap.class);
+			RetrieverFactory retrieverFactory = retrieverMap.getRetrieverFactory(retrieverConfig.get(Retriever.IMPLEMENTATION_KEY_PROPERTY, null));
+			Retriever test = retrieverFactory.getRetriever(retrieverConfig, variableSource);
+			
 			threadPool.invoke(test);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -327,6 +329,7 @@ public class Main {
 				ScanningLoaderModule.of(AbstractModule.class, 
 					"io.coursescheduler.scheduler.parse",
 					"io.coursescheduler.scheduler.datasource",
+					"io.coursescheduler.scheduler.retrieval",
 					"io.coursescheduler.util.variable"
 				)
 		);

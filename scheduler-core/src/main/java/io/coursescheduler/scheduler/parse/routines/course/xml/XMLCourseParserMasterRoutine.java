@@ -33,7 +33,7 @@ package io.coursescheduler.scheduler.parse.routines.course.xml;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.ParserConstants;
+import io.coursescheduler.scheduler.parse.ParseConstants;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
@@ -160,7 +160,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 	private Set<String> getCourseIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving course IDs from source data set");
 		Set<String> courses = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_FULL_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParseConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_FULL_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
@@ -185,7 +185,7 @@ public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put(XMLParserConstants.COURSE_ID_VARIABLE, courseID);
 
-		NodeList list = parser.retrieveNodeList(doc, settings.node(ParserConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_SINGLE_PROPERTY, replacements);
+		NodeList list = parser.retrieveNodeList(doc, settings.node(ParseConstants.COURSE_SETTINGS_NODE), XMLParserConstants.COURSE_NAME_SINGLE_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), courseID);
 		

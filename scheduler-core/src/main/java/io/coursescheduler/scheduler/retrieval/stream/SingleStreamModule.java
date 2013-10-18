@@ -1,7 +1,7 @@
 /**
-  * @(#)FileDataSourceModule.java
+  * @(#)SingleStreamModule.java
   *
-  * Guice module for the File DataSource plugin binding
+  * Guice module for binding the SingleStreamRetriever and Factory implementions
   *
   * @author Mike Reinhold
   * 
@@ -26,10 +26,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.datasource.file;
+package io.coursescheduler.scheduler.retrieval.stream;
 
-import io.coursescheduler.scheduler.datasource.DataSource;
-import io.coursescheduler.scheduler.datasource.DataSourceFactory;
+import io.coursescheduler.scheduler.retrieval.Retriever;
+import io.coursescheduler.scheduler.retrieval.RetrieverFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +39,17 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 
 /**
- * Guice module for the File DataSource plugin binding
+ * Guice module for binding the SingleStreamRetriever and Factory implementions
  *
  * @author Mike Reinhold
  *
  */
-public class FileDataSourceModule extends AbstractModule {
-
+public class SingleStreamModule extends AbstractModule {
+	
 	/**
 	 * Component based logger
 	 */
-	Logger log = LoggerFactory.getLogger(getClass().getName());
+	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/* (non-Javadoc)
 	 * @see com.google.inject.AbstractModule#configure()
@@ -58,21 +58,22 @@ public class FileDataSourceModule extends AbstractModule {
 	protected void configure() {
 		//install a module indicating that FileDataSource can be built from a factory with assisted inject
 		log.debug("Installing FactoryModuleBuilder for {} with implementations {}",
-			FileDataSourceFactory.class,
-			FileDataSource.class + " for " + DataSource.class
+			SingleStreamRetrieverFactory.class,
+			SingleStreamRetriever.class + " for " + Retriever.class
 		);
 		install(new FactoryModuleBuilder()
-			.implement(DataSource.class, FileDataSource.class)
-			.build(FileDataSourceFactory.class)
+			.implement(Retriever.class, SingleStreamRetriever.class)
+			.build(SingleStreamRetrieverFactory.class)
 		);
 		
 		//add a mapped binding from the DataSource class to the implementation classes
 		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
-				DataSourceFactory.class,
-				FileDataSourceFactory.class,
-				FileDataSourceFactory.DATA_SOURCE_INTERNAL_NAME
+				RetrieverFactory.class,
+				SingleStreamRetrieverFactory.class,
+				SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME
 		});
-		MapBinder<String, DataSourceFactory> dataSourceBinder = MapBinder.newMapBinder(binder(), String.class, DataSourceFactory.class );
-		dataSourceBinder.addBinding(FileDataSourceFactory.DATA_SOURCE_INTERNAL_NAME).toProvider(getProvider(FileDataSourceFactory.class));
+		MapBinder<String, RetrieverFactory> dataSourceBinder = MapBinder.newMapBinder(binder(), String.class, RetrieverFactory.class );
+		dataSourceBinder.addBinding(SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME).toProvider(getProvider(SingleStreamRetrieverFactory.class));
 	}
+	
 }

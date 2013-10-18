@@ -15,5 +15,6 @@
 	<include resource="config/system/io.coursescheduler/util/guice/guice.inc.xml" />     <!-- Guice logging configuration -->
 	<include resource="config/system/io.coursescheduler/scheduler/parse/parser.inc.xml" />     <!-- Parser logging configuration -->
 	<include resource="config/system/io.coursescheduler/scheduler/datasource/datasource.inc.xml" />     <!-- DataSource logging configuration -->
+	<include resource="config/system/io.coursescheduler/scheduler/retrieval/retriever.inc.xml" />     <!-- Retriever logging configuration -->
 	
 </configuration>
