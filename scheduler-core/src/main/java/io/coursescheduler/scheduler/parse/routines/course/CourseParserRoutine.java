@@ -31,8 +31,6 @@ package io.coursescheduler.scheduler.parse.routines.course;
 
 import io.coursescheduler.scheduler.parse.routines.StreamParserRoutine;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Interface for describing general Course parser routines. Parser routines that only work with

@@ -82,22 +82,22 @@ public class SingleStreamRetriever extends Retriever {
 	/**
 	 * Map of the Parser Routine implementations that can be used to parse the data stream
 	 */
-	private ParserRoutineMap parseRoutineMap;
+	private transient ParserRoutineMap parseRoutineMap;
 	
 	/**
 	 * Map of the Data Source implementations that can be used to build a data stream
 	 */
-	private DataSourceMap dataSourceMap;
+	private transient DataSourceMap dataSourceMap;
 	
 	/**
 	 * Preferences node that contains the configuration for the retrieval instance
 	 */
-	private Preferences config;
+	private transient Preferences config;
 	
 	/**
 	 * Variable source for local variables
 	 */
-	private SubstitutionVariableSource replacements;
+	private transient SubstitutionVariableSource replacements;
 	
 	/**
 	 * Create a new SingleStreamRetriver that is useful for retrieving data from a single source, parsing it, and processing it for use.

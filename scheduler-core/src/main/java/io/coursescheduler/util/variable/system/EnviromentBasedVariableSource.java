@@ -1,7 +1,7 @@
 /**
   * @(#)EnviromentBasedVariableSource.java
   *
-  * TODO FILE PURPOSE
+  * A Global Substitution Variable Source that retrieves environment variables for use in substitution
   *
   * @author Mike Reinhold
   * 
