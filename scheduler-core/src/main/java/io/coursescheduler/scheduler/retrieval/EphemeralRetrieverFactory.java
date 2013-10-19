@@ -1,7 +1,7 @@
 /**
-  * @(#)SingleStreamRetrieverFactory.java
+  * @(#)EphemeralRetrieverFactory.java
   *
-  * Factory class for the SingleStreamRetriever
+  * Factory interface for building EphemeralRetriever instances
   *
   * @author Mike Reinhold
   * 
@@ -26,35 +26,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.retrieval.stream;
+package io.coursescheduler.scheduler.retrieval;
+
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
-import io.coursescheduler.util.variable.SubstitutionVariableSource;
-
 /**
- * Factory interface for the SingleStreamRetriever
+ * Factory interface for building EphemeralRetriever instances
  *
  * @author Mike Reinhold
  *
  */
-public interface SingleStreamRetrieverFactory extends EphemeralRetrieverFactory {
+public interface EphemeralRetrieverFactory extends RetrieverFactory {
 	
 	/**
-	 * Retriever internal name used in configuration and in binding to uniquely
-	 * identify the retriever. It must be unique among all other retriever
-	 * modules or it will not be able to properly bind.
+	 * Create a new EphemeralRetriever instance using the specified Preferences node and the variable source containing
+	 * the local variable replacements. Ephemeral Retrievers do not perform any persistence of data and instead provide
+	 * a method for subsequent tasks to access the retrieved data.
 	 * 
-	 * Value: {@value}
+	 * @param config Preferences node containing the Retriever's configuration
+	 * @param replacements variable source for local variable replacements
+	 * @return the EphemeralRetriever instance
 	 */
-	public static final String RETRIEVER_INTERNAL_NAME = "stream-singlesource";
-	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.retrieval.RetrieverFactory#getRetriever(java.util.prefs.Preferences, io.coursescheduler.util.variable.SubstitutionVariableSource)
-	 */
-	@Override
-	public SingleStreamRetriever getRetriever(@Assisted("config") Preferences config, @Assisted("localVars") SubstitutionVariableSource replacements);
+	public EphemeralRetriever getRetriever(@Assisted("config") Preferences config, @Assisted("localVars") SubstitutionVariableSource replacements);
 }

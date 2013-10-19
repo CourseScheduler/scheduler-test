@@ -1,7 +1,7 @@
 /**
-  * @(#)SingleStreamRetrieverFactory.java
+  * @(#)PersistentRetrieverFactory.java
   *
-  * Factory class for the SingleStreamRetriever
+  * Factory interface for building Persistent Retriever instances
   *
   * @author Mike Reinhold
   * 
@@ -26,35 +26,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.retrieval.stream;
+package io.coursescheduler.scheduler.retrieval;
+
+import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
-import io.coursescheduler.util.variable.SubstitutionVariableSource;
-
 /**
- * Factory interface for the SingleStreamRetriever
+ * Factory interface for building Persistent Retriever instances
  *
  * @author Mike Reinhold
  *
  */
-public interface SingleStreamRetrieverFactory extends EphemeralRetrieverFactory {
-	
-	/**
-	 * Retriever internal name used in configuration and in binding to uniquely
-	 * identify the retriever. It must be unique among all other retriever
-	 * modules or it will not be able to properly bind.
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String RETRIEVER_INTERNAL_NAME = "stream-singlesource";
+public interface PersistentRetrieverFactory extends RetrieverFactory {
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.retrieval.RetrieverFactory#getRetriever(java.util.prefs.Preferences, io.coursescheduler.util.variable.SubstitutionVariableSource)
 	 */
-	@Override
-	public SingleStreamRetriever getRetriever(@Assisted("config") Preferences config, @Assisted("localVars") SubstitutionVariableSource replacements);
+	public Retriever getRetriever(@Assisted("config") Preferences config, @Assisted("localVars") SubstitutionVariableSource replacements);
 }

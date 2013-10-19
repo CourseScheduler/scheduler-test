@@ -51,15 +51,27 @@ public class MapBoundRetrieverMap implements RetrieverMap {
 	private Map<String, Provider<RetrieverFactory>> retrieverFactoryMap;
 	
 	/**
+	 * Map of the EphemeralRetriever internal name to a provider for the EphemeralRetrieverFactory corresponding to the internal name
+	 */
+	private Map<String, Provider<EphemeralRetrieverFactory>> ephemeralRetrieverFactoryMap;
+	
+	/**
+	 * Map of the PersistentRetriever internal name to a provider for the PersistentRetrieverFactory corresponding to the internal name
+	 */
+	private Map<String, Provider<PersistentRetrieverFactory>> persistentRetrieverFactoryMap;
+	
+	/**
 	 * Create a new MapBoundRetrieverMap using the Guice provided binding map
 	 *
 	 * @param retrieverFactoryMap map of the Retriever internal name to the provider for the RetrieverFactory
 	 */
 	@Inject
-	public MapBoundRetrieverMap(Map<String, Provider<RetrieverFactory>> retrieverFactoryMap) {
+	public MapBoundRetrieverMap(Map<String, Provider<RetrieverFactory>> retrieverFactoryMap, Map<String, Provider<EphemeralRetrieverFactory>> ephemeralRetrieverFactoryMap, Map<String, Provider<PersistentRetrieverFactory>> persistentRetrieverFactoryMap) {
 		super();
 		
 		this.retrieverFactoryMap = retrieverFactoryMap;
+		this.ephemeralRetrieverFactoryMap = ephemeralRetrieverFactoryMap;
+		this.persistentRetrieverFactoryMap = persistentRetrieverFactoryMap;
 	}
 	
 	/* (non-Javadoc)
@@ -68,6 +80,22 @@ public class MapBoundRetrieverMap implements RetrieverMap {
 	@Override
 	public RetrieverFactory getRetrieverFactory(String key) {
 		return retrieverFactoryMap.get(key).get();
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.retrieval.RetrieverMap#getEphemeralRetrieverFactory(java.lang.String)
+	 */
+	@Override
+	public EphemeralRetrieverFactory getEphemeralRetrieverFactory(String key) {
+		return ephemeralRetrieverFactoryMap.get(key).get();
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.retrieval.RetrieverMap#getPersistentRetrieverFactory(java.lang.String)
+	 */
+	@Override
+	public PersistentRetrieverFactory getPersistentRetrieverFactory(String key) {
+		return persistentRetrieverFactoryMap.get(key).get();
 	}
 	
 }

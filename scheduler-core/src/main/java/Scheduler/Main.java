@@ -1,5 +1,7 @@
 package Scheduler;
 
+import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
+import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
 import io.coursescheduler.scheduler.retrieval.RetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.RetrieverMap;
@@ -293,10 +295,11 @@ public class Main {
 			SubstitutionVariableSource variableSource = new NullVariableSource();
 			java.util.prefs.Preferences retrieverConfig = prefFact.getSystemNode("profiles/kettering/sample.file.retrieval");
 			RetrieverMap retrieverMap = injector.getInstance(RetrieverMap.class);
-			RetrieverFactory retrieverFactory = retrieverMap.getRetrieverFactory(retrieverConfig.get(Retriever.IMPLEMENTATION_KEY_PROPERTY, null));
-			Retriever test = retrieverFactory.getRetriever(retrieverConfig, variableSource);
+			EphemeralRetrieverFactory retrieverFactory = retrieverMap.getEphemeralRetrieverFactory(retrieverConfig.get(Retriever.IMPLEMENTATION_KEY_PROPERTY, null));
+			EphemeralRetriever test = retrieverFactory.getRetriever(retrieverConfig, variableSource);
 			
 			threadPool.invoke(test);
+			printTestResults(test.getDataSet());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

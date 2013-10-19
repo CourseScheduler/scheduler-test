@@ -51,4 +51,23 @@ public interface RetrieverMap {
 	 * @return a RetrieverFactory for the class specified by the internal name
 	 */
 	public RetrieverFactory getRetrieverFactory(String key);
+	
+	/**
+	 * Create an EphemeralRetrieverFactory based on the internal Retriever name corresponding to the Retriever.
+	 * Ephemeral Retrievers do not perform any persisting of the retrieved data, but instead provide a method 
+	 * for subsequent tasks to access the retrieved data.
+	 *
+	 * @param key the internal name of the Retriever class for which a factory instance should be returned
+	 * @return an EphemeralRetrieverFactory for the class specified by the internal name
+	 */
+	public EphemeralRetrieverFactory getEphemeralRetrieverFactory(String key);
+	
+	/**
+	 * Create a PersistentRetrieverFactory based on the internal Retriever name corresponding to the Retriever.
+	 * Persistent Retrievers persist the retrieved data using on of several persisting options.
+	 *
+	 * @param key the internal name of the Retriever class for which a factory instance should be returned
+	 * @return a PersistentRetrieverFactory for the class specified by the internal name
+	 */
+	public PersistentRetrieverFactory getPersistentRetrieverFactory(String key);
 }

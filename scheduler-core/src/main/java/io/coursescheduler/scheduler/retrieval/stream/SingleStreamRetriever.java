@@ -44,7 +44,7 @@ import io.coursescheduler.scheduler.datasource.DataSourceMap;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory;
-import io.coursescheduler.scheduler.retrieval.Retriever;
+import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
 /**
@@ -53,7 +53,7 @@ import io.coursescheduler.util.variable.SubstitutionVariableSource;
  * @author Mike Reinhold
  *
  */
-public class SingleStreamRetriever extends Retriever {
+public class SingleStreamRetriever extends EphemeralRetriever {
 	
 	/**
 	 * Serial Version UID
@@ -122,17 +122,14 @@ public class SingleStreamRetriever extends Retriever {
 	 */
 	@Override
 	protected void compute() {
-		//TODO evaluate finer grain exception handling
 		try {
 			log.info("Preparing to process single stream retrieval");
 			log.debug("Processing stream using Retriever configuration node {}", config);
 			long start = System.currentTimeMillis();
 			
+			//create an input stream from the data source and process it into a data set
 			InputStream source = getDataSourceInputStream();
-			Map<String, Map<String, String>> data = getParserDataSets(source);
-			
-			//TODO define the data sink, retrieve it, execute it
-			
+			setDataSet(getParserDataSets(source));
 			
 			long end = System.currentTimeMillis();
 			log.info("Finished processing single stream retrieval in {} ms", end - start);
@@ -233,6 +230,5 @@ public class SingleStreamRetriever extends Retriever {
 			log.error("Exception encountered during parser routine creation or execution", e);
 			throw e;
 		}
-	}
-	
+	}	
 }

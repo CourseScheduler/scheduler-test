@@ -28,6 +28,8 @@
   */
 package io.coursescheduler.scheduler.retrieval.stream;
 
+import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
+import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
 import io.coursescheduler.scheduler.retrieval.RetrieverFactory;
 
@@ -56,24 +58,35 @@ public class SingleStreamModule extends AbstractModule {
 	 */
 	@Override
 	protected void configure() {
-		//install a module indicating that FileDataSource can be built from a factory with assisted inject
+		//install a module indicating that SingleStreamRetriever can be built from a factory with assisted inject
 		log.debug("Installing FactoryModuleBuilder for {} with implementations {}",
 			SingleStreamRetrieverFactory.class,
+			SingleStreamRetriever.class + " for " + EphemeralRetriever.class,
 			SingleStreamRetriever.class + " for " + Retriever.class
 		);
 		install(new FactoryModuleBuilder()
 			.implement(Retriever.class, SingleStreamRetriever.class)
+			.implement(EphemeralRetriever.class, SingleStreamRetriever.class)
 			.build(SingleStreamRetrieverFactory.class)
 		);
 		
-		//add a mapped binding from the DataSource class to the implementation classes
+		//add a mapped binding from the Retriever class to the implementation classes
 		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
 				RetrieverFactory.class,
 				SingleStreamRetrieverFactory.class,
 				SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME
 		});
-		MapBinder<String, RetrieverFactory> dataSourceBinder = MapBinder.newMapBinder(binder(), String.class, RetrieverFactory.class );
-		dataSourceBinder.addBinding(SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME).toProvider(getProvider(SingleStreamRetrieverFactory.class));
+		MapBinder<String, RetrieverFactory> retrieverBinder = MapBinder.newMapBinder(binder(), String.class, RetrieverFactory.class );
+		retrieverBinder.addBinding(SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME).toProvider(getProvider(SingleStreamRetrieverFactory.class));
+		
+		//add a mapped binding from the Retriever class to the implementation classes
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				EphemeralRetrieverFactory.class,
+				SingleStreamRetrieverFactory.class,
+				SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME
+		});
+		MapBinder<String, EphemeralRetrieverFactory> ephemeralRetrieverBinder = MapBinder.newMapBinder(binder(), String.class, EphemeralRetrieverFactory.class );
+		ephemeralRetrieverBinder.addBinding(SingleStreamRetrieverFactory.RETRIEVER_INTERNAL_NAME).toProvider(getProvider(SingleStreamRetrieverFactory.class));
 	}
 	
 }
