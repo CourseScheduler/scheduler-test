@@ -209,13 +209,13 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		try{
 			sync();
 		} catch (BackingStoreException e) {
-			log.error("Unable to synchronize preferences on disk to memory", e);
+			log.error("Unable to synchronize preferences on disk to memory for " + this.toString(), e);
 		}
 		
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			log.error("Unable to flush preferences from memory to disk", e);
+			log.error("Unable to flush preferences from memory to disk for " + this.toString(), e);
 		}
 	}
 	
@@ -264,7 +264,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			log.error("Unable to flush preferences from memory to disk", e);
+			log.error("Unable to flush preferences from memory to disk for " + this.toString(), e);
 		}
 	}
 
@@ -288,7 +288,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 		try {
 			flush();
 		} catch (BackingStoreException e) {
-			log.error("Unable to flush preferences from memory to disk", e);
+			log.error("Unable to flush preferences from memory to disk for " + this.toString(), e);
 		}
 	}
 
@@ -354,7 +354,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 			File file = getBackingFile();
 			
 			if(isDirty()) {
-				log.warn("Sync from disk requested when unflushed changes exist");
+				log.warn("Sync from disk requested when unflushed changes exist for " + this.toString());
 			}
 			
 			if(!newNode){
@@ -362,9 +362,9 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 					load(properties, fileInStream);
 					clearDirty();
 				} catch (FileNotFoundException e) {
-					log.info("File {} does not exist - preferences could not be loaded", file);
+					log.info("File {} does not exist - preferences could not be loaded for " + this.toString(), file);
 				} catch (IOException e) {
-					log.error("Unable to load preferences from disk", e);					
+					log.error("Unable to load preferences from disk for " + this.toString(), e);					
 					throw new BackingStoreException(e);
 				}
 			}
@@ -385,7 +385,7 @@ public abstract class PropertiesFilePreferences extends AbstractPreferences {
 					store(properties, fileOutStream);
 					clearDirty();
 				} catch (IOException e) {
-					log.error("Unable to store preferences to disk", e);
+					log.error("Unable to store preferences to disk for " + this.toString(), e);
 					
 					throw new BackingStoreException(e);
 				}
