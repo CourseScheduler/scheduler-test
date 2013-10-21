@@ -1,5 +1,10 @@
 package Scheduler;
 
+import io.coursescheduler.scheduler.datasource.DataSource;
+import io.coursescheduler.scheduler.datasource.DataSourceFactory;
+import io.coursescheduler.scheduler.datasource.DataSourceMap;
+import io.coursescheduler.scheduler.datasource.http.HttpDataSource;
+import io.coursescheduler.scheduler.datasource.http.HttpDataSourceFactory;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
@@ -8,8 +13,11 @@ import io.coursescheduler.scheduler.retrieval.RetrieverMap;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
 import io.coursescheduler.util.preferences.PreferencesFactory;
+import io.coursescheduler.util.variable.MapVariableSource;
 import io.coursescheduler.util.variable.NullVariableSource;
+import io.coursescheduler.util.variable.StrSubstitutorFactory;
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
+import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 import java.awt.Component;
 
@@ -44,6 +52,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
@@ -291,6 +300,30 @@ public class Main {
 		try{
 			ForkJoinPool threadPool = new ForkJoinPool();
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
+			
+			//----------------- Test 1
+			Map<String, String> retrievalParms = new HashMap<>();
+			retrievalParms.put("term.id", "201401");
+			retrievalParms.put("term.name", "Winter 2014");
+			
+			DataSourceMap dsMap = injector.getInstance(DataSourceMap.class);
+			DataSourceFactory httpFactory = dsMap.getDataSourceFactory(HttpDataSourceFactory.DATA_SOURCE_INTERNAL_NAME);
+			DataSource httpRequest = httpFactory.createDataSource( 
+					prefFact.getSystemNode("profiles/kettering/default.http.retrieval/datasource"), 
+					new MapVariableSource(retrievalParms)
+				);
+			
+			threadPool.invoke(httpRequest);
+			
+			InputStream contentStream = httpRequest.getDataSourceAsInputStream();		
+			Scanner scanner = new Scanner(contentStream);
+			System.out.println("==================");
+			while(scanner.hasNextLine()) {
+				System.out.println(scanner.nextLine());
+			}
+			System.out.println("==================");
+			
+			//----------------- Test 2
 			
 			SubstitutionVariableSource variableSource = new NullVariableSource();
 			java.util.prefs.Preferences retrieverConfig = prefFact.getSystemNode("profiles/kettering/sample.file.retrieval");

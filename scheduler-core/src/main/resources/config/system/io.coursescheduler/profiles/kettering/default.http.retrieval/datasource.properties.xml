@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="implementation.key">http-request</entry>
+	<entry key="method">POST</entry>
+	<entry key="host">jweb.kettering.edu</entry>
+	<entry key="protocol">https</entry>
+	<entry key="path">cku1/bwckschd.p_get_crse_unsec</entry>
+	<entry key="uri">${protocol}://${host}/${path}</entry>
+	<entry key="buffer.disk">false</entry>
+	
+	<entry key="param.0.name">begin_ap</entry>
+	<entry key="param.0.value">a</entry>
+	
+	<entry key="param.1.name">begin_hh</entry>
+	<entry key="param.1.value">0</entry>
+	
+	<entry key="param.2.name">begin_mi</entry>
+	<entry key="param.2.value">0</entry>
+	
+	<entry key="param.3.name">end_ap</entry>
+	<entry key="param.3.value">a</entry>
+	
+	<entry key="param.4.name">end_hh</entry>
+	<entry key="param.4.value">0</entry>
+	
+	<entry key="param.5.name">end_mi</entry>
+	<entry key="param.5.value">0</entry>
+	
+	<entry key="param.6.name">sel_attr</entry>
+	<entry key="param.6.value">dummy</entry>
+	
+	<entry key="param.7.name">sel_camp</entry>
+	<entry key="param.7.value">dummy</entry>
+	
+	<entry key="param.8.name">sel_crse</entry>
+	<entry key="param.8.value"></entry>
+	
+	<entry key="param.9.name">sel_day</entry>
+	<entry key="param.9.value">dummy</entry>
+	
+	<entry key="param.10.name">sel_from_cred</entry>
+	<entry key="param.10.value"></entry>
+	
+	<entry key="param.11.name">sel_insm</entry>
+	<entry key="param.11.value">dummy</entry>
+	
+	<entry key="param.12.name">sel_instr</entry>
+	<entry key="param.12.value">dummy</entry>
+	
+	<entry key="param.12.name">sel_instr</entry>
+	<entry key="param.12.value">%</entry>
+	
+	<entry key="param.13.name">sel_levl</entry>
+	<entry key="param.13.value">dummy</entry>
+	
+	<entry key="param.14.name">sel_ptrm</entry>
+	<entry key="param.14.value">dummy</entry>
+	
+	<entry key="param.15.name">sel_schd</entry>
+	<entry key="param.15.value">dummy</entry>
+	
+	<entry key="param.16.name">sel_sess</entry>
+	<entry key="param.16.value">dummy</entry>
+	
+	<entry key="param.17.name">sel_subj</entry>
+	<entry key="param.17.value">dummy</entry>
+	
+	<entry key="param.18.name">sel_subj</entry>
+	<entry key="param.18.value">%</entry>
+	
+	<entry key="param.19.name">sel_title</entry>
+	<entry key="param.19.value"></entry>
+	
+	<entry key="param.20.name">sel_to_cred</entry>
+	<entry key="param.20.value"></entry>
+	
+	<entry key="param.21.name">term_in</entry>
+	<entry key="param.21.value">${term.id}</entry>
+	
+</properties>

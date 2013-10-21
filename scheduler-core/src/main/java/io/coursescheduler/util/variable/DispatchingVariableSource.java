@@ -56,10 +56,10 @@ public class DispatchingVariableSource extends StrLookup<String> {
 	private Set<StrLookup<String>> sources;
 	
 	/**
-	 * Cache of lookup values so that repeated lookups of the same value
+	 * Cache of lookup sources so that repeated lookups of the same value
 	 * need not traverse the entire set of sources
 	 */
-	private Map<String, String> cache;
+	private Map<String, StrLookup<String>> cache;
 	
 	/**
 	 * Create a new Dispatching Variable Source that will dispatch variable
@@ -73,7 +73,7 @@ public class DispatchingVariableSource extends StrLookup<String> {
 		
 		this.sources = sources;
 		
-		cache = new HashMap<String, String>();
+		cache = new HashMap<String, StrLookup<String>>();
 	}
 	
 	/* (non-Javadoc)
@@ -84,19 +84,19 @@ public class DispatchingVariableSource extends StrLookup<String> {
 		String value;
 		log.debug("Looking up value for variable {}", variable);
 		if(!cache.containsKey(variable)) {
-			log.debug("Variable {} not found in cache", variable);
+			log.debug("Source for variable {} not found in cache", variable);
 			fillCache(variable);
 		}
-		value = cache.get(variable);
+		value = cache.get(variable).lookup(variable);
 		log.debug("Lookup of {} yielded {}", variable, value);
 		
 		return value;
 	}
 	
 	/**
-	 * Lookup the variable in the internal StrLookup instances and add it to the cache.
+	 * Lookup the variable in the internal StrLookup instances and add the source to the cache.
 	 *
-	 * @param variable the variable to find from the sources and cache
+	 * @param variable the variable to find from the sources and cache the source
 	 */
 	private void fillCache(String variable) {
 		log.trace("Looking up variable {} in {} possible sources", variable, sources.size());
@@ -107,15 +107,14 @@ public class DispatchingVariableSource extends StrLookup<String> {
 				log.trace("Variable {} not found in source {}", variable, source);
 			}else {
 				log.debug("Variable {} found in source {}", variable, source);
-				cache.put(variable, value);
-				log.trace("Caching value {} for variable {}", value, variable);
+				cache.put(variable, source);
+				log.trace("Caching source {} for variable {}", source, variable);
 				break;	//exit early
 			}
 		}
 		
 		if(!cache.containsKey(variable)) {
-			log.debug("Value for variable {} not found in sources, caching null ({})", variable, null);
-			cache.put(variable, null);		//Map must allow null values
+			log.debug("Variable {} not found in sources", variable);
 		}
 	}
 	

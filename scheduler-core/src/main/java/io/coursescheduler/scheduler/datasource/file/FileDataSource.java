@@ -30,7 +30,6 @@ package io.coursescheduler.scheduler.datasource.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,7 +39,6 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -81,30 +79,14 @@ public class FileDataSource extends DataSource {
 	public static final String FILE_PATH_PROPERTY = "file-path-template";
 	
 	/**
-	 * Preferences property for specifying if a copy of the file should be saved
-	 * in the temp directory of the application
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String FILE_COPY_PROPERTY = "file-save-copy";
-	
-	/**
-	 * Preferences property for specifying the name of the temp copy of the data
-	 * source file (with possible placeholder replacement). 
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String FILE_COPY_NAME_PROPERTY = "file-copy-path-template";
-	
-	/**
 	 * Component based logger
 	 */
 	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/**
-	 * File that will be used as the Data Source
+	 * Input stream that will be used as the Data Source
 	 */
-	private File file;
+	private InputStream dataSource;
 	
 	/**
 	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
@@ -124,24 +106,7 @@ public class FileDataSource extends DataSource {
 	 */
 	@Override
 	public InputStream getDataSourceAsInputStream() throws IOException {
-		FileInputStream input;
-		
-		try {
-			long start = System.currentTimeMillis();
-			log.info("Retrieving input stream for file {}", file);
-			input = new FileInputStream(file);
-			long end = System.currentTimeMillis();
-			log.info("Input stream for file {} acquired in {} ms. {} bytes available without blocking IO", new Object[] {
-				file, 
-				end - start, 
-				input.available()
-			});
-		} catch (FileNotFoundException e) {
-			log.error("Exception while retrieving input stream for data source", e);
-			throw e;
-		}
-		
-		return input;
+		return dataSource;
 	}
 	
 	/* (non-Javadoc)
@@ -149,58 +114,71 @@ public class FileDataSource extends DataSource {
 	 */
 	@Override
 	protected void compute() {
-		log.info("Computing data source");
-		File source = null;
-		
-		try {
-			log.info("Checking source file URI");
-			String fileURITemplate = getSettings().get(FILE_URI_PROPERTY, null);
-			log.debug("Source file URI template: {}", fileURITemplate);
-			
-			String fileURI = performReplacements(fileURITemplate);
-			log.debug("Source file URI result: {}", fileURI);
-		
-			source = new File(new URI(fileURI));
-		} catch (NullPointerException | URISyntaxException | IllegalArgumentException e) {
-			log.error("Unable to access file due to invalid file URI", e);
-			
-			log.info("Checking alternate source file path");
-			String filePathTemplate = getSettings().get(FILE_PATH_PROPERTY, null);
-			log.debug("Source file path template: {}", filePathTemplate);
-			
-			String filePath = performReplacements(filePathTemplate);
-			log.debug("Source file path result: {}", filePath);
-		
-			source = new File(filePath);
-		}
+		log.info("Computing data source for file based source");
+		long start = System.currentTimeMillis();
+		File source = getSourceFile();
 		log.debug("Source file is {}", source);
-		
-		if(getSettings().getBoolean(FILE_COPY_PROPERTY, false)) {
-			String targetFileTemplate = getSettings().get(FILE_COPY_NAME_PROPERTY, null);
-			log.debug("Temp target file template: {}", targetFileTemplate);
-			
-			String targetFile = performReplacements(targetFileTemplate);
-			log.debug("Temp target file: {}", targetFile);
 
-			try {
-				File target = new File(targetFile);
-				log.debug("Temp target file is {}", target);
-			
-				log.info("Temp copy requested, preparing to copy {} to {}", source, target);
-				Files.copy(source, target);
-				file = target;
-			} catch (NullPointerException | IOException e) {
-				log.error("Exception copying data source file to temporary file", e);
-				
-				log.debug("Using source without temp copy");
-				file = source;
-			}
-		}else {
-			log.info("Temp copy not requested");
-			file = source;
+		log.info("Retrieving input stream for file {}", source);
+		try {
+			FileInputStream stream = new FileInputStream(source);
+			log.debug("Preparing to buffer the input file {}", stream);
+			dataSource = buffer(stream);
+			log.debug("Built data source input stream {}", dataSource);
+
+			long end = System.currentTimeMillis();
+			log.info("Input stream for file {} acquired in {} ms. {} bytes available without blocking IO", new Object[] {
+				source, end - start, dataSource.available()
+			});
+		} catch (IOException e) {
+			log.error("Exception while accessing data source " + source, e);
 		}
-
-		log.info("Using file {} as data source", file);
 	}
 	
+	/**
+	 * Access the File DataSource based on the URI or the alternate source path
+	 *
+	 * @return the File reference for the data source
+	 */
+	private File getSourceFile() {
+		try {
+			return getURISourceFile();
+		} catch (NullPointerException | URISyntaxException | IllegalArgumentException e) {
+			log.error("Unable to access file due to invalid file URI", e);
+			return getLocalSourceFile();
+		}
+	}
+	
+	/**
+	 * Access the File DataSource based on the URI
+	 *
+	 * @return the File reference for the data source
+	 * @throws URISyntaxException if there is an issue accessing the URI
+	 */
+	private File getURISourceFile() throws URISyntaxException {
+		log.info("Checking source file URI");
+		String fileURITemplate = getSettings().get(FILE_URI_PROPERTY, null);
+		log.debug("Source file URI template: {}", fileURITemplate);
+		
+		String fileURI = performReplacements(fileURITemplate);
+		log.debug("Source file URI result: {}", fileURI);
+	
+		return new File(new URI(fileURI));
+	}
+	
+	/**
+	 * Access the File DataSource based on the alternate source path
+	 *
+	 * @return the File reference for the data source
+	 */
+	private File getLocalSourceFile() {		
+		log.info("Checking alternate source file path");
+		String filePathTemplate = getSettings().get(FILE_PATH_PROPERTY, null);
+		log.debug("Source file path template: {}", filePathTemplate);
+		
+		String filePath = performReplacements(filePathTemplate);
+		log.debug("Source file path result: {}", filePath);
+	
+		return new File(filePath);
+	}
 }
