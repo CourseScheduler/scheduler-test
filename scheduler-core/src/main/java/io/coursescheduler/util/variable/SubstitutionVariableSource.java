@@ -49,5 +49,4 @@ public abstract class SubstitutionVariableSource extends StrLookup<String> {
 	 * do not collide.
 	 */
 	public static final String NAMESPACE_SEPARATOR = ".";
-	
 }
