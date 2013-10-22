@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
@@ -82,12 +84,7 @@ public class FileDataSource extends DataSource {
 	 * Component based logger
 	 */
 	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
-	
-	/**
-	 * Input stream that will be used as the Data Source
-	 */
-	private InputStream dataSource;
-	
+		
 	/**
 	 * Create a new FileDataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
@@ -102,14 +99,6 @@ public class FileDataSource extends DataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.datasource.DataSource#getDataSourceAsInputStream()
-	 */
-	@Override
-	public InputStream getDataSourceAsInputStream() throws IOException {
-		return dataSource;
-	}
-	
-	/* (non-Javadoc)
 	 * @see java.util.concurrent.RecursiveAction#compute()
 	 */
 	@Override
@@ -121,15 +110,28 @@ public class FileDataSource extends DataSource {
 
 		log.info("Retrieving input stream for file {}", source);
 		try {
+			//Access the file
 			FileInputStream stream = new FileInputStream(source);
-			log.debug("Preparing to buffer the input file {}", stream);
-			dataSource = buffer(stream);
-			log.debug("Built data source input stream {}", dataSource);
+			
+			//Tee the input if configured
+			InputStream teedSource = tee(stream);
+			
+			//Prepare the cross thread pipe
+			PipedOutputStream bufferSink = createPipeSource();
+			PipedInputStream bufferedStream = createPipeSink(bufferSink);
 
+			//Set the data source stream
+			setDataSource(bufferedStream);
 			long end = System.currentTimeMillis();
 			log.info("Input stream for file {} acquired in {} ms. {} bytes available without blocking IO", new Object[] {
-				source, end - start, dataSource.available()
+				source, end - start, getDataSource().available()
 			});
+			
+			log.info("Preparing to pipe data source");
+			start = System.currentTimeMillis();
+			transferDataToPipe(teedSource, bufferSink);
+			end = System.currentTimeMillis();
+			log.info("Finished piping data source in {} ms", end - start);
 		} catch (IOException e) {
 			log.error("Exception while accessing data source " + source, e);
 		}

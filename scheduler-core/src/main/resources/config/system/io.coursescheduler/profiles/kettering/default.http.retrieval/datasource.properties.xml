@@ -7,7 +7,7 @@
 	<entry key="protocol">https</entry>
 	<entry key="path">cku1/bwckschd.p_get_crse_unsec</entry>
 	<entry key="uri">${protocol}://${host}/${path}</entry>
-	<entry key="buffer.disk">false</entry>
+	<entry key="copy.enabled">true</entry>
 	
 	<entry key="param.0.name">begin_ap</entry>
 	<entry key="param.0.value">a</entry>

@@ -30,6 +30,8 @@ package io.coursescheduler.scheduler.datasource.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.prefs.Preferences;
 
 import org.apache.http.Header;
@@ -110,11 +112,6 @@ public class HttpDataSource extends DataSource {
 	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
-	
-	/**
-	 * Input stream that is the result of running the HTTP request
-	 */
-	private InputStream dataStream;
 
 	/**
 	 * Create a new HTTP Data source for retrieving data using HTTP to access resources
@@ -127,14 +124,6 @@ public class HttpDataSource extends DataSource {
 	@AssistedInject
 	public HttpDataSource(StrSubstitutorFactory substitutionFactory, PreferencesBasedVariableFactory prefSourceFactory, @Assisted("config") Preferences settings, @Assisted("localVars") SubstitutionVariableSource replacements) {
 		super(substitutionFactory, prefSourceFactory, settings, replacements);
-	}
-
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.datasource.DataSource#getDataSourceAsInputStream()
-	 */
-	@Override
-	public InputStream getDataSourceAsInputStream() throws IOException {
-		return dataStream;
 	}
 	
 	/* (non-Javadoc)
@@ -169,13 +158,22 @@ public class HttpDataSource extends DataSource {
 				
 				HttpEntity entity = response.getEntity();
 				log.info("HTTP Response contains {} bytes, {}", entity.getContentLength(), entity.getContentType());
+
+				//Tee the input if configured
+				InputStream teedSource = tee(entity.getContent());
 				
-				//call specific buffer methods instead of general buffer method because buffering is required for this data source
-				if(diskBufferRequested()) {
-					dataStream = bufferOnDisk(entity.getContent());
-				}else {
-					dataStream = bufferInMemory(entity.getContent());
-				}
+				//Prepare the cross thread pipe
+				PipedOutputStream bufferSink = createPipeSource();
+				PipedInputStream bufferedStream = createPipeSink(bufferSink);
+				
+				//Set the data source stream
+				setDataSource(bufferedStream);
+
+				log.info("Preparing to pipe data source");
+				long start = System.currentTimeMillis();
+				transferDataToPipe(teedSource, bufferSink);
+				long end = System.currentTimeMillis();
+				log.info("Finished piping data source in {} ms", end - start);
 			} catch (IOException e) {
 				log.error("Exception occurred during execution of HTTP request", e);
 			}

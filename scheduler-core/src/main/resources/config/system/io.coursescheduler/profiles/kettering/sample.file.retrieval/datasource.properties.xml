@@ -4,7 +4,7 @@
 	<entry key="implementation.key">file-uri</entry>
 	<entry key="file-uri-template">${source.protocol}://${source.path}/${source.file}</entry>
 	<entry key="file-path-template">${dir.data}/${source.file}</entry>
-	<entry key="buffer.disk">false</entry>
+	<entry key="copy.enabled">true</entry>
 	<entry key="source.file">ku_scheduler_3.xml</entry>
 	<entry key="source.path">/C:/Eclipse/Repositories/coursescheduler/scheduler-core/target/classes/Data</entry>
 	<entry key="source.protocol">file</entry>

@@ -169,9 +169,12 @@ public class SingleStreamRetriever extends EphemeralRetriever {
 			//Execute the DataSource
 			log.debug("Invoking execution of DataSource {}", source);
 			long start = System.currentTimeMillis();
-			source.invoke();
+			source.fork();
+			
+			while(!source.isDataSourceInputStreamReady());	//TODO sleep for small amount of time?
+			
 			long end = System.currentTimeMillis();
-			log.info("Finished executing DataSource {} in {} ms", source, end - start);
+			log.info("DataSource {} ready in {} ms", source, end - start);
 			
 			//Retrieve InputStream from the data source
 			InputStream dataSourceStream = source.getDataSourceAsInputStream();

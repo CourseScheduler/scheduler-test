@@ -33,7 +33,6 @@ import io.coursescheduler.util.variable.SubstitutionVariableSource;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +45,7 @@ import java.util.Set;
 import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 
+import org.apache.commons.io.input.TeeInputStream;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
@@ -68,54 +68,47 @@ public abstract class DataSource extends RecursiveAction {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Preferences node property for indicating whether a disk based buffer should be used for the
-	 * data source. If true, a copy of the input will be saved in ${dir.tmp}.
-	 * 
-	 * If false, data source specific buffer requirements may require in memory buffering, regardless
-	 * of the value of {@link #MEMORY_BUFFER_PROPERTY}
+	 * Preferences node property for indicating that the DataSource should create a local copy
+	 * of the data source. The location of the data source copy can be specified in the property
+	 * referenced by the {@link #DISK_COPY_FILE_PROPERTY} preferences property. If no value is
+	 * specified, the default copy file (specified in {@link #DISK_COPY_DEFAULT_FILE}) will be used.
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String DISK_BUFFER_PROPERTY = "buffer.disk";
+	public static final String DISK_COPY_PROPRTY = "copy.enabled";
 	
 	/**
 	 * Preferences node property for indicating the location and name of the disk based buffer.
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String DISK_BUFFER_FILE_PROPERTY = "buffer.file";
+	public static final String DISK_COPY_FILE_PROPERTY = "copy.file";
 	
 	/**
-	 * Default buffer file location if disk based buffering is in use and not explicitly specified in
-	 * {@link #DISK_BUFFER_FILE_PROPERTY}.
+	 * Default copy file location if a local copy is requested (as specified in {@link #DISK_COPY_PROPRTY}
+	 * and not explicitly specified in {@link #DISK_COPY_FILE_PROPERTY}.
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String DISK_BUFFER_DEFAULT_FILE = "${dir.tmp}/${random.string}";
-	
-	/**
-	 * Preferences node property for indicating whether a memory based buffer should be used for the
-	 * data source. If true, the data source will attempt to buffer the stream in memory.
-	 */
-	public static final String MEMORY_BUFFER_PROPERTY = "buffer.memory";
+	public static final String DISK_COPY_DEFAULT_FILE = "${dir.tmp}/${random.string}";
 	
 	/**
 	 * Preferences node property for indicating the size of the in memory buffer that should be used
 	 * for the data source (if disk based buffering is not enabled via the {@link #DISK_BUFFER_PROPERTY} preferences
 	 * property. The default value used by the DataSource (if not specified in the Preferences node), is
-	 * specified by {@link #MEMORY_BUFFER_DEFAULT_SIZE}.
+	 * specified by {@link #PIPE_BUFFER_DEFAULT_SIZE}.
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String MEMORY_BUFFER_SIZE_PROPERTY = "buffer.size";
+	public static final String PIPE_BUFFER_SIZE_PROPERTY = "buffer.size";
 	
 	/**
 	 * Default size of the Memory based buffer if in use and not specified explicitly in the Preferences node
-	 * via the {@link #MEMORY_BUFFER_SIZE_PROPERTY}.
+	 * via the {@link #PIPE_BUFFER_SIZE_PROPERTY}.
 	 * 
 	 * Value: {@value} bytes
 	 */
-	public static final int MEMORY_BUFFER_DEFAULT_SIZE = 1024000;
+	public static final int PIPE_BUFFER_DEFAULT_SIZE = 1024000;
 	
 	/**
 	 * Component based logger
@@ -148,6 +141,11 @@ public abstract class DataSource extends RecursiveAction {
 	private PreferencesBasedVariableFactory prefSourceFactory;
 	
 	/**
+	 * Input stream that will be used as the Data Source
+	 */
+	private volatile InputStream dataSource;
+
+	/**
 	 * Create a new DataSource using the specified Preferences node and map of placeholders
 	 * and replacement values
 	 * @param substitutionFactory factory instance for creating StrSubstitution instances
@@ -168,14 +166,54 @@ public abstract class DataSource extends RecursiveAction {
 	}
 	
 	/**
+	 * Set the Data Source input stream that the subsequent tasks can use to access the data
+	 * from the source
+	 * 
+	 * @param dataSource the dataSource to set
+	 */
+	protected void setDataSource(InputStream dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	/**
+	 * Retrieve the current DataSource InputStream that subsequent tasks will use to access the data
+	 * 
+	 * @return the dataSource the data source input stream
+	 */
+	protected InputStream getDataSource() {
+		return dataSource;
+	}
+
+	/**
 	 * Return the input stream that is a result of processing the data source.
 	 * 
 	 * Calling this method prior to execution of the DataSource may result in invalid results.
+	 * A data source does not need to have completed processing in order to have a valid
+	 * DataSource InputStream. Many data sources will prepare the input stream and then allow 
+	 * the input stream to be accessed by the subsequent tasks  even before the data source has
+	 * processed the stream in full. Since the preparation of the DataSource InputStream is asynchronous
+	 * from the calling and subsequent tasks, the calling class should wait until the data source
+	 * is ready by checking the {@link #isDataSourceInputStreamReady()} method.
+	 * 
 	 *
 	 * @return the input stream resulting from processing the input stream
 	 * @throws IOException if there is an error performing IO on the data source
 	 */
-	public abstract InputStream getDataSourceAsInputStream() throws IOException;
+	public InputStream getDataSourceAsInputStream() throws IOException{
+		return dataSource;
+	}
+	
+	/**
+	 * Return if the DataSource InputStream is ready for processing by subsequent tasks. 
+	 * 
+	 * Calling classes should confirm that the data source is ready to use by calling this
+	 * method before calling the {@link #getDataSourceAsInputStream()} method.
+	 *
+	 * @return if the DataSource InputStream is ready for subsequent processing
+	 */
+	public boolean isDataSourceInputStreamReady() {
+		return dataSource != null;
+	}
 	
 	/**
 	 * Update the preferences node used by the current string substituter instance
@@ -224,123 +262,91 @@ public abstract class DataSource extends RecursiveAction {
 	protected Preferences getSettings() {
 		return settings;
 	}
-
-	/**
-	 * Return if the data source is configured for disk buffering
-	 *
-	 * @return if disk buffering is configured
-	 */
-	protected boolean diskBufferRequested() {
-		return getSettings().getBoolean(DISK_BUFFER_PROPERTY, false);
-	}
 	
 	/**
-	 * Return if the data source is configured for memory buffering
+	 * Create a TeeInputStream that transparently copies output to a local file copy, if the 
+	 * data source is configured to use a local file copy (see {@link #DISK_COPY_PROPRTY}).
 	 *
-	 * @return if memory buffering is configured
+	 * @param source the data source input stream
+	 * @return the input stream of the Tee or the source, if a file copy is not requested or the
+	 * file copy output stream creation failed
 	 */
-	protected boolean memoryBufferRequested() {
-		return getSettings().getBoolean(MEMORY_BUFFER_PROPERTY, false);
-	}
-	
-	/**
-	 * Buffer the specified input stream to disk or in memory based on configuration. If no
-	 * buffering has been configured for this data source, the original input stream will
-	 * be returned
-	 *
-	 * @param stream the input stream to buffer
-	 * @return the buffered input stream, if buffering is configured. Otherwise, the input stream
-	 * @throws IOException if there is an issue performing the buffer operation
-	 */
-	protected InputStream buffer(InputStream stream) throws IOException {
-		log.debug("Checking buffer configuration");
-		if(diskBufferRequested()) {
-			log.debug("Disk based buffer requested");
-			return bufferOnDisk(stream);
-		} else if(memoryBufferRequested()) {
-			log.debug("Memory based buffer requested");
-			return bufferInMemory(stream);
+	protected InputStream tee(InputStream source) {
+		log.debug("Checking if a local copy is requested");
+		if(getSettings().getBoolean(DISK_COPY_PROPRTY, false)) {
+			try {
+				log.info("Preparing to create local copy");
+		        String tempFile = performReplacements(getSettings().get(DISK_COPY_FILE_PROPERTY, DISK_COPY_DEFAULT_FILE));
+		        log.debug("Writing input stream to temporary file: {}", tempFile);
+				
+		        FileOutputStream copy = new FileOutputStream(tempFile);
+				TeeInputStream tee = new TeeInputStream(source, copy);
+		        log.debug("Local copy stream {} created using output stream {} and source stream {}", new Object[] {tee, copy, source});
+				
+				return tee;
+			} catch (IOException e) {
+				log.error("Unable to create tee to file output stream for input stearm {}, returning original input without redirection", source);
+				return source;
+			}
+		} else {
+			log.info("No local copy requested for this data source");
+			return source;
 		}
-		log.debug("No buffering configured");
-		return stream;
 	}
 	
 	/**
-	 * Buffer the specified input stream to a file on disk and then return an input stream
-	 * that references the buffered stream
+	 * Build the data sink (InputStream) for a Pipe to transfer data from one
+	 * stream to another. This is used to buffer and transfer data between 
+	 * threads.
 	 *
-	 * @param stream the input stream to buffer on disk
-	 * @return the buffered input stream
-	 * @throws IOException if the input stream cannot be buffered on disk
+	 * @return the Pipe sink InputStream for retrieving data from the Pipe
+	 * @throws IOException if there is a problem creating the Piped streams
 	 */
-	protected InputStream bufferOnDisk(InputStream stream) throws IOException {
-		log.debug("Preparing to buffer input stream on disk");
-		long start = System.currentTimeMillis();
+	protected PipedInputStream createPipeSink(PipedOutputStream source) throws IOException{
+		log.debug("Preparing to build pipe sink input stream for pipe source output stream {}", source);		
+		PipedInputStream sink = new PipedInputStream(source, getSettings().getInt(PIPE_BUFFER_SIZE_PROPERTY, PIPE_BUFFER_DEFAULT_SIZE));
+		log.debug("Finished building pipe sink input stream {}", sink);
 		
-		String tempFile = performReplacements(getSettings().get(DISK_BUFFER_FILE_PROPERTY, DISK_BUFFER_DEFAULT_FILE));
-		log.debug("Writing input stream to temporary file: {}", tempFile);
-		
-		try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile))){
-			BufferedReader contentReader = new BufferedReader(new InputStreamReader(stream));
-			
-			log.debug("Copying input stream to temporary file {}", tempFile);
-			copyStream(contentReader, writer);
-			log.debug("Finished copying input to temporary file {}", tempFile);
-		} catch (IOException e) {
-			log.error("Exception copying input stream to temporary file {}", tempFile);
-			throw e;
-		}
-		
-		InputStream input = new FileInputStream(tempFile);  
-		long end = System.currentTimeMillis();		
-		log.debug("Finished preparing local disk copy in {} ms", end - start);
-		
-		return input;
+		return sink;
 	}
 	
 	/**
-	 * Buffer the specified input stream in memory and then return an input stream that
-	 * references the buffered stream
+	 * Build the data source (OutputStream) for a Pipe to transfer data from
+	 * one stream to another. This is used to buffer and transfer data between
+	 * threads.
 	 *
-	 * @param stream the input stream to buffer in memory
-	 * @return the buffered input stream
-	 * @throws IOException if the input stream cannot be buffered in memory
+	 * @return the Pipe source OutputStream for inputting data into the Pipe
 	 */
-	protected InputStream bufferInMemory(InputStream stream) throws IOException {
-		log.debug("Preparing to buffer input stream in memory");
-		long start = System.currentTimeMillis();
+	protected PipedOutputStream createPipeSource() {
+		log.debug("Preparing to build pipe source output stream");
+		PipedOutputStream source = new PipedOutputStream();
+		log.debug("Finished building pipe source output stream {}", source);
 		
-		PipedInputStream input = new PipedInputStream(getSettings().getInt(MEMORY_BUFFER_SIZE_PROPERTY, MEMORY_BUFFER_DEFAULT_SIZE));
-		try(OutputStreamWriter output = new OutputStreamWriter(new PipedOutputStream(input))){
-			BufferedReader contentReader = new BufferedReader(new InputStreamReader(stream));
-			
-			log.debug("Copying input stream to memory buffer");
-			copyStream(contentReader, output);
-			log.debug("Finished copying input to memory buffer");
+		return source;
+	}
+	
+	/**
+	 * Transfer data from the source InputStream to the OutputStream of the Pipe. 
+	 * 
+	 * @param source the input stream supplying data to the Pipe
+	 * @param pipe the output stream of the pipe that will receive the data
+	 *
+	 * @throws IOException if there is an issue transferring data to the pipe
+	 */
+	protected void transferDataToPipe(InputStream source, PipedOutputStream pipe) throws IOException {
+		log.debug("Preparing to transfer data from InputStream {} to PipedOutputStream {}", source, pipe);
+		long start = System.currentTimeMillis();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(source));
+		
+		try(OutputStreamWriter writer = new OutputStreamWriter(pipe)) {
+			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+				writer.write(line + "\n");
+			}
 		} catch (IOException e) {
-			log.error("Exception copying input stream to memory buffer");
-			throw e;
+			log.error("Exception transferring data from source stream to the pipe", e);
 		}
 		
 		long end = System.currentTimeMillis();
-		log.debug("Finished preparing in memory copy in {} ms", end - start);
-		
-		return input;
-	}
-	
-	/**
-	 * Copy the lines from the specified BufferedReader to the specified OutputStreamWriter
-	 *
-	 * @param reader a Reader for the input stream to copy
-	 * @param writer a Writer for the output stream target
-	 * @throws IOException if there is an issue reading or writing the streams during copy
-	 */
-	private void copyStream(BufferedReader reader, OutputStreamWriter writer) throws IOException {
-		String line;
-		while((line = reader.readLine()) != null) {
-			writer.write(line);
-			writer.write("\n");
-		}
-		writer.close();
+		log.debug("Finished transferring data from InputStream {} to PipedOutputStream {} in {} ms", new Object[] { source, pipe, end - start});
 	}
 }

@@ -313,7 +313,9 @@ public class Main {
 					new MapVariableSource(retrievalParms)
 				);
 			
-			threadPool.invoke(httpRequest);
+			threadPool.execute(httpRequest);
+			
+			while(!httpRequest.isDataSourceInputStreamReady());
 			
 			InputStream contentStream = httpRequest.getDataSourceAsInputStream();		
 			Scanner scanner = new Scanner(contentStream);
