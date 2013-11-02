@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.text;
+package io.coursescheduler.scheduler.parse.routines.text;
 
 import java.io.InputStream;
 import java.util.prefs.Preferences;
@@ -34,6 +34,7 @@ import java.util.prefs.Preferences;
 import com.google.inject.assistedinject.Assisted;
 
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
 
 /**
  * Factory interface for Text Course parser routines
@@ -41,7 +42,7 @@ import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFac
  * @author Mike Reinhold
  *
  */
-public interface TextCourseParserRoutineFactory extends	CourseParserRoutineFactory {
+public interface TextCourseParserRoutineFactory extends	StreamParserRoutineFactory, CourseParserRoutineFactory {
 
 	/**
 	 * Parser Routine internal name used in configuration and in binding to uniquely identify
@@ -53,7 +54,7 @@ public interface TextCourseParserRoutineFactory extends	CourseParserRoutineFacto
 	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-text";
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.CourseParserRoutineFactory#createSectionBasedParser(java.io.InputStream, java.util.prefs.Preferences)
+	 * @see io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
 	 */
 	@Override
 	public TextCourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);

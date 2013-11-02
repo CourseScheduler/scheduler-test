@@ -26,12 +26,15 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse.routines.stream;
 
 import java.io.InputStream;
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
+
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 
 /**
  * Factory interface for creating Stream Parser routines
@@ -39,15 +42,14 @@ import com.google.inject.assistedinject.Assisted;
  * @author Mike Reinhold
  *
  */
-public interface StreamParserRoutineFactory extends ParserRoutineFactory {
+public interface StreamParserRoutineFactory extends ParserRoutineFactory{
 
 	/**
-	 * Create a new ParserRoutine intended to parse the specified input stream using settings contained
-	 * in the specified {@link java.util.prefs.Preferences} node corresponding to the ParserRoutine profile
-	 *
-	 * @param input the input stream containing the source data to parse
-	 * @param profile the Preferences node containing the settings for the ParserRoutine
+  	 * Create a new ParserRoutine intended to parse the specified input stream using settings contained
+ 	 * in the specified {@link java.util.prefs.Preferences} node corresponding to the ParserRoutine profile
+ 	 *
+ 	 * @param input the input stream containing the source data to parse
+ 	 * @param profile the Preferences node containing the settings for the ParserRoutine
 	 */
 	public ParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
-	
 }

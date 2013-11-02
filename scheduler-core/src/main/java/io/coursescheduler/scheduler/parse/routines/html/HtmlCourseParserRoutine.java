@@ -1,7 +1,7 @@
 /**
-  * @(#)StreamParserRoutine.java
+  * @(#)HtmlCourseParserRoutine.java
   *
-  * Stream parsers are specialized parse routines that process data from an inputstream
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -26,22 +26,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse.routines.html;
 
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
- * Stream parsers are specialized parse routines that process data from an inputstream
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public abstract class StreamParserRoutine extends ParserRoutine {
-
+public class HtmlCourseParserRoutine extends ParserRoutine {
+	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-	
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.RecursiveAction#compute()
+	 */
+	@Override
+	protected void compute() {
+		// TODO METHOD STUB
+		
+	}
 	
 }

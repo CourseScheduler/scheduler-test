@@ -26,17 +26,15 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.xml;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.StreamParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -70,16 +68,12 @@ public class XMLCourseParserModule extends AbstractModule {
 	 */
 	private void configureXMLCourseParserMasterRoutine() {
 		//install a module indicating that XMLCourseParserMasterRoutine can be built from a factory with assisted inject
-		log.debug("Installing FactoryModuleBuilder for {} with implementations {}, {}, {}",
+		log.debug("Installing FactoryModuleBuilder for {} with implementations {}",
 				XMLCourseParserMasterRoutineFactory.class,
-				XMLCourseParserMasterRoutine.class + " for " + ParserRoutine.class,
-				XMLCourseParserMasterRoutine.class + " for " + StreamParserRoutine.class,
-				XMLCourseParserMasterRoutine.class + " for " + CourseParserRoutine.class
+				XMLCourseParserMasterRoutine.class + " for " + ParserRoutine.class
 		);
 		install(new FactoryModuleBuilder()
 			.implement(ParserRoutine.class, XMLCourseParserMasterRoutine.class)
-			.implement(StreamParserRoutine.class, XMLCourseParserMasterRoutine.class)
-			.implement(CourseParserRoutine.class, XMLCourseParserMasterRoutine.class)
 			.build(XMLCourseParserMasterRoutineFactory.class)
 		);
 		
@@ -91,24 +85,24 @@ public class XMLCourseParserModule extends AbstractModule {
 		});  
 		MapBinder<String, ParserRoutineFactory> parseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, ParserRoutineFactory.class);
 		parseRoutineBinder.addBinding(XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserMasterRoutineFactory.class));
-		
-		//add a mapped binding from the ParserRouting class to the implementation classes
-		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
-				StreamParserRoutineFactory.class,
-				XMLCourseParserMasterRoutineFactory.class,
-				XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
-		});  
-		MapBinder<String, StreamParserRoutineFactory> streamParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, StreamParserRoutineFactory.class);
-		streamParseRoutineBinder.addBinding(XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserMasterRoutineFactory.class));
 
 		//add a mapped binding for the CourseParserRoutine class to the implementation class
 		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
-				ParserRoutineFactory.class,
+				CourseParserRoutineFactory.class,
 				XMLCourseParserMasterRoutineFactory.class,
 				XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
 		}); 
 		MapBinder<String, CourseParserRoutineFactory> courseParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, CourseParserRoutineFactory.class);
 		courseParseRoutineBinder.addBinding(XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserMasterRoutineFactory.class));
+		
+		//add a mapped binding for the StreamParserRoutine class to the implementation class
+		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
+				StreamParserRoutineFactory.class,
+				XMLCourseParserMasterRoutineFactory.class,
+				XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME
+		}); 
+		MapBinder<String, StreamParserRoutineFactory> streamParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, StreamParserRoutineFactory.class);
+		streamParseRoutineBinder.addBinding(XMLCourseParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLCourseParserMasterRoutineFactory.class));
 	}
 	
 	

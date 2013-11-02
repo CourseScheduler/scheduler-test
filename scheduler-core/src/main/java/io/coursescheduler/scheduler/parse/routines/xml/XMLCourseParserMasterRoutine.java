@@ -28,13 +28,13 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.xml;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParseConstants;
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
@@ -72,7 +72,7 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Mike Reinhold
  *
  */
-public class XMLCourseParserMasterRoutine extends CourseParserRoutine {
+public class XMLCourseParserMasterRoutine extends ParserRoutine {
 	
 	/**
 	 * Serial Version UID

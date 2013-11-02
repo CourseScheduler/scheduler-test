@@ -1,7 +1,9 @@
 /**
-  * @(#)TextCourseParserRoutine.java
+  * @(#)XMLCourseParserHelperRoutine.java
   *
-  * A general text parser routine for extracting course data out of different types of formatted text
+  * An XML parsing routine for extracting course data from XML formatted documents. This
+  * is the abstract base class for helper XML parsing routine that performs the work of
+  * parsing one or more XML document nodes corresponding to a single course
   *
   * @author Mike Reinhold
   * 
@@ -26,30 +28,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.text;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
- * A general text parser routine for extracting course data out of different types of formatted text
+ * An XML parsing routine for extracting course data from XML formatted documents. This
+ * is the abstract base class for helper XML parsing routine that performs the work of
+ * parsing one or more XML document nodes corresponding to a single course
  *
  * @author Mike Reinhold
  *
  */
-public class TextCourseParserRoutine extends CourseParserRoutine {
-	
+public abstract class XMLCourseParserHelperRoutine extends ParserRoutine {
+
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.RecursiveAction#compute()
-	 */
-	@Override
-	protected void compute() {
-		// TODO METHOD STUB
-		
-	}
+	
 	
 }

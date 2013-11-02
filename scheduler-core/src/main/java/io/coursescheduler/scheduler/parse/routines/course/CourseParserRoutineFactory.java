@@ -28,12 +28,7 @@
   */
 package io.coursescheduler.scheduler.parse.routines.course;
 
-import io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory;
-
-import java.io.InputStream;
-import java.util.prefs.Preferences;
-
-import com.google.inject.assistedinject.Assisted;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
 
 /**
  * Factory interface for Course parser routines
@@ -41,11 +36,6 @@ import com.google.inject.assistedinject.Assisted;
  * @author Mike Reinhold
  *
  */
-public interface CourseParserRoutineFactory extends StreamParserRoutineFactory {
+public interface CourseParserRoutineFactory extends ParserRoutineFactory {
 
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
-	 */
-	@Override
-	public CourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 }

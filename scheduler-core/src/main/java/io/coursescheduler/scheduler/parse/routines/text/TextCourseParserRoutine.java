@@ -1,7 +1,7 @@
 /**
-  * @(#)XMLCourseParserHelperMap.java
+  * @(#)TextCourseParserRoutine.java
   *
-  * Factory interface for XML Course Parser Helper routines
+  * A general text parser routine for extracting course data out of different types of formatted text
   *
   * @author Mike Reinhold
   * 
@@ -26,24 +26,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.xml;
+package io.coursescheduler.scheduler.parse.routines.text;
 
-import com.google.inject.ImplementedBy;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
- * Factory interface for XML Course Parser Helper routines
+ * A general text parser routine for extracting course data out of different types of formatted text
  *
  * @author Mike Reinhold
  *
  */
-@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
-public interface XMLCourseParserHelperMap {
-
+public class TextCourseParserRoutine extends ParserRoutine {
+	
 	/**
-	 * Get a XMLCourseParserHelperRoutineFactory for extracting course data from an XML document
-	 *
-	 * @param key the internal parser routine name used to reference the parser routine in configuration
-	 * @return a factory instance for the parser routine specified by the internal name
+	 * Serial Version UID
 	 */
-	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
+	private static final long serialVersionUID = 1L;
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.RecursiveAction#compute()
+	 */
+	@Override
+	protected void compute() {
+		// TODO METHOD STUB
+		
+	}
+	
 }

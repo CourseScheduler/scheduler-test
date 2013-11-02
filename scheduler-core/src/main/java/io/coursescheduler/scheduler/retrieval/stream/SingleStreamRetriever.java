@@ -43,7 +43,7 @@ import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
-import io.coursescheduler.scheduler.parse.routines.StreamParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
 

@@ -1,7 +1,7 @@
 /**
-  * @(#)HtmlCourseParserRoutine.java
+  * @(#)XMLCourseParserHelperMap.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for XML Course Parser Helper routines
   *
   * @author Mike Reinhold
   * 
@@ -26,30 +26,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.html;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutine;
+import com.google.inject.ImplementedBy;
 
 /**
- * TODO Describe this type
+ * Factory interface for XML Course Parser Helper routines
  *
  * @author Mike Reinhold
  *
  */
-public class HtmlCourseParserRoutine extends CourseParserRoutine {
-	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 1L;
+@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
+public interface XMLCourseParserHelperMap {
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.RecursiveAction#compute()
+	/**
+	 * Get a XMLCourseParserHelperRoutineFactory for extracting course data from an XML document
+	 *
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
 	 */
-	@Override
-	protected void compute() {
-		// TODO METHOD STUB
-		
-	}
-	
+	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
 }

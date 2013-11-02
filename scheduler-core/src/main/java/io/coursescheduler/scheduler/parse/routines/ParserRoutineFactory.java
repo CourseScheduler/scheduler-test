@@ -28,7 +28,6 @@
   */
 package io.coursescheduler.scheduler.parse.routines;
 
-
 /**
  * Interface for ParserRoutineFactory classes that create ParserRoutine instances
  *
@@ -36,5 +35,5 @@ package io.coursescheduler.scheduler.parse.routines;
  *
  */
 public interface ParserRoutineFactory {
-		
+	
 }

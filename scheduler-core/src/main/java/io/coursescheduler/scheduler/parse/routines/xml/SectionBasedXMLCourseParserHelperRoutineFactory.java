@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course.xml;
+package io.coursescheduler.scheduler.parse.routines.xml;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -54,7 +54,7 @@ public interface SectionBasedXMLCourseParserHelperRoutineFactory extends XMLCour
 	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-xml-section-helper";
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.course.xml.XMLCourseParserHelperRoutineFactory#createParserRoutine(java.util.List, java.util.prefs.Preferences, java.lang.String, java.util.concurrent.ConcurrentMap)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLCourseParserHelperRoutineFactory#createParserRoutine(java.util.List, java.util.prefs.Preferences, java.lang.String, java.util.concurrent.ConcurrentMap)
 	 */
 	@Override
 	public SectionBasedXMLCourseParserHelperRoutine createParserRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings")Preferences settings, @Assisted("courseid") String courseID, @Assisted("data") ConcurrentMap<String, String> data);
