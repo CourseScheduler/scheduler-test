@@ -42,31 +42,31 @@ import com.google.inject.Inject;
  * @author Mike Reinhold
  *
  */
-public class MapBoundXMLCourseParserHelperMap implements XMLCourseParserHelperMap {
+public class MapBoundXMLCourseParserHelperMap implements XMLParserHelperMap {
 	
 	/**
 	 * Map of the parser routine internal name to the XML Course Parser Helper routine factories 
 	 */
-	Map<String, XMLCourseParserHelperRoutineFactory> factories;
+	Map<String, XMLParserHelperRoutineFactory> factories;
 	
 	/**
-	 * Create a new MapBoundXMLCourseParserHelperMap instance containing maps of the XMLCourseParserHelperRoutine
+	 * Create a new MapBoundXMLCourseParserHelperMap instance containing maps of the XMLParserHelperRoutine
 	 * internal names to the factory instances that create those Parser Helpers
 	 *
 	 * @param factories the map of internal names to 
 	 */
 	@Inject
-	public MapBoundXMLCourseParserHelperMap(Map<String, XMLCourseParserHelperRoutineFactory> factories) {
+	public MapBoundXMLCourseParserHelperMap(Map<String, XMLParserHelperRoutineFactory> factories) {
 		super();
 		
 		this.factories = factories;
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLCourseParserHelperMap#getXMLCourseParserHelperRoutineFactory(java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserHelperMap#getXMLCourseParserHelperRoutineFactory(java.lang.String)
 	 */
 	@Override
-	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key) {
+	public XMLParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key) {
 		return factories.get(key);
 	}
 }

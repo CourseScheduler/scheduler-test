@@ -1,5 +1,5 @@
 /**
-  * @(#)XMLCourseParserHelperRoutineFactory.java
+  * @(#)XMLParserHelperRoutineFactory.java
   *
   * Factory class for building helper XML parsing routines
   *
@@ -44,18 +44,19 @@ import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
  * @author Mike Reinhold
  *
  */
-public interface XMLCourseParserHelperRoutineFactory extends ParserRoutineFactory {
+public interface XMLParserHelperRoutineFactory extends ParserRoutineFactory {
 	
 	/**
-	 * Create a new XMLCourseParserHelperRoutine which will process the specified list of nodes,
-	 * using the Preferences node, for the identified course, and place the results into the data
+	 * Create a new XMLParserHelperRoutine which will process the specified list of nodes,
+	 * using the Preferences node, for the identified element, and place the results into the data
 	 * map provided
 	 *
 	 * @param nodeList the list of XML Document nodes to process
 	 * @param settings the Preferences node corresponding to this parser routine's configuration
-	 * @param courseID the course ID of the course being processed
+	 * @param elementid the element ID of the element being processed
+	 * @param context the data value name context
 	 * @param data the thread safe map in which the routine will place the data
-	 * @return the Helper XML Course Parser Routine
+	 * @return the Helper XML Parser Routine
 	 */
-	public XMLCourseParserHelperRoutine createParserRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings")Preferences settings, @Assisted("courseid") String courseID, @Assisted("data") ConcurrentMap<String, String> data);
+	public XMLParserHelperRoutine createParserRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings")Preferences settings, @Assisted("elementid") String courseID, @Assisted("context") String context, @Assisted("data") ConcurrentMap<String, String> data);
 }

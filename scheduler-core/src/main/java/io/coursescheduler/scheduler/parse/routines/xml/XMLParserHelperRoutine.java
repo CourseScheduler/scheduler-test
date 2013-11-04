@@ -1,7 +1,9 @@
 /**
-  * @(#)XMLCourseParserHelperMap.java
+  * @(#)XMLParserHelperRoutine.java
   *
-  * Factory interface for XML Course Parser Helper routines
+  * An XML parsing routine for extracting course data from XML formatted documents. This
+  * is the abstract base class for helper XML parsing routine that performs the work of
+  * parsing one or more XML document nodes corresponding to a single course
   *
   * @author Mike Reinhold
   * 
@@ -28,22 +30,22 @@
   */
 package io.coursescheduler.scheduler.parse.routines.xml;
 
-import com.google.inject.ImplementedBy;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
- * Factory interface for XML Course Parser Helper routines
+ * An XML parsing routine for extracting course data from XML formatted documents. This
+ * is the abstract base class for helper XML parsing routine that performs the work of
+ * parsing one or more XML document nodes corresponding to a single course
  *
  * @author Mike Reinhold
  *
  */
-@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
-public interface XMLCourseParserHelperMap {
+public abstract class XMLParserHelperRoutine extends ParserRoutine {
 
 	/**
-	 * Get a XMLCourseParserHelperRoutineFactory for extracting course data from an XML document
-	 *
-	 * @param key the internal parser routine name used to reference the parser routine in configuration
-	 * @return a factory instance for the parser routine specified by the internal name
+	 * Serial Version UID
 	 */
-	public XMLCourseParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
+	private static final long serialVersionUID = 1L;
+	
+	
 }

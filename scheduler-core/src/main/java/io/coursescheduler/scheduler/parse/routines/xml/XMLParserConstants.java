@@ -39,28 +39,28 @@ package io.coursescheduler.scheduler.parse.routines.xml;
 public class XMLParserConstants {
 	
 	/**
-	 * Course name query to find all course names in the source document
+	 * Element name query to find all element groups in the source document
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String COURSE_NAME_FULL_LIST_PROPERTY = "query-all";
+	public static final String GROUP_LIST_PROPERTY = "group-list";
 	
 	/**
-	 * Course name query to find all nodes in the source document that match
-	 * the course ID passed into the query via the Course ID substitution 
-	 * placeholder ({@link #COURSE_ID_VARIABLE}
+	 * Element name query to find all nodes in the source document that match
+	 * the element ID passed into the query via the Element ID substitution 
+	 * placeholder ({@link #ELEMENT_ID_VARIABLE}
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String COURSE_NAME_SINGLE_PROPERTY = "query-single";
+	public static final String GROUP_ELEMENT_PROPERTY = "group-element";
 	
 	/**
-	 * Course ID placeholder used in the {@link #COURSE_NAME_SINGLE_PROPERTY} expression
-	 * to substitute the correct course id into the XML search expression
+	 * Element ID placeholder used in the {@link #GROUP_ELEMENT_PROPERTY} expression
+	 * to substitute the correct element id into the XML search expression
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String COURSE_ID_VARIABLE = "course.id";
+	public static final String ELEMENT_ID_VARIABLE = "element.id";
 
 	/**
 	 * Property for retrieving the ParserTool to use for extracting data from the data source
@@ -75,4 +75,39 @@ public class XMLParserConstants {
 	 * Value: {@value}
 	 */
 	public static final String PARSER_HELPER_PROPERTY = "xml-helper";
+	
+	/**
+	 * Property for retrieving the XML element that will encapsulate data rows when regrouped
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String XML_GROUPING_ELEMENT_PROPERTY = "element.top";
+	
+	/**
+	 * Default value for the XML Grouping Element used to encapsulate data rows when regrouped
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String XML_GROUPING_ELEMENT_DEFAULT = "Group";
+	
+	/**
+	 * Property for retrieving if the XML helper should save a copy of the group XML document
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String XML_GROUP_SAVE_PROPERTY = "group-doc.save";
+	
+	/**
+	 * Property for retrieving where the XML helper should save a copy of the group XML document
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String XML_GROUP_FILE_PROPERTY = "group-doc.file";
+	
+	/**
+	 * Default value for where the XML helper should save a copy of the group XML document
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String XML_GROUP_FILE_DEFAULT = "${dir.tmp}/${random.string}";
 }

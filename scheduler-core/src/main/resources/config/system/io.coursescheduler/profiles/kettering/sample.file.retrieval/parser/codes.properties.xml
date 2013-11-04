@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="course.catalog.url">ROWSET/ROW/CatalogEntryURL</entry>
+	<entry key="course.corequisites">ROWSET/ROW/CrseInfo/CrseInfo_ROW/Corequisites</entry>
+	<entry key="course.credits">ROWSET/ROW/Credits</entry>
+	<entry key="course.department.code">ROWSET/ROW/DeparmentCode</entry>
+	<entry key="course.department.name">ROWSET/ROW/Department</entry>
+	<entry key="course.description">ROWSET/ROW/CrseInfo/CrseInfo_ROW/Description</entry>
+	<entry key="course.id">ROWSET/ROW/CourseID</entry>
+	<entry key="course.levels">ROWSET/ROW/Levels/Levels_ROW/Student</entry>
+	<entry key="course.prerequisites">ROWSET/ROW/CrseInfo/CrseInfo_ROW/Prerequisites</entry>
+	<entry key="course.sections">ROWSET/ROW</entry>
+	<entry key="course.standing.minimum">ROWSET/ROW/CrseInfo/CrseInfo_ROW/Standing</entry>
+	<entry key="course.term">ROWSET/ROW/AssociatedTerm</entry>
+	<entry key="course.terms.offered">ROWSET/ROW/CrseInfo/CrseInfo_ROW/TermsOffered</entry>
+	<entry key="course.title">ROWSET/ROW/Title</entry>
+</properties>

@@ -46,26 +46,17 @@ public class ParseConstants {
 	 * Value: {@value}
 	 */
 	public static final String GENERAL_SETTINGS_NODE = "general";
-
-	/**
-	 * Preferences node name for the course specific parser settings
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String COURSE_SETTINGS_NODE = "course";
 	
 	/**
-	 * Preferences node name for the section specific parser settings
+	 * Preferences node name for parser group settings. Parser group settings are the
+	 * configurations for data values that are shared between elements that are part
+	 * of the same group.
+	 * 
+	 * Example: In a course data set that is organized by section, the course data 
+	 * elements need only be investigated once per group of section elements
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String SECTION_SETTINGS_NODE = "section";
-	
-	/**
-	 * Preferences node name for the meeting specific parser settings
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String MEETING_SETTINGS_NODE = "meeting";
+	public static final String GROUP_SETTINGS_NODE = "group";
 	
 }
