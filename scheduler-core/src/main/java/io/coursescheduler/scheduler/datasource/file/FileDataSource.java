@@ -109,9 +109,7 @@ public class FileDataSource extends DataSource {
 		log.debug("Source file is {}", source);
 
 		log.info("Retrieving input stream for file {}", source);
-		try {
-			//Access the file
-			FileInputStream stream = new FileInputStream(source);
+		try(FileInputStream stream = new FileInputStream(source)){
 			
 			//Tee the input if configured
 			InputStream teedSource = tee(stream);

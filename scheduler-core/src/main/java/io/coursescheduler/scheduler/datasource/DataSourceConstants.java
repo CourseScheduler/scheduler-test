@@ -48,4 +48,12 @@ public class DataSourceConstants {
 	 * Value: {@value}
 	 */
 	public static final String GENERAL_SETTINGS_NODE = "general";
+	
+	/**
+	 * General configuration property for data sources to indicate what 
+	 * character set should be used to interpret the input.
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String INPUT_CHARSET_PROPERTY = "source.charset";
 }

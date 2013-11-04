@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.RecursiveAction;
@@ -336,9 +337,12 @@ public abstract class DataSource extends RecursiveAction {
 	protected void transferDataToPipe(InputStream source, PipedOutputStream pipe) throws IOException {
 		log.debug("Preparing to transfer data from InputStream {} to PipedOutputStream {}", source, pipe);
 		long start = System.currentTimeMillis();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(source));
+		String charset = settings.get(DataSourceConstants.INPUT_CHARSET_PROPERTY, Charset.defaultCharset().name());
+		log.debug("Processing data streams as {}", charset);
 		
-		try(OutputStreamWriter writer = new OutputStreamWriter(pipe)) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(source, Charset.forName(charset)));
+		
+		try(OutputStreamWriter writer = new OutputStreamWriter(pipe, Charset.forName(charset))) {
 			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
 				writer.write(line + "\n");
 			}

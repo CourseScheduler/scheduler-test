@@ -111,7 +111,7 @@ public class HttpDataSource extends DataSource {
 	/**
 	 * Component based logger
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 
 	/**
 	 * Create a new HTTP Data source for retrieving data using HTTP to access resources
@@ -235,7 +235,7 @@ public class HttpDataSource extends DataSource {
 		
 		for(int index = 0; true; index++) {
 			String header = performReplacements(getSettings().get(HTTP_HEADER_PROPERTY_PREFIX + index + HTTP_NAME_POSTFIX, null));
-			String value = performReplacements(getSettings().get(HTTP_HEADER_PROPERTY_PREFIX + index + HTTP_VALUE_POSTFIX, null));;
+			String value = performReplacements(getSettings().get(HTTP_HEADER_PROPERTY_PREFIX + index + HTTP_VALUE_POSTFIX, null));
 			
 			if(header != null) {
 				log.debug("Found HTTP header index {}: {} = {}", new Object[] {index, header, value});
@@ -261,7 +261,7 @@ public class HttpDataSource extends DataSource {
 		
 		for(int index = 0; true; index++) {
 			String header = performReplacements(getSettings().get(HTTP_PARAM_PROPERTY_PREFIX + index + HTTP_NAME_POSTFIX, null));
-			String value = performReplacements(getSettings().get(HTTP_PARAM_PROPERTY_PREFIX + index + HTTP_VALUE_POSTFIX, null));;
+			String value = performReplacements(getSettings().get(HTTP_PARAM_PROPERTY_PREFIX + index + HTTP_VALUE_POSTFIX, null));
 						
 			if(header != null) {
 				log.debug("Found HTTP parameter index {}: {} = {}", new Object[] {index, header, value});

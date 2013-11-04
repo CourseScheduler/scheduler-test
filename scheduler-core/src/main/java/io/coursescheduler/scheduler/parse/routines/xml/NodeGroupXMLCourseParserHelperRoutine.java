@@ -119,12 +119,12 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 	/**
 	 * DocumentBuilderProvider for getting Builders to build XML documents
 	 */
-	private DocumentBuilderProvider builderProvider;
+	private transient DocumentBuilderProvider builderProvider;
 	
 	/**
 	 * StrSubstitutorFactory for accessing string substitutors
 	 */
-	private StrSubstitutor substitutor;
+	private transient StrSubstitutor substitutor;
 	
 	/**
 	 * Create a new NodeGroupXMLCourseParserHelperRoutine instance
