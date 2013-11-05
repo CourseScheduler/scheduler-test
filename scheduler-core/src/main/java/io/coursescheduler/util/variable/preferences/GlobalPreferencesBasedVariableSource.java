@@ -42,6 +42,8 @@ import com.google.inject.Inject;
 import io.coursescheduler.util.preferences.PreferencesFactory;
 import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
 
+import static io.coursescheduler.util.variable.preferences.PreferencesSourceConstants.*;
+
 /**
  * GlobalPreferencesBasedVariableSource for retrieving values from  other preferences nodes. This
  * class only does absolute preferences node referencing (unlike the PreferencesBasedVariableSource
@@ -52,20 +54,6 @@ import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
  *
  */
 public class GlobalPreferencesBasedVariableSource extends GlobalSubstitutionVariableSource {
-	
-	/**
-	 * Preferences property prefix for identifying system preferences variables
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String SYSTEM_PREFERENCES_VARIABLE_PREFIX = "prefs.system/";
-	
-	/**
-	 * Preferences property prefix for identifying user preferences variables
-	 * 
-	 * Value: {@value}
-	 */
-	public static final String USER_PREFERENCES_VARIABLE_PREFIX = "prefs.user/";
 	
 	/**
 	 * Component based logger
@@ -92,10 +80,10 @@ public class GlobalPreferencesBasedVariableSource extends GlobalSubstitutionVari
 	public GlobalPreferencesBasedVariableSource(PreferencesFactory prefsFact) {
 		super();
 		
-		system = prefsFact.getSystemNode("/");
+		system = prefsFact.getSystemNode(ROOT_NODE_PATH);
 		log.debug("Found root system preferences {}", system);
 		
-		user = prefsFact.getUserNode("/");
+		user = prefsFact.getUserNode(ROOT_NODE_PATH);
 		log.debug("Found root user preferences {}", user);
 	}
 	
@@ -131,9 +119,9 @@ public class GlobalPreferencesBasedVariableSource extends GlobalSubstitutionVari
 		}
 
 		//split out the path into the node path and the variable name
-		String nodeName = relativePath.substring(0, relativePath.lastIndexOf('/'));
+		String nodeName = relativePath.substring(0, relativePath.lastIndexOf(PREFERENCES_NODE_PATH_SEPARATOR));
 		log.trace("Found node path {} for key {}", nodeName, key);
-		String variableName = relativePath.substring(relativePath.lastIndexOf('/')+1);
+		String variableName = relativePath.substring(relativePath.lastIndexOf(PREFERENCES_NODE_PATH_SEPARATOR)+1);
 		log.trace("Found variable name {} for key {}", variableName, key);
 		
 		//access the correct node and retrieve the variable value

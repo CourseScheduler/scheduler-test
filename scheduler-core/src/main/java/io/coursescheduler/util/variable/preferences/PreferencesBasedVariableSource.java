@@ -38,6 +38,8 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
 
+import static io.coursescheduler.util.variable.preferences.PreferencesSourceConstants.*;
+
 /**
  * Use a Preferences node as the variable source
  *
@@ -45,12 +47,6 @@ import io.coursescheduler.util.variable.SubstitutionVariableSource;
  *
  */
 public class PreferencesBasedVariableSource extends SubstitutionVariableSource {
-
-	/**
-	 * Node path separator for Preferences nodes - used to determine if a preferences variable
-	 * is local or relative.
-	 */
-	public static final String PREFERENCES_NODE_PATH_SEPARATOR = "/";
 	
 	/**
 	 * Component based logger
