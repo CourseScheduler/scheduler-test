@@ -1,7 +1,7 @@
 /**
-  * @(#)HtmlCourseParserRoutine.java
+  * @(#)GlobalPreferencesBasedVariableModule.java
   *
-  * TODO FILE PURPOSE
+  * Guice Module for binding the GlobalPreferencesBasedVariableSource
   *
   * @author Mike Reinhold
   * 
@@ -26,48 +26,38 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.html;
-
-import java.io.InputStream;
-import java.util.prefs.Preferences;
+package io.coursescheduler.util.variable.preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.assistedinject.Assisted;
+import io.coursescheduler.util.variable.GlobalSubstitutionVariableSource;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 
 /**
- * TODO Describe this type
+ * Guice Module for binding the GlobalPreferencesBasedVariableSource
  *
  * @author Mike Reinhold
  *
  */
-public class HtmlCourseParserRoutine extends ParserRoutine {
-	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 1L;
+public class GlobalPreferencesBasedVariableModule extends AbstractModule {
 	
 	/**
 	 * Component based logger
 	 */
-	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
-
-	public HtmlCourseParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) {
-		super();
-		
-	}
+	private Logger log = LoggerFactory.getLogger(getClass().getName());
 	
 	/* (non-Javadoc)
-	 * @see java.util.concurrent.RecursiveAction#compute()
+	 * @see com.google.inject.AbstractModule#configure()
 	 */
 	@Override
-	protected void compute() {
-		// TODO METHOD STUB
-		
+	protected void configure() {
+		log.debug("Creating MultiBinder for {} using implementation {}", GlobalSubstitutionVariableSource.class,GlobalPreferencesBasedVariableSource.class);
+		Multibinder<GlobalSubstitutionVariableSource> globalVarBinder = Multibinder.newSetBinder(binder(), GlobalSubstitutionVariableSource.class);
+		globalVarBinder.addBinding().to(GlobalPreferencesBasedVariableSource.class).in(Singleton.class);
 	}
 	
 }

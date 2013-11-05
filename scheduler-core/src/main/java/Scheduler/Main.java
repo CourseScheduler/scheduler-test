@@ -300,6 +300,8 @@ public class Main {
 		try{
 			ForkJoinPool threadPool = new ForkJoinPool();
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
+			StrSubstitutorFactory subsFact = injector.getInstance(StrSubstitutorFactory.class);
+			String testReplace = subsFact.createSubstitutor().replace("${prefs.system/io.coursescheduler/profiles/kettering/default.http.retrieval/datasource/uri.base}");
 			
 			//----------------- Test 1
 			Map<String, String> retrievalParms = new HashMap<>();

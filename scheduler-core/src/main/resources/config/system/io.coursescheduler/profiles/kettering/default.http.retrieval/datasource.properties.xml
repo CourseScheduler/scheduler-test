@@ -6,7 +6,8 @@
 	<entry key="host">jweb.kettering.edu</entry>
 	<entry key="protocol">https</entry>
 	<entry key="path">cku1/bwckschd.p_get_crse_unsec</entry>
-	<entry key="uri">${protocol}://${host}/${path}</entry>
+	<entry key="uri">${uri.base}/${path}</entry>
+	<entry key="uri.base">${protocol}://${host}/</entry>
 	<entry key="copy.enabled">true</entry>
 	
 	<entry key="param.0.name">begin_ap</entry>
