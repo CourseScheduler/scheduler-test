@@ -1,7 +1,7 @@
 /**
-  * @(#)HtmlCourseParserRoutine.java
+  * @(#)HtmlParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * HTML parser routine for retrieving data from HTML documents
   *
   * @author Mike Reinhold
   * 
@@ -28,9 +28,11 @@
   */
 package io.coursescheduler.scheduler.parse.routines.html;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.prefs.Preferences;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +41,12 @@ import com.google.inject.assistedinject.Assisted;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
 
 /**
- * TODO Describe this type
- *
+ * HTML parser routine for retrieving data from HTML documents
+ * 
  * @author Mike Reinhold
  *
  */
-public class HtmlCourseParserRoutine extends ParserRoutine {
+public class HtmlParserRoutine extends ParserRoutine {
 	
 	/**
 	 * Serial Version UID
@@ -55,10 +57,29 @@ public class HtmlCourseParserRoutine extends ParserRoutine {
 	 * Component based logger
 	 */
 	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
+	
+	/**
+	 * Input stream that is the source for the HTML parser
+	 */
+	private InputStream source;
+	
+	/**
+	 * Preferences node for the parser configuration
+	 */
+	private Preferences settings;
 
-	public HtmlCourseParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) {
+	/**
+	 * 
+	 * TODO Describe this constructor
+	 *
+	 * @param input
+	 * @param profile
+	 */
+	public HtmlParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile) {
 		super();
 		
+		this.source = input;
+		this.settings = profile;
 	}
 	
 	/* (non-Javadoc)
@@ -66,8 +87,26 @@ public class HtmlCourseParserRoutine extends ParserRoutine {
 	 */
 	@Override
 	protected void compute() {
-		// TODO METHOD STUB
 		
+		
+		String charsetName = "UTF-8";	//TODO change to settings retrieved
+		String baseUri = "https://jweb.kettering.edu/";	//TODO change to relative settings ${../datasource/uri.base}
+		
+		try {
+			Jsoup.parse(source, charsetName, baseUri);
+			
+			
+			
+		} catch (IOException e) {
+			log.error("Exception parsing input stream", e);
+		}finally {
+			try {
+				log.debug("Attempting to close the input stream {}", source);
+				source.close();
+			} catch (IOException e) {
+				log.error("Exception closing input data source", e);
+			}
+		}
 	}
 	
 }
