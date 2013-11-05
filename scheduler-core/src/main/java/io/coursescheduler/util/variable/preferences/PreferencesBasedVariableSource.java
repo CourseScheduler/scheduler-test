@@ -47,6 +47,12 @@ import io.coursescheduler.util.variable.SubstitutionVariableSource;
 public class PreferencesBasedVariableSource extends SubstitutionVariableSource {
 
 	/**
+	 * Node path separator for Preferences nodes - used to determine if a preferences variable
+	 * is local or relative.
+	 */
+	public static final String PREFERENCES_NODE_PATH_SEPARATOR = "/";
+	
+	/**
 	 * Component based logger
 	 */
 	private Logger log = LoggerFactory.getLogger(getClass().getName());
@@ -73,9 +79,25 @@ public class PreferencesBasedVariableSource extends SubstitutionVariableSource {
 	 */
 	@Override
 	public String lookup(String variable) {
-		log.debug("Checking for variable {} in Preferences node {}", variable, node.absolutePath());
-		String value = node.get(variable, null);
-		log.debug("Preferences node contained {} for variable {}", value, variable);
+		String value;
+		
+		if(variable.contains(PREFERENCES_NODE_PATH_SEPARATOR)) {
+			log.debug("Checking for variable {} relative to Preferences node {}", variable, node.absolutePath());
+			String path = variable.substring(0, variable.lastIndexOf(PREFERENCES_NODE_PATH_SEPARATOR));
+			log.trace("Found node path {} relative to {}", path, node.absolutePath());
+			String key = variable.substring(variable.lastIndexOf(PREFERENCES_NODE_PATH_SEPARATOR)+1);
+			log.trace("Found variable name {} to be searched in relative node", key);
+			
+			Preferences relative = node.node(path);
+			log.trace("Found relative node {}", relative);
+			value = relative.get(key, null);
+			log.debug("Preferences node {} contained {} for variable {}", new Object[] {relative, value, key});
+		}else {
+			log.debug("Checking for local variable {} in Preferences node {}", variable, node.absolutePath());
+			value = node.get(variable, null);
+			log.debug("Preferences node contained {} for variable {}", value, variable);
+		}
+		
 		return value;
 	}
 	
