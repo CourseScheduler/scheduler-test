@@ -278,7 +278,7 @@ public abstract class DataSource extends RecursiveAction {
 			try {
 				log.info("Preparing to create local copy");
 		        String tempFile = performReplacements(getSettings().get(DISK_COPY_FILE_PROPERTY, DISK_COPY_DEFAULT_FILE));
-		        log.debug("Writing input stream to temporary file: {}", tempFile);
+		        log.info("Writing local copy to temporary file: {}", tempFile);
 				
 		        FileOutputStream copy = new FileOutputStream(tempFile);
 				TeeInputStream tee = new TeeInputStream(source, copy);

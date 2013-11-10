@@ -33,6 +33,9 @@ import java.io.InputStream;
 import java.util.prefs.Preferences;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +96,13 @@ public class HtmlParserRoutine extends ParserRoutine {
 		String baseUri = "https://jweb.kettering.edu/";	//TODO change to relative settings ${../datasource/uri.base}
 		
 		try {
-			Jsoup.parse(source, charsetName, baseUri);
+			Document doc = Jsoup.parse(source, charsetName, baseUri);
 			
+			Elements elements = doc.select(settings.get(HtmlParserConstants.GROUP_LIST_PROPERTY, ""));
+			
+			for(Element element: elements) {
+				
+			}
 			
 			
 		} catch (IOException e) {

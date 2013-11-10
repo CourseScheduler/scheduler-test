@@ -9,74 +9,191 @@
 	<entry key="uri">${uri.base}/${path}</entry>
 	<entry key="uri.base">${protocol}://${host}/</entry>
 	<entry key="copy.enabled">true</entry>
+	<entry key="copy.file">${dir.tmp}/${random.string}.html</entry>
 	
-	<entry key="param.0.name">begin_ap</entry>
-	<entry key="param.0.value">a</entry>
+	<entry key="param.0.name">term_in</entry>
+	<entry key="param.0.value">${term.id}</entry>
 	
-	<entry key="param.1.name">begin_hh</entry>
-	<entry key="param.1.value">0</entry>
+	<entry key="param.1.name">sel_subj</entry>
+	<entry key="param.1.value">dummy</entry>
 	
-	<entry key="param.2.name">begin_mi</entry>
-	<entry key="param.2.value">0</entry>
+	<entry key="param.2.name">sel_day</entry>
+	<entry key="param.2.value">dummy</entry>
 	
-	<entry key="param.3.name">end_ap</entry>
-	<entry key="param.3.value">a</entry>
+	<entry key="param.3.name">sel_schd</entry>
+	<entry key="param.3.value">dummy</entry>
 	
-	<entry key="param.4.name">end_hh</entry>
-	<entry key="param.4.value">0</entry>
+	<entry key="param.4.name">sel_insm</entry>
+	<entry key="param.4.value">dummy</entry>
 	
-	<entry key="param.5.name">end_mi</entry>
-	<entry key="param.5.value">0</entry>
+	<entry key="param.5.name">sel_camp</entry>
+	<entry key="param.5.value">dummy</entry>
 	
-	<entry key="param.6.name">sel_attr</entry>
+	<entry key="param.6.name">sel_levl</entry>
 	<entry key="param.6.value">dummy</entry>
 	
-	<entry key="param.7.name">sel_camp</entry>
+	<entry key="param.7.name">sel_sess</entry>
 	<entry key="param.7.value">dummy</entry>
 	
-	<entry key="param.8.name">sel_crse</entry>
-	<entry key="param.8.value"></entry>
+	<entry key="param.8.name">sel_instr</entry>
+	<entry key="param.8.value">dummy</entry>
 	
-	<entry key="param.9.name">sel_day</entry>
+	<entry key="param.9.name">sel_ptrm</entry>
 	<entry key="param.9.value">dummy</entry>
 	
-	<entry key="param.10.name">sel_from_cred</entry>
-	<entry key="param.10.value"></entry>
+	<entry key="param.10.name">sel_attr</entry>
+	<entry key="param.10.value">dummy</entry>
 	
-	<entry key="param.11.name">sel_insm</entry>
-	<entry key="param.11.value">dummy</entry>
+	<entry key="param.11.name">sel_crse</entry>
+	<entry key="param.11.value"></entry>
 	
-	<entry key="param.12.name">sel_instr</entry>
-	<entry key="param.12.value">dummy</entry>
+	<entry key="param.12.name">sel_title</entry>
+	<entry key="param.12.value"></entry>
 	
-	<entry key="param.12.name">sel_instr</entry>
-	<entry key="param.12.value">%</entry>
+	<entry key="param.13.name">sel_from_cred</entry>
+	<entry key="param.13.value"></entry>
 	
-	<entry key="param.13.name">sel_levl</entry>
-	<entry key="param.13.value">dummy</entry>
+	<entry key="param.14.name">sel_to_cred</entry>
+	<entry key="param.14.value"></entry>
 	
-	<entry key="param.14.name">sel_ptrm</entry>
-	<entry key="param.14.value">dummy</entry>
+	<entry key="param.15.name">sel_instr</entry>
+	<entry key="param.15.value">%</entry>
 	
-	<entry key="param.15.name">sel_schd</entry>
-	<entry key="param.15.value">dummy</entry>
+	<entry key="param.16.name">begin_hh</entry>
+	<entry key="param.16.value">0</entry>
 	
-	<entry key="param.16.name">sel_sess</entry>
-	<entry key="param.16.value">dummy</entry>
+	<entry key="param.17.name">begin_mi</entry>
+	<entry key="param.17.value">0</entry>
 	
-	<entry key="param.17.name">sel_subj</entry>
-	<entry key="param.17.value">dummy</entry>
+	<entry key="param.18.name">begin_ap</entry>
+	<entry key="param.18.value">a</entry>
 	
-	<entry key="param.18.name">sel_subj</entry>
-	<entry key="param.18.value">%</entry>
+	<entry key="param.19.name">end_hh</entry>
+	<entry key="param.19.value">0</entry>
 	
-	<entry key="param.19.name">sel_title</entry>
-	<entry key="param.19.value"></entry>
+	<entry key="param.20.name">end_mi</entry>
+	<entry key="param.20.value">0</entry>
 	
-	<entry key="param.20.name">sel_to_cred</entry>
-	<entry key="param.20.value"></entry>
+	<entry key="param.21.name">end_ap</entry>
+	<entry key="param.21.value">a</entry>
+
+	<!-- TODO convert these to pulled from the form -->
 	
-	<entry key="param.21.name">term_in</entry>
-	<entry key="param.21.value">${term.id}</entry>
+	<entry key="param.22.name">sel_subj</entry>
+	<entry key="param.22.value">ACCT</entry>
+	
+	<entry key="param.23.name">sel_subj</entry>
+	<entry key="param.23.value">BIOL</entry>
+	
+	<entry key="param.24.name">sel_subj</entry>
+	<entry key="param.24.value">BIZ</entry>
+	
+	<entry key="param.25.name">sel_subj</entry>
+	<entry key="param.25.value">BUSN</entry>
+	
+	<entry key="param.26.name">sel_subj</entry>
+	<entry key="param.26.value">CHME</entry>
+	
+	<entry key="param.27.name">sel_subj</entry>
+	<entry key="param.27.value">CHEM</entry>
+	
+	<entry key="param.28.name">sel_subj</entry>
+	<entry key="param.28.value">CHN</entry>
+	
+	<entry key="param.29.name">sel_subj</entry>
+	<entry key="param.29.value">COMM</entry>
+	
+	<entry key="param.30.name">sel_subj</entry>
+	<entry key="param.30.value">CE</entry>
+	
+	<entry key="param.31.name">sel_subj</entry>
+	<entry key="param.31.value">CS</entry>
+	
+	<entry key="param.32.name">sel_subj</entry>
+	<entry key="param.32.value">CUE</entry>
+	
+	<entry key="param.33.name">sel_subj</entry>
+	<entry key="param.33.value">ECON</entry>
+	
+	<entry key="param.34.name">sel_subj</entry>
+	<entry key="param.34.value">ECE</entry>
+	
+	<entry key="param.35.name">sel_subj</entry>
+	<entry key="param.35.value">EE</entry>
+	
+	<entry key="param.36.name">sel_subj</entry>
+	<entry key="param.36.value">EP</entry>
+	
+	<entry key="param.37.name">sel_subj</entry>
+	<entry key="param.37.value">ESL</entry>
+	
+	<entry key="param.38.name">sel_subj</entry>
+	<entry key="param.38.value">FINC</entry>
+	
+	<entry key="param.39.name">sel_subj</entry>
+	<entry key="param.39.value">FYE</entry>
+	
+	<entry key="param.40.name">sel_subj</entry>
+	<entry key="param.40.value">GER</entry>
+	
+	<entry key="param.41.name">sel_subj</entry>
+	<entry key="param.41.value">HMGT</entry>
+	
+	<entry key="param.42.name">sel_subj</entry>
+	<entry key="param.42.value">HIST</entry>
+	
+	<entry key="param.43.name">sel_subj</entry>
+	<entry key="param.43.value">HUMN</entry>
+	
+	<entry key="param.44.name">sel_subj</entry>
+	<entry key="param.44.value">IME</entry>
+	
+	<entry key="param.45.name">sel_subj</entry>
+	<entry key="param.45.value">ISYS</entry>
+	
+	<entry key="param.46.name">sel_subj</entry>
+	<entry key="param.46.value">KETT</entry>
+	
+	<entry key="param.47.name">sel_subj</entry>
+	<entry key="param.47.value">MFGO</entry>
+	
+	<entry key="param.48.name">sel_subj</entry>
+	<entry key="param.48.value">LS</entry>
+	
+	<entry key="param.49.name">sel_subj</entry>
+	<entry key="param.49.value">LIT</entry>
+	
+	<entry key="param.50.name">sel_subj</entry>
+	<entry key="param.50.value">MGMT</entry>
+	
+	<entry key="param.51.name">sel_subj</entry>
+	<entry key="param.51.value">MRKT</entry>
+	
+	<entry key="param.52.name">sel_subj</entry>
+	<entry key="param.52.value">MATH</entry>
+	
+	<entry key="param.53.name">sel_subj</entry>
+	<entry key="param.53.value">MECH</entry>
+	
+	<entry key="param.54.name">sel_subj</entry>
+	<entry key="param.54.value">MEDI</entry>
+	
+	<entry key="param.55.name">sel_subj</entry>
+	<entry key="param.55.value">ORTN</entry>
+	
+	<entry key="param.56.name">sel_subj</entry>
+	<entry key="param.56.value">PHIL</entry>
+	
+	<entry key="param.57.name">sel_subj</entry>
+	<entry key="param.57.value">PHYS</entry>
+	
+	<entry key="param.58.name">sel_subj</entry>
+	<entry key="param.58.value">SSCI</entry>
+	
+	<entry key="param.59.name">sel_subj</entry>
+	<entry key="param.59.value">SOC</entry>
+	
+	<entry key="param.60.name">sel_subj</entry>
+	<entry key="param.60.value">WEXP</entry>
 	
 </properties>

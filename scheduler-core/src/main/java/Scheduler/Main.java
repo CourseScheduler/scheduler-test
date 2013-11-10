@@ -5,6 +5,8 @@ import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
 import io.coursescheduler.scheduler.datasource.http.HttpDataSource;
 import io.coursescheduler.scheduler.datasource.http.HttpDataSourceFactory;
+import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
+import io.coursescheduler.scheduler.parse.routines.html.HtmlParserRoutine;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
@@ -301,7 +303,6 @@ public class Main {
 			ForkJoinPool threadPool = new ForkJoinPool();
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			StrSubstitutorFactory subsFact = injector.getInstance(StrSubstitutorFactory.class);
-			String testReplace = subsFact.createSubstitutor().replace("${prefs.system/io.coursescheduler/profiles/kettering/default.http.retrieval/datasource/uri.base}");
 			
 			//----------------- Test 1
 			Map<String, String> retrievalParms = new HashMap<>();
@@ -319,13 +320,9 @@ public class Main {
 			
 			while(!httpRequest.isDataSourceInputStreamReady());
 			
-			InputStream contentStream = httpRequest.getDataSourceAsInputStream();		
-			Scanner scanner = new Scanner(contentStream);
-			System.out.println("==================");
-			while(scanner.hasNextLine()) {
-				System.out.println(scanner.nextLine());
-			}
-			System.out.println("==================");
+			InputStream contentStream = httpRequest.getDataSourceAsInputStream();
+			HtmlParserRoutine htmlParser = new HtmlParserRoutine(contentStream, prefFact.getSystemNode("profiles/kettering/default.http.retrieval/parser"));
+			threadPool.invoke(htmlParser);
 			
 			//----------------- Test 2
 			

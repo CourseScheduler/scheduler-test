@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="implementation.key">html</entry>
+	<entry key="batch.size">5</entry>
+	<entry key="group-list">th[class=ddtitle] > a</entry>
+	<entry key="group-element">th[class=ddtitle] > a:containsOwn(${element.id})</entry>
+</properties>
