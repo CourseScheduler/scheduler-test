@@ -68,7 +68,6 @@ public class DefaultGroovyShellFactory implements GroovyShellFactory {
 	@Override
 	public GroovyShell getGroovyShell(Preferences settings) {
 			log.debug("Preparing to build Groovy compiler configuration");
-			
 			CompilerConfiguration configuration = new CompilerConfiguration();
 			
 			log.debug("Setting compiler target version based on running JVM version {}", CompilerConfiguration.currentJVMVersion);

@@ -307,6 +307,7 @@ public class Main {
 			ScriptParserToolMap sptMap = injector.getInstance(ScriptParserToolMap.class);
 			ScriptParserTool parseTool = sptMap.getScriptParserTool(GroovyParserTool.PARSER_INTERNAL_NAME);
 			Map<String, String> replacements = new HashMap<>();
+			replacements.put("value1", "field1 , field2 , field3 ");
 			String value = parseTool.executeScript(prefFact.getSystemNode("profiles/kettering/script.test"), "query", replacements);
 			
 			//----------------- Test 1

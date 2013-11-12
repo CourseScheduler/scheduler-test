@@ -140,7 +140,14 @@ public class GroovyParserTool extends AbstractScriptParserTool {
 		GroovyShell shell = shellFactory.getGroovyShell(settings);
 		
 		log.trace("Evaluating Groovy script {}", script);
-		Object result = shell.evaluate(script);
+		Object result;
+		try {
+			result = shell.evaluate(script);
+		}catch(Exception e) {
+			log.error("Exception caught while executing script {}, using \"\" as result", script);
+			log.error("Exception during script evaluation", e);
+			result = "";
+		}
 		
 		log.trace("Script resulted in {}", result);
 		return result;
