@@ -230,6 +230,14 @@
 				<version>1.7.2</version>
 			</dependency>
 			
+			<!-- Groovy Tools -->
+			<dependency>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-all</artifactId> 
+				<version>2.1.9</version>
+				<classifier>indy</classifier>
+			</dependency>
+			
 		</dependencies>
 		
 	</dependencyManagement>
@@ -342,6 +350,13 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 		</dependency> 
+			
+		<!-- Groovy Tools -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId> 
+			<classifier>indy</classifier>
+		</dependency>
 		
 	</dependencies>
 	

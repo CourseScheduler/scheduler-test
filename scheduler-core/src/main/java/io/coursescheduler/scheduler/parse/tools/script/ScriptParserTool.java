@@ -64,6 +64,13 @@ public interface ScriptParserTool extends ParserTool {
 	public static final String SCRIPT_PREFERENCES_NODE = "_script";
 	
 	/**
+	 * Default script if no script is defined. Generally defined as a simple replacement of the source value
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String SCRIPT_DEFAULT = "${" + SOURCE_STRING_VARIABLE + "}";
+	
+	/**
 	 * Retrieve the script configured for the specified key from the Preferences node and execute it
 	 *
 	 * @param settings the preferences node containing the scripts to execute

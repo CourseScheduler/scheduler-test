@@ -3,14 +3,14 @@ package Scheduler;
 import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
-import io.coursescheduler.scheduler.datasource.http.HttpDataSource;
 import io.coursescheduler.scheduler.datasource.http.HttpDataSourceFactory;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineMap;
 import io.coursescheduler.scheduler.parse.routines.html.HtmlParserRoutine;
+import io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool;
+import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
+import io.coursescheduler.scheduler.parse.tools.script.groovy.GroovyParserTool;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
-import io.coursescheduler.scheduler.retrieval.RetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.RetrieverMap;
 import io.coursescheduler.util.guice.component.ComponentLoaderModule;
 import io.coursescheduler.util.guice.scan.ScanningLoaderModule;
@@ -19,7 +19,6 @@ import io.coursescheduler.util.variable.MapVariableSource;
 import io.coursescheduler.util.variable.NullVariableSource;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
 import io.coursescheduler.util.variable.SubstitutionVariableSource;
-import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
 import java.awt.Component;
 
@@ -303,6 +302,12 @@ public class Main {
 			ForkJoinPool threadPool = new ForkJoinPool();
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			StrSubstitutorFactory subsFact = injector.getInstance(StrSubstitutorFactory.class);
+			
+			//----------------- Script Test
+			ScriptParserToolMap sptMap = injector.getInstance(ScriptParserToolMap.class);
+			ScriptParserTool parseTool = sptMap.getScriptParserTool(GroovyParserTool.PARSER_INTERNAL_NAME);
+			Map<String, String> replacements = new HashMap<>();
+			String value = parseTool.executeScript(prefFact.getSystemNode("profiles/kettering/script.test"), "query", replacements);
 			
 			//----------------- Test 1
 			Map<String, String> retrievalParms = new HashMap<>();

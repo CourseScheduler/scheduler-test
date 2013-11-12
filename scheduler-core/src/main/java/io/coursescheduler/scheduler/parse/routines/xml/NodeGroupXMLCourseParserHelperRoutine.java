@@ -31,7 +31,6 @@
 package io.coursescheduler.scheduler.parse.routines.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.ParseConstants;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
@@ -199,7 +198,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 	 * @throws ParserConfigurationException if there is a problem starting the XML parser
 	 */
 	private Node combineGroupNodes() throws ParserConfigurationException {
-		String rowElement = retrievalSettings.node(ParseConstants.GENERAL_SETTINGS_NODE).get(
+		String rowElement = retrievalSettings.get(
 				XMLParserConstants.XML_GROUPING_ELEMENT_PROPERTY, XMLParserConstants.XML_GROUPING_ELEMENT_DEFAULT);
 		log.debug("Preparing to combine {} elements under top level element {}", rowElement);
 		
@@ -218,7 +217,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 		}
 		
 		log.debug("Checking if group document save is requested via {}", XMLParserConstants.XML_GROUP_SAVE_PROPERTY);
-		if(retrievalSettings.node(ParseConstants.GENERAL_SETTINGS_NODE).getBoolean(XMLParserConstants.XML_GROUP_SAVE_PROPERTY, false)) {
+		if(retrievalSettings.getBoolean(XMLParserConstants.XML_GROUP_SAVE_PROPERTY, false)) {
 			saveGroupXML(doc);
 		} else {
 			log.debug("No group documunt save requested");
@@ -236,7 +235,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 		long start = System.currentTimeMillis();
 		log.debug("Preparing to save group document");
 		try {
-			String file = retrievalSettings.node(ParseConstants.GENERAL_SETTINGS_NODE).get
+			String file = retrievalSettings.get
 					(XMLParserConstants.XML_GROUP_FILE_PROPERTY, XMLParserConstants.XML_GROUP_FILE_DEFAULT);
 			log.debug("File target for element {} is {}", id, file);
 			file = substitutor.replace(file);
