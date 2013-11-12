@@ -1,9 +1,9 @@
 /**
-  * @(#)XMLParserToolMap.java
+  * @(#)ScriptParserToolMap.java
   *
   * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on
   * the implementation key. This allows for other classes that need a ParserTool instance to be
-  * decoupled from the specific binding organization of the ParserTools. This adds a XMLParserTool
+  * decoupled from the specific binding organization of the ParserTools. This adds a ScriptParserTool
   * specific retrieval method.
   *
   * @author Mike Reinhold
@@ -29,7 +29,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.xml;
+package io.coursescheduler.scheduler.parse.tools.script;
 
 import com.google.inject.ImplementedBy;
 
@@ -38,23 +38,23 @@ import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 /**
  * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on
  * the implementation key. This allows for other classes that need a ParserTool instance to be
- * decoupled from the specific binding organization of the ParserTools. This adds a XMLParserTool
+ * decoupled from the specific binding organization of the ParserTools. This adds a ScriptParserTool
  * specific retrieval method.
  * 
- * Default implementation is {@link MapBoundXMLParserToolMap} however
+ * Default implementation is {@link MapBoundScriptParserToolMap} however
  * this can be overridden in a module by binding an alternative implementation
  *
  * @author Mike Reinhold
  *
  */
-@ImplementedBy(MapBoundXMLParserToolMap.class)
-public interface XMLParserToolMap extends ParserToolMap {
-
+@ImplementedBy(MapBoundScriptParserToolMap.class)
+public interface ScriptParserToolMap extends ParserToolMap {
+	
 	/**
-	 * Get a XML ParserTool for extracting data from XML based on the ParserTool internal name
+	 * Get a ScriptParserTool for extracting data from general text  based on the parser internal name
 	 *
-	 * @param key the internal name of the ParserTool 
-	 * @return a ParserTool instance for the internal name provided
+	 * @param key the parser internal name
+	 * @return a parser tool whose type is determined by the parser key
 	 */
-	public XMLParserTool getXMLParserTool(String key);
+	public ScriptParserTool getScriptParserTool(String key);
 }
