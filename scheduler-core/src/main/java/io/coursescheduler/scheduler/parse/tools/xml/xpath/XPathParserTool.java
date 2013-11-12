@@ -6,7 +6,7 @@
   *
   * The methods of this XML ParserTool takes a {@link java.util.prefs.Prefenences} node that contains the 
   * invocation specific configuration elements. In particular, this XML ParserTool implementation requires
-  * a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the data element name and the value
+  * a sub-node at {@value #QUERY_PREFERENCES_NODE} where the key is the data element name and the value
   * is the XPath expression that is used to retrieve the data for that element.
   *
   * This class is not thread safe and instances should not be shared between threads. Create a new instance
@@ -72,7 +72,7 @@ import com.google.inject.Inject;
  *
  * The methods of this XML ParserTool takes a {@link java.util.prefs.Prefenences} node that contains the 
  * invocation specific configuration elements. In particular, the data retrieval methods of this XML 
- * ParserTool implementation requires a sub-node at {@value #CODES_PREFERENCES_NODE} where the key is the 
+ * ParserTool implementation requires a sub-node at {@value #QUERY_PREFERENCES_NODE} where the key is the 
  * data element name and the value is the XPath expression that is used to retrieve the data for that 
  * element.
  *  
@@ -128,7 +128,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	 * in the preferences node should map from a data element name to an XPath query that retrieves that
 	 * element.
 	 */
-	private static final String CODES_PREFERENCES_NODE = "codes";
+	private static final String QUERY_PREFERENCES_NODE = "_query";
 	
 	/**
 	 * Component based logger
@@ -248,7 +248,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	 */
 	@Override
 	public void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException{
-		Preferences codes = settings.node(CODES_PREFERENCES_NODE);
+		Preferences codes = settings.node(QUERY_PREFERENCES_NODE);
 		try {
 			for(String key: codes.keys()){
 				String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
@@ -277,7 +277,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	 */
 	protected void retrieveDataElement(Node node, Preferences settings, String attributePath, String keyPath, String key, Map<String, String> data) throws ParseException{
 		try{
-			Preferences codes = settings.node(CODES_PREFERENCES_NODE);
+			Preferences codes = settings.node(QUERY_PREFERENCES_NODE);
 			String query = codes.get(key, null);
 			NodeList children = retrieveNodeList(node, query);
 			
@@ -320,7 +320,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	protected void retrieveDataElementIndex(Node child, Preferences settings, String attributePath, String keyPath, String key, int item, Map<String, String> data) throws ParseException, BackingStoreException {
 		log.debug("Getting code subnode: {}", key);
 		Preferences codes = settings.node(key); 
-		Preferences subCodes = codes.node(CODES_PREFERENCES_NODE);
+		Preferences subCodes = codes.node(QUERY_PREFERENCES_NODE);
 		int subNodeCount = 0;
 		
 		try {
