@@ -85,9 +85,12 @@ public class DispatchingVariableSource extends StrLookup<String> {
 		log.debug("Looking up value for variable {}", variable);
 		if(!cache.containsKey(variable)) {
 			log.debug("Source for variable {} not found in cache", variable);
-			fillCache(variable);
+			value = fillCache(variable);
+		}else {
+			StrLookup<String> lookup = cache.get(variable);
+			log.debug("Source for variable {} found in cache: {}", variable, lookup);
+			value = lookup.lookup(variable);
 		}
-		value = cache.get(variable).lookup(variable);
 		log.debug("Lookup of {} yielded {}", variable, value);
 		
 		return value;
@@ -97,8 +100,9 @@ public class DispatchingVariableSource extends StrLookup<String> {
 	 * Lookup the variable in the internal StrLookup instances and add the source to the cache.
 	 *
 	 * @param variable the variable to find from the sources and cache the source
+	 * @return the value found while filling the cache
 	 */
-	private void fillCache(String variable) {
+	private String fillCache(String variable) {
 		log.trace("Looking up variable {} in {} possible sources", variable, sources.size());
 		for(StrLookup<String> source: sources) {
 			String value = source.lookup(variable);
@@ -109,13 +113,14 @@ public class DispatchingVariableSource extends StrLookup<String> {
 				log.debug("Variable {} found in source {}", variable, source);
 				cache.put(variable, source);
 				log.trace("Caching source {} for variable {}", source, variable);
-				break;	//exit early
+				return value;	//exit early
 			}
 		}
 		
 		if(!cache.containsKey(variable)) {
 			log.debug("Variable {} not found in sources", variable);
 		}
+		return null;
 	}
 	
 }
