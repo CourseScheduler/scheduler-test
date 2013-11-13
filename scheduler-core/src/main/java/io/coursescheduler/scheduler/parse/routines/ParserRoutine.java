@@ -52,7 +52,7 @@ public abstract class ParserRoutine extends RecursiveAction {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String BATCH_SIZE_PROPERTY = "batch.size";
+	public static final String BATCH_SIZE_PROPERTY = "batch-size";
 
 	/**
 	 * Map of the data parsed by the parse routine (represented by the data element 

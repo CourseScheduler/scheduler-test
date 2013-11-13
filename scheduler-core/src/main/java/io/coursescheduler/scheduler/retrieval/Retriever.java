@@ -52,5 +52,5 @@ public abstract class Retriever extends RecursiveAction {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String IMPLEMENTATION_KEY_PROPERTY = "implementation.key";
+	public static final String IMPLEMENTATION_KEY_PROPERTY = "implementation-key";
 }

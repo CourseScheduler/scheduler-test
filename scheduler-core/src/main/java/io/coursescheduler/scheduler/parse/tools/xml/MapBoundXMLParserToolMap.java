@@ -71,6 +71,10 @@ public class MapBoundXMLParserToolMap extends MapBoundParserToolMap implements X
 	 */
 	@Override
 	public XMLParserTool getXMLParserTool(String key) {
-		return xmlParserProviders.get(key).get();
+		try{
+			return xmlParserProviders.get(key).get();
+		}catch(NullPointerException e) {
+			return null;
+		}
 	}
 }

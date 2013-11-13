@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="implementation.key">xml</entry>
-	<entry key="batch.size">5</entry>
+	<entry key="implementation-key">xml</entry>
+	<entry key="batch-size">5</entry>
 	<entry key="xml-parser">xml-xpath</entry>
 	<entry key="xml-helper">xml-group-helper</entry>
 	<entry key="group-list">//ROWSET/ROW/CourseID</entry>
 	<entry key="group-element">//ROWSET/ROW[CourseID='${element.id}']</entry>
+	<entry key="element-top">ROWSET</entry>
+	<entry key="group-doc.save">false</entry>
+	<entry key="group-doc.file">${dir.tmp}/${random.string}</entry>
 </properties>

@@ -38,14 +38,21 @@
 package io.coursescheduler.scheduler.parse.tools.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool;
+import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
+import io.coursescheduler.scheduler.retrieval.Retriever;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.inject.Inject;
 
 /**
  * A base XML parser class that provides basic implementations of the XMLParserTool. Most methods accept
@@ -64,6 +71,27 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractXMLParserTool implements XMLParserTool {
 	
+	/**
+	 * Component based logger
+	 */
+	private Logger log = LoggerFactory.getLogger(getClass().getName());
+	
+	/**
+	 * Map of the script parser tools that can be used
+	 */
+	private ScriptParserToolMap scriptToolMap;
+	
+	/**
+	 * Create the XMLParserTool with the specified script tool map
+	 *
+	 * @param scriptToolMap the map of script parser tools
+	 */
+	@Inject
+	public AbstractXMLParserTool(ScriptParserToolMap scriptToolMap) {
+		super();
+		
+		this.scriptToolMap = scriptToolMap;
+	}
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
@@ -112,4 +140,32 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
 	 */
 	public abstract void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException;
+	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool#executeScript(java.lang.String, java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public String executeScript(String value, Preferences settings, String key, Map<String, String> data) {
+		log.debug("Preparing to execute script");
+		Preferences scripts = settings.node(ScriptParserTool.SCRIPT_PREFERENCES_NODE);
+		String scriptToolKey = scripts.get(Retriever.IMPLEMENTATION_KEY_PROPERTY, "");
+		log.debug("Found script implementation key: {}", key);
+		
+		ScriptParserTool scriptTool = scriptToolMap.getScriptParserTool(scriptToolKey);
+		String script = scripts.get(key, null);
+		log.trace("Found script tool {} for script tool implementation key {} and element script {} for element id {}", new Object[] {
+				scriptTool, scriptToolKey, script, key
+		});
+		
+		String result;
+		if(scriptTool != null && script != null) {
+			result = scriptTool.executeScriptOnString(value, settings, key, data);
+			log.debug("Executing script for key {}, value {} yielded {}", new Object[] {key, value, result});
+		}else {
+			result = value;
+			log.debug("No script or script tool configured for {}, passing through {}", key, value);
+		}
+		
+		return result;
+	}
 }

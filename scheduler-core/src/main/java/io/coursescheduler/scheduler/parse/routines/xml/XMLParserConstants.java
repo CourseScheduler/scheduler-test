@@ -81,7 +81,7 @@ public class XMLParserConstants {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String XML_GROUPING_ELEMENT_PROPERTY = "element.top";
+	public static final String XML_GROUPING_ELEMENT_PROPERTY = "element-top";
 	
 	/**
 	 * Default value for the XML Grouping Element used to encapsulate data rows when regrouped

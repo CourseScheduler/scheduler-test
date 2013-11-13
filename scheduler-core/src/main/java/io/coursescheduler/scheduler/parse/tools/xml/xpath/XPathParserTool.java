@@ -42,6 +42,7 @@
 package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.ParseException;
+import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.xml.AbstractXMLParserTool;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
@@ -153,10 +154,14 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	
 	/**
 	 * Create a new XPath XML ParserTool for retrieving DOM nodes.
+	 * 
+	 * @param subsFactory string substitutor factory
+	 * @param prefFactory preferences based variable factory
+	 * @param scriptToolMap map of the script parser tools
 	 */
 	@Inject
-	public XPathParserTool(StrSubstitutorFactory subsFactory, PreferencesBasedVariableFactory prefFactory) {
-		super();
+	public XPathParserTool(StrSubstitutorFactory subsFactory, PreferencesBasedVariableFactory prefFactory, ScriptParserToolMap scriptToolMap) {
+		super(scriptToolMap);
 		
 		this.xPath = XPathFactory.newInstance().newXPath();
 		this.subsFactory = subsFactory;
@@ -343,6 +348,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 		}else{					
 			String itemKey = keyPath + "." + item;
 			String value = child.getTextContent();
+			value = executeScript(value, settings, key, data);
 			data.put(itemKey, value);
 			log.trace("Element: {} ( \" text() \" ) = {}", itemKey, value);
 		}

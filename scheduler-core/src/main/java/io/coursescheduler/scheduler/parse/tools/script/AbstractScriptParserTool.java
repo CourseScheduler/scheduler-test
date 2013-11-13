@@ -75,10 +75,10 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	 */
 	@Override
 	public String executeScript(Preferences settings, String key) {
-		log.debug("Preparing to execute script for key {} from {}", key, settings);
+		log.trace("Preparing to execute script for key {} from {}", key, settings);
 		Map<String, String> replacements = new HashMap<>();
 		String source = "";
-		log.debug("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
+		log.trace("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
 		replacements.put(SOURCE_STRING_VARIABLE, source);
 		return executeScript(settings, key, replacements);
 	}
@@ -90,21 +90,21 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	public String executeScript(Preferences settings, String key, Map<String, String> replacements) {
 		log.debug("Preparing to execute script for key {} from {} using replacements map {}", new Object[] {key, settings, replacements});
 		
-		log.debug("Retrieving script for key {}", key);
-		String script = settings.node(SCRIPT_PREFERENCES_NODE).get(key, SCRIPT_DEFAULT);
-		log.debug("Found script for key {}: {}", key, script);
+		log.trace("Retrieving script for key {}", key);
+		String script = settings.node(SCRIPT_PREFERENCES_NODE).get(key, getDefaultScript());
+		log.trace("Found script for key {}: {}", key, script);
 		
-		log.debug("Preparing variable replacer");
+		log.trace("Preparing variable replacer");
 		StrSubstitutor replacer = substFactory.createSubstitutor(replacements);
-		log.debug("Replacing variables in script {}", script);
+		log.trace("Replacing variables in script {}", script);
 		script = replacer.replace(script);
-		log.debug("Variable replacement updated script {}", script);
+		log.trace("Variable replacement updated script {}", script);
 		
 		long start = System.currentTimeMillis();
-		log.info("Executing script {}");
+		log.debug("Executing script {}", script);
 		Object result = executeScript(script, settings);
 		long end = System.currentTimeMillis();
-		log.info("Finished executing script in {} ms. Found result {}", end - start, result);
+		log.debug("Finished executing script in {} ms. Found result {}", end - start, result);
 		
 		return result.toString();		
 	}
@@ -114,9 +114,9 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	 */
 	@Override
 	public String executeScriptOnString(String source, Preferences settings, String key) {
-		log.debug("Preparing to execute script for key {} from {} using source string {}", new Object[] {key, settings, source});
+		log.trace("Preparing to execute script for key {} from {} using source string {}", new Object[] {key, settings, source});
 		Map<String, String> replacements = new HashMap<>();
-		log.debug("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
+		log.trace("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
 		replacements.put(SOURCE_STRING_VARIABLE, source);
 		return executeScript(settings, key, replacements);
 	}
@@ -126,10 +126,10 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	 */
 	@Override
 	public String executeScriptOnString(String source, Preferences settings, String key, Map<String, String> replacements) {
-		log.debug("Preparing to execute script for key {} from {} using source string {} and replacements map {}", new Object[] {key, settings, source, replacements});
+		log.trace("Preparing to execute script for key {} from {} using source string {} and replacements map {}", new Object[] {key, settings, source, replacements});
 		Map<String, String> values = new HashMap<>();
 		values.putAll(replacements);
-		log.debug("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
+		log.trace("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
 		values.put(SOURCE_STRING_VARIABLE, source);
 		return executeScript(settings, key, values);
 	}
@@ -142,5 +142,12 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	 * @return the result of the script execution
 	 */
 	protected abstract Object executeScript(String script, Preferences settings);
+	
+	/**
+	 * Get the implementation specific default script
+	 *
+	 * @return the default script if no other script is configured
+	 */
+	protected abstract String getDefaultScript();
 	
 }

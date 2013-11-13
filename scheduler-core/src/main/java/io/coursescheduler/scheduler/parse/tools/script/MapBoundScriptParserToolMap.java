@@ -72,7 +72,11 @@ public class MapBoundScriptParserToolMap extends MapBoundParserToolMap implement
 	 */
 	@Override
 	public ScriptParserTool getScriptParserTool(String key) {
-		return scriptParserProviders.get(key).get();
+		try {
+			return scriptParserProviders.get(key).get();
+		}catch(NullPointerException e) {
+			return null;
+		}
 	}
 	
 }

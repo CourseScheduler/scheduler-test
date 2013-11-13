@@ -220,7 +220,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 		if(retrievalSettings.getBoolean(XMLParserConstants.XML_GROUP_SAVE_PROPERTY, false)) {
 			saveGroupXML(doc);
 		} else {
-			log.debug("No group documunt save requested");
+			log.debug("No group document save requested");
 		}
 		
 		return doc;

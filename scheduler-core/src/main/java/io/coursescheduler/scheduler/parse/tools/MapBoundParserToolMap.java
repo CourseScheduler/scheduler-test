@@ -68,7 +68,11 @@ public class MapBoundParserToolMap implements ParserToolMap {
 	 */
 	@Override
 	public ParserTool getParserTool(String key) {
-		return parserProviders.get(key).get();
+		try {
+			return parserProviders.get(key).get();
+		}catch(NullPointerException e) {
+			return null;
+		}
 	}
 	
 }

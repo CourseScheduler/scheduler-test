@@ -81,6 +81,13 @@ public class GroovyParserTool extends AbstractScriptParserTool {
 	public static final String PARSER_LONG_DESCRIPTION = "A Groovy based parser that uses Groovy "
 			+ "scripts to parse data. The string value of the result of the Groovy script is used "
 			+ "as the found value";
+
+	/**
+	 * DEfault script that will be used in the event a script is not configured
+	 * 
+	 * Value: {@value}
+	 */
+	private static final String DEFAULT_SCRIPT = "return \"${" + SOURCE_STRING_VARIABLE + "}\";";
 	
 	/**
 	 * Component based logger
@@ -151,6 +158,14 @@ public class GroovyParserTool extends AbstractScriptParserTool {
 		
 		log.trace("Script resulted in {}", result);
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.tools.script.AbstractScriptParserTool#getDefaultScript()
+	 */
+	@Override
+	protected String getDefaultScript() {
+		return DEFAULT_SCRIPT;
 	}
 	
 }

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-	<entry key="element.top">ROWSET</entry>
-	<entry key="group-doc.save">false</entry>
-	<entry key="group-doc.file">${dir.tmp}/${random.string}</entry>
-</properties>
