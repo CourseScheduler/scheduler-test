@@ -65,6 +65,8 @@ import org.w3c.dom.Node;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.*;
+
 /**
  * Parser helper to perform organization specific extraction of element data from the XML document.
  * This ParserHelperRoutine is designed for XML documents where the data elements are grouped into
@@ -148,15 +150,15 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 		this.context = context;
 		this.retrievalSettings = settings;
 		this.parser = toolMap.getXMLParserTool(
-			settings.get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
+			settings.get(PARSER_TOOL_PROPERTY, null)
 		);
 		this.builderProvider = builderProvider;
 		
 		log.trace("Preparing to build lookup instances for variable substitution");
 		Set<StrLookup<String>> localLookups = new HashSet<>();
 		Map<String, String> locals = new HashMap<>();
-		locals.put(XMLParserConstants.ELEMENT_ID_VARIABLE, elementID);
-		log.trace("Map bound {} with value {}", XMLParserConstants.ELEMENT_ID_VARIABLE, elementID);
+		locals.put(ELEMENT_ID_VARIABLE, elementID);
+		log.trace("Map bound {} with value {}", ELEMENT_ID_VARIABLE, elementID);
 		
 		localLookups.add(StrLookup.mapLookup(locals));
 		localLookups.add(prefsFact.createPreferencesVariableSource(settings));
@@ -198,8 +200,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 	 * @throws ParserConfigurationException if there is a problem starting the XML parser
 	 */
 	private Node combineGroupNodes() throws ParserConfigurationException {
-		String rowElement = retrievalSettings.get(
-				XMLParserConstants.XML_GROUPING_ELEMENT_PROPERTY, XMLParserConstants.XML_GROUPING_ELEMENT_DEFAULT);
+		String rowElement = retrievalSettings.get(XML_GROUPING_ELEMENT_PROPERTY, XML_GROUPING_ELEMENT_DEFAULT);
 		log.debug("Preparing to combine {} elements under top level element {}", rowElement);
 		
 		Document doc = builderProvider.get().newDocument();
@@ -216,8 +217,8 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 			log.trace("Migrated original node {} to new node {} and added to document", node, replacement);
 		}
 		
-		log.debug("Checking if group document save is requested via {}", XMLParserConstants.XML_GROUP_SAVE_PROPERTY);
-		if(retrievalSettings.getBoolean(XMLParserConstants.XML_GROUP_SAVE_PROPERTY, false)) {
+		log.debug("Checking if group document save is requested via {}", XML_GROUP_SAVE_PROPERTY);
+		if(retrievalSettings.getBoolean(XML_GROUP_SAVE_PROPERTY, false)) {
 			saveGroupXML(doc);
 		} else {
 			log.debug("No group document save requested");
@@ -235,8 +236,7 @@ public class NodeGroupXMLCourseParserHelperRoutine extends XMLParserHelperRoutin
 		long start = System.currentTimeMillis();
 		log.debug("Preparing to save group document");
 		try {
-			String file = retrievalSettings.get
-					(XMLParserConstants.XML_GROUP_FILE_PROPERTY, XMLParserConstants.XML_GROUP_FILE_DEFAULT);
+			String file = retrievalSettings.get(XML_GROUP_FILE_PROPERTY, XML_GROUP_FILE_DEFAULT);
 			log.debug("File target for element {} is {}", id, file);
 			file = substitutor.replace(file);
 			log.debug("Variable substituted file target for {} is {}", id, file);

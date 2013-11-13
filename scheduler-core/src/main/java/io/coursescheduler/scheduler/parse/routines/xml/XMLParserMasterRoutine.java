@@ -63,6 +63,8 @@ import org.xml.sax.SAXException;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.*;
+
 /**
  * A general XML parsing routine for extracting course data from XML formatted documents. This
  * is the master XML parsing routine that performs the work of scheduling additional helper
@@ -124,11 +126,9 @@ public class XMLParserMasterRoutine extends ParserRoutine {
 		
 		doc = builderProvider.get().parse(input);
 		this.profile = profile;
-		this.parser = toolMap.getXMLParserTool(
-			profile.get(XMLParserConstants.PARSER_TOOL_PROPERTY, null)
-		);
+		this.parser = toolMap.getXMLParserTool(profile.get(PARSER_TOOL_PROPERTY, null));
 		parserHelperFactory = helperMap.getXMLCourseParserHelperRoutineFactory(
-			profile.get(XMLParserConstants.PARSER_HELPER_PROPERTY, null)
+			profile.get(PARSER_HELPER_PROPERTY, null)
 		); 
 	}
 
@@ -160,11 +160,12 @@ public class XMLParserMasterRoutine extends ParserRoutine {
 	private Set<String> getElementIDs(Preferences settings) throws ParseException{
 		log.info("Retrieving element identifiers from source data set");
 		Set<String> elements = new TreeSet<String>();
-		NodeList list = parser.retrieveNodeList(doc, settings, XMLParserConstants.GROUP_LIST_PROPERTY);
+		NodeList list = parser.retrieveNodeList(doc, settings, GROUP_LIST_PROPERTY);
 		
 		for(int item = 0; item < list.getLength(); item++){
 			Node node = list.item(item).cloneNode(true);
 			String courseID = node.getTextContent();
+			courseID = parser.executeScript(courseID, settings, GROUP_LIST_PROPERTY);
 			elements.add(courseID);
 			log.debug("Found row belonging to {}", courseID);
 		}
@@ -183,9 +184,9 @@ public class XMLParserMasterRoutine extends ParserRoutine {
 	 */
 	private XMLParserHelperRoutine createElementTask(Preferences settings, String elementID) throws ParseException{
 		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put(XMLParserConstants.ELEMENT_ID_VARIABLE, elementID);
+		replacements.put(ELEMENT_ID_VARIABLE, elementID);
 
-		NodeList list = parser.retrieveNodeList(doc, settings, XMLParserConstants.GROUP_ELEMENT_PROPERTY, replacements);
+		NodeList list = parser.retrieveNodeList(doc, settings, GROUP_ELEMENT_PROPERTY, replacements);
 		
 		log.info("Found {} rows for {}", list.getLength(), elementID);
 		

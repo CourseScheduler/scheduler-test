@@ -160,6 +160,17 @@ public interface XMLParserTool extends ParserTool{
 	 */
 	public abstract void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException;
 	
+
+	/**
+	 * Execute the script configured under the specified preferences node against the specified data element
+	 *
+	 * @param value the script source value that can be operated upon
+	 * @param settings the configuration parent node of the query or script node
+	 * @param key the local data element key to identify the script in configuration
+	 * @return the result of the script evaluation
+	 */
+	public abstract String executeScript(String value, Preferences settings, String key);
+	
 	/**
 	 * Execute the script configured under the specified preferences node against the specified data element, with the related data elements
 	 *

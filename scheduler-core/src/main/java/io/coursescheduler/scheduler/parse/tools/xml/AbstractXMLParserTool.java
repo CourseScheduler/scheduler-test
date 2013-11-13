@@ -43,6 +43,7 @@ import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
 import io.coursescheduler.scheduler.retrieval.Retriever;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -140,6 +141,14 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
 	 */
 	public abstract void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException;
+	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool#executeScript(java.lang.String, java.util.prefs.Preferences, java.lang.String)
+	 */
+	@Override
+	public String executeScript(String value, Preferences settings, String key) {
+		return executeScript(value, settings, key, new HashMap<String, String>());
+	}
 	
 	/* (non-Javadoc)
 	 * @see io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool#executeScript(java.lang.String, java.util.prefs.Preferences, java.lang.String, java.util.Map)
