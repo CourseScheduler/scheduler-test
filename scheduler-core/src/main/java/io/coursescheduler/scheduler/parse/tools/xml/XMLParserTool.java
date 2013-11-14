@@ -38,7 +38,7 @@
 package io.coursescheduler.scheduler.parse.tools.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserTool;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +62,7 @@ import org.w3c.dom.NodeList;
  * @author Mike Reinhold
  *
  */
-public interface XMLParserTool extends ParserTool{
+public interface XMLParserTool extends QueryBasedParserTool{
 	
 	/**
 	 * Retrieve a list of nodes based on the configuration stored in the {@link java.util.prefs.Preferences} node

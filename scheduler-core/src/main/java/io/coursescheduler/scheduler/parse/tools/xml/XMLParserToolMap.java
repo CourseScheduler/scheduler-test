@@ -34,6 +34,7 @@ package io.coursescheduler.scheduler.parse.tools.xml;
 import com.google.inject.ImplementedBy;
 
 import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
+import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserToolMap;
 
 /**
  * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on
@@ -48,7 +49,7 @@ import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
  *
  */
 @ImplementedBy(MapBoundXMLParserToolMap.class)
-public interface XMLParserToolMap extends ParserToolMap {
+public interface XMLParserToolMap extends QueryBasedParserToolMap {
 
 	/**
 	 * Get a XML ParserTool for extracting data from XML based on the ParserTool internal name
