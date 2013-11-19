@@ -1,7 +1,7 @@
 /**
-  * @(#)TextCourseParserRoutineFactory.java
+  * @(#)NodeGroupXMLCourseParserHelperRoutineFactory.java
   *
-  * Factory interface for Text Course parser routines
+  * Factory interface for building a Section based XML Course Parser helper routine
   *
   * @author Mike Reinhold
   * 
@@ -26,23 +26,23 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.text;
+package io.coursescheduler.scheduler.parse.xml;
 
-import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 import java.util.prefs.Preferences;
+
+import org.w3c.dom.Node;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
-
 /**
- * Factory interface for Text Course parser routines
+ * Factory interface for building a Section based XML Course Parser helper routine
  *
  * @author Mike Reinhold
  *
  */
-public interface TextCourseParserRoutineFactory extends	StreamParserRoutineFactory, CourseParserRoutineFactory {
+public interface NodeGroupXMLCourseParserHelperRoutineFactory extends XMLParserHelperRoutineFactory {
 
 	/**
 	 * Parser Routine internal name used in configuration and in binding to uniquely identify
@@ -51,12 +51,12 @@ public interface TextCourseParserRoutineFactory extends	StreamParserRoutineFacto
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-text";
+	public static final String PARSER_ROUTINE_INTERNAL_NAME = "xml-group-helper";
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
+	 * @see io.coursescheduler.scheduler.parse.xml.XMLParserHelperRoutineFactory#createParserRoutine(java.util.List, java.util.prefs.Preferences, java.lang.String, java.util.concurrent.ConcurrentMap)
 	 */
 	@Override
-	public TextCourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	public NodeGroupXMLCourseParserHelperRoutine createParserRoutine(@Assisted("nodes") List<Node> nodeList, @Assisted("settings")Preferences settings, @Assisted("elementid") String elementID, @Assisted("context") String context, @Assisted("data") ConcurrentMap<String, String> data);
 	
 }

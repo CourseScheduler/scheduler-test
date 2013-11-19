@@ -1,7 +1,7 @@
 /**
-  * @(#)XMLParserMasterRoutineFactory.java
+  * @(#)StreamParserRoutineFactory.java
   *
-  * Factory interface for XML Course parser routines
+  * Factory interface for creating Stream Parser routines
   *
   * @author Mike Reinhold
   * 
@@ -26,37 +26,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.stream;
 
 import java.io.InputStream;
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutineFactory;
 
 /**
- * Factory interface for XML Course parser routines
+ * Factory interface for creating Stream Parser routines
  *
  * @author Mike Reinhold
  *
  */
-public interface XMLParserMasterRoutineFactory extends StreamParserRoutineFactory, CourseParserRoutineFactory {
+public interface StreamParserRoutineFactory extends ParserRoutineFactory{
 
 	/**
-	 * Parser Routine internal name used in configuration and in binding to uniquely identify
-	 * the parser module. It must be unique among all other Parser Routine modules or else it
-	 * will not be available for use by data retrieval routines.
-	 * 
-	 * Value: {@value}
+  	 * Create a new ParserRoutine intended to parse the specified input stream using settings contained
+ 	 * in the specified {@link java.util.prefs.Preferences} node corresponding to the ParserRoutine profile
+ 	 *
+ 	 * @param input the input stream containing the source data to parse
+ 	 * @param profile the Preferences node containing the settings for the ParserRoutine
 	 */
-	public static final String PARSER_ROUTINE_INTERNAL_NAME = "xml";
-	
-	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
-	 */
-	@Override
-	public XMLParserMasterRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
-	
+	public ParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
 }

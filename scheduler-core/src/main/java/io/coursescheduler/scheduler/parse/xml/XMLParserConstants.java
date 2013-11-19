@@ -27,7 +27,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
 /**
  * This class contains a number of XML parser constants that can be used by 

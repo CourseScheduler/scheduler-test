@@ -28,13 +28,13 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.query.QueryBasedParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
+import io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserTool;
 import io.coursescheduler.scheduler.parse.tools.xml.XMLParserToolMap;
@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
-import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.*;
+import static io.coursescheduler.scheduler.parse.xml.XMLParserConstants.*;
 
 /**
  * A general XML parsing routine for extracting course data from XML formatted documents. This
@@ -128,7 +128,7 @@ public class XMLParserMasterRoutine extends QueryBasedParserRoutine<Node> {
 	}	
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.query.QueryBasedParserRoutine#prepareInput()
+	 * @see io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine#prepareInput()
 	 */
 	@Override
 	protected Document prepareInput() throws Exception {

@@ -1,7 +1,7 @@
 /**
-  * @(#)XMLParserHelperMap.java
+  * @(#)QueryBasedParserHelperRoutine.java
   *
-  * Factory interface for XML Course Parser Helper routines
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -26,24 +26,38 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.query;
 
-import com.google.inject.ImplementedBy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
- * Factory interface for XML Course Parser Helper routines
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
-public interface XMLParserHelperMap {
-
+public abstract class QueryBasedParserHelperRoutine extends ParserRoutine {
+	
 	/**
-	 * Get a XMLParserHelperRoutineFactory for extracting course data from an XML document
-	 *
-	 * @param key the internal parser routine name used to reference the parser routine in configuration
-	 * @return a factory instance for the parser routine specified by the internal name
+	 * Serial Version UID
 	 */
-	public XMLParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Component based logger
+	 */
+	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.RecursiveAction#compute()
+	 */
+	@Override
+	protected void compute() {
+		// TODO METHOD STUB
+		
+	}
+	
 }

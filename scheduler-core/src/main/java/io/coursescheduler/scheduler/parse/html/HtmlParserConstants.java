@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.html;
+package io.coursescheduler.scheduler.parse.html;
 
 /**
  * This class contains a number of constants that are used by HTML parser routines and helpers 

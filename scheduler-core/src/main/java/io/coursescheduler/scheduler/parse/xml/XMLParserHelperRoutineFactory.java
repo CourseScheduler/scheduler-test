@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.ParserRoutineFactory;
 
 /**
  * Factory class for building helper XML parsing routines

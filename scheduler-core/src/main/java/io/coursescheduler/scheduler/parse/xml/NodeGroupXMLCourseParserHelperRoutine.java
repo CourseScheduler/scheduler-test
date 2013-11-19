@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.tools.xml.DocumentBuilderProvider;
@@ -65,7 +65,7 @@ import org.w3c.dom.Node;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
-import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.*;
+import static io.coursescheduler.scheduler.parse.xml.XMLParserConstants.*;
 
 /**
  * Parser helper to perform organization specific extraction of element data from the XML document.

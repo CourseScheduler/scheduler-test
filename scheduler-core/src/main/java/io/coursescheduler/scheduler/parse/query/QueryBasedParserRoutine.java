@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.query;
+package io.coursescheduler.scheduler.parse.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
  * Provide an interface for and default implementation of a query based parser routine. This is for 

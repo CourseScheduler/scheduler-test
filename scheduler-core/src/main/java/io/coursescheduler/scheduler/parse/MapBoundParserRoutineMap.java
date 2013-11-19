@@ -28,10 +28,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.stream.StreamParserRoutineFactory;
 
 import java.util.Map;
 

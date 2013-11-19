@@ -1,7 +1,7 @@
 /**
-  * @(#)CourseParserRoutineFactory.java
+  * @(#)ParserRoutineFactory.java
   *
-  * Factory interface for Course parser routines
+  * Interface for ParserRoutineFactory classes that create ParserRoutine instances
   *
   * @author Mike Reinhold
   * 
@@ -26,16 +26,14 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.course;
-
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+package io.coursescheduler.scheduler.parse;
 
 /**
- * Factory interface for Course parser routines
+ * Interface for ParserRoutineFactory classes that create ParserRoutine instances
  *
  * @author Mike Reinhold
  *
  */
-public interface CourseParserRoutineFactory extends ParserRoutineFactory {
-
+public interface ParserRoutineFactory {
+	
 }

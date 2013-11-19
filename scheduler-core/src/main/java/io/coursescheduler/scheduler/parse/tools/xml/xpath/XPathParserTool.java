@@ -201,7 +201,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String)
 	 */
 	@Override
 	public NodeList retrieveNodeList(Node node, Preferences settings, String key) throws ParseException {
@@ -227,7 +227,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.scheduler.parse.xml.XMLParserTool#retrieveNodeList(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public NodeList retrieveNodeList(Node node, Preferences settings, String key, Map<String, String> replacements) throws ParseException {
@@ -249,7 +249,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserTool#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.scheduler.parse.xml.XMLParserTool#retrieveData(org.w3c.dom.Node, java.util.prefs.Preferences, java.lang.String, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public void retrieveData(Node node, Preferences settings, String attributePath, String nodePath, Map<String, String> data) throws ParseException{

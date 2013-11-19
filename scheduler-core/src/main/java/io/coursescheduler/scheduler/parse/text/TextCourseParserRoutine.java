@@ -1,7 +1,7 @@
 /**
-  * @(#)QueryBasedParserHelperRoutine.java
+  * @(#)TextCourseParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * A general text parser routine for extracting course data out of different types of formatted text
   *
   * @author Mike Reinhold
   * 
@@ -26,30 +26,22 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.query;
+package io.coursescheduler.scheduler.parse.text;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
- * TODO Describe this type
+ * A general text parser routine for extracting course data out of different types of formatted text
  *
  * @author Mike Reinhold
  *
  */
-public abstract class QueryBasedParserHelperRoutine extends ParserRoutine {
+public class TextCourseParserRoutine extends ParserRoutine {
 	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * Component based logger
-	 */
-	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.RecursiveAction#compute()

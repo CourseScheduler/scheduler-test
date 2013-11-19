@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
 import java.util.Map;
 
@@ -63,7 +63,7 @@ public class MapBoundXMLCourseParserHelperMap implements XMLParserHelperMap {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.routines.xml.XMLParserHelperMap#getXMLCourseParserHelperRoutineFactory(java.lang.String)
+	 * @see io.coursescheduler.scheduler.parse.xml.XMLParserHelperMap#getXMLCourseParserHelperRoutineFactory(java.lang.String)
 	 */
 	@Override
 	public XMLParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key) {

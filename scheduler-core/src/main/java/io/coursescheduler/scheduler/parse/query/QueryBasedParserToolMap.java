@@ -1,7 +1,7 @@
 /**
-  * @(#)TextCourseParserRoutine.java
+  * @(#)QueryBasedParserToolMap.java
   *
-  * A general text parser routine for extracting course data out of different types of formatted text
+  * TODO FILE PURPOSE
   *
   * @author Mike Reinhold
   * 
@@ -26,30 +26,17 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.text;
+package io.coursescheduler.scheduler.parse.query;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 
 /**
- * A general text parser routine for extracting course data out of different types of formatted text
+ * TODO Describe this type
  *
  * @author Mike Reinhold
  *
  */
-public class TextCourseParserRoutine extends ParserRoutine {
+public interface QueryBasedParserToolMap extends ParserToolMap {
 	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.RecursiveAction#compute()
-	 */
-	@Override
-	protected void compute() {
-		// TODO METHOD STUB
-		
-	}
-	
+	public abstract QueryBasedParserTool getQueryBasedParserTool(String key);
 }

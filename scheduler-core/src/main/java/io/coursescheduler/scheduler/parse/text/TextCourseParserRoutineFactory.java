@@ -1,7 +1,7 @@
 /**
-  * @(#)StreamParserRoutineFactory.java
+  * @(#)TextCourseParserRoutineFactory.java
   *
-  * Factory interface for creating Stream Parser routines
+  * Factory interface for Text Course parser routines
   *
   * @author Mike Reinhold
   * 
@@ -26,30 +26,37 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.stream;
+package io.coursescheduler.scheduler.parse.text;
 
 import java.io.InputStream;
 import java.util.prefs.Preferences;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.stream.StreamParserRoutineFactory;
 
 /**
- * Factory interface for creating Stream Parser routines
+ * Factory interface for Text Course parser routines
  *
  * @author Mike Reinhold
  *
  */
-public interface StreamParserRoutineFactory extends ParserRoutineFactory{
+public interface TextCourseParserRoutineFactory extends	StreamParserRoutineFactory, CourseParserRoutineFactory {
 
 	/**
-  	 * Create a new ParserRoutine intended to parse the specified input stream using settings contained
- 	 * in the specified {@link java.util.prefs.Preferences} node corresponding to the ParserRoutine profile
- 	 *
- 	 * @param input the input stream containing the source data to parse
- 	 * @param profile the Preferences node containing the settings for the ParserRoutine
+	 * Parser Routine internal name used in configuration and in binding to uniquely identify
+	 * the parser module. It must be unique among all other Parser Routine modules or else it
+	 * will not be available for use by data retrieval routines.
+	 * 
+	 * Value: {@value}
 	 */
-	public ParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	public static final String PARSER_ROUTINE_INTERNAL_NAME = "course-text";
+	
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.scheduler.parse.stream.StreamParserRoutineFactory#createParserRoutine(java.io.InputStream, java.util.prefs.Preferences)
+	 */
+	@Override
+	public TextCourseParserRoutine createParserRoutine(@Assisted("source") InputStream input, @Assisted("profile") Preferences profile);
+	
 }

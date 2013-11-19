@@ -33,7 +33,7 @@ package io.coursescheduler.scheduler.parse.tools.xml;
 
 import com.google.inject.ImplementedBy;
 
-import io.coursescheduler.scheduler.parse.routines.query.QueryBasedParserToolMap;
+import io.coursescheduler.scheduler.parse.query.QueryBasedParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 
 /**

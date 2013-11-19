@@ -28,9 +28,9 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.xml;
+package io.coursescheduler.scheduler.parse.xml;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
  * An XML parsing routine for extracting course data from XML formatted documents. This

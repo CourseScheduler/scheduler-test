@@ -28,10 +28,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines;
+package io.coursescheduler.scheduler.parse;
 
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.stream.StreamParserRoutineFactory;
 
 import com.google.inject.ImplementedBy;
 
@@ -41,7 +41,7 @@ import com.google.inject.ImplementedBy;
  * the implementation key. This allows for other classes that need a ParserRoutine instance to be
  * decoupled from the specific binding organization of the ParserRoutines
  * 
- * Default implementation is {@link io.coursescheduler.scheduler.parse.routines.MapBoundParserRoutineMap} however
+ * Default implementation is {@link io.coursescheduler.scheduler.parse.MapBoundParserRoutineMap} however
  * this can be overridden in a module by binding an alternative implementation
  *
  * @author Mike Reinhold

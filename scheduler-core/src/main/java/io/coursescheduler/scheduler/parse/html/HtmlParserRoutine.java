@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.html;
+package io.coursescheduler.scheduler.parse.html;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.assistedinject.Assisted;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
  * HTML parser routine for retrieving data from HTML documents

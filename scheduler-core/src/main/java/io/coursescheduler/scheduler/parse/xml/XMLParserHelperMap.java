@@ -1,7 +1,7 @@
 /**
-  * @(#)QueryBasedParserTool.java
+  * @(#)XMLParserHelperMap.java
   *
-  * TODO FILE PURPOSE
+  * Factory interface for XML Course Parser Helper routines
   *
   * @author Mike Reinhold
   * 
@@ -26,25 +26,24 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.query;
+package io.coursescheduler.scheduler.parse.xml;
 
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
-
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import com.google.inject.ImplementedBy;
 
 /**
- * TODO Describe this type
+ * Factory interface for XML Course Parser Helper routines
  *
  * @author Mike Reinhold
  *
  */
-interface QueryBasedParserTool<N> extends ParserTool {
-	
-	public abstract String asString(N item);
-	
-	public abstract List<N> query(N queryable, Preferences settings);
-	
-	public abstract List<N> query(N queryable, Preferences settings, Map<String, String> replacements);
+@ImplementedBy(MapBoundXMLCourseParserHelperMap.class)
+public interface XMLParserHelperMap {
+
+	/**
+	 * Get a XMLParserHelperRoutineFactory for extracting course data from an XML document
+	 *
+	 * @param key the internal parser routine name used to reference the parser routine in configuration
+	 * @return a factory instance for the parser routine specified by the internal name
+	 */
+	public XMLParserHelperRoutineFactory getXMLCourseParserHelperRoutineFactory(String key);
 }

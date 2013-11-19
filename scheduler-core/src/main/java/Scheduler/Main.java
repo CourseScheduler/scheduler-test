@@ -4,7 +4,7 @@ import io.coursescheduler.scheduler.datasource.DataSource;
 import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
 import io.coursescheduler.scheduler.datasource.http.HttpDataSourceFactory;
-import io.coursescheduler.scheduler.parse.routines.html.HtmlParserRoutine;
+import io.coursescheduler.scheduler.parse.html.HtmlParserRoutine;
 import io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool;
 import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.script.groovy.GroovyParserTool;

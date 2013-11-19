@@ -26,15 +26,15 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.routines.text;
+package io.coursescheduler.scheduler.parse.text;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
-import io.coursescheduler.scheduler.parse.routines.ParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.course.CourseParserRoutineFactory;
-import io.coursescheduler.scheduler.parse.routines.stream.StreamParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.ParserRoutine;
+import io.coursescheduler.scheduler.parse.ParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.course.CourseParserRoutineFactory;
+import io.coursescheduler.scheduler.parse.stream.StreamParserRoutineFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
