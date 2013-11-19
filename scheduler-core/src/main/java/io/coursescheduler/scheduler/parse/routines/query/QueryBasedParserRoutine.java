@@ -1,7 +1,7 @@
 /**
   * @(#)QueryBasedParserRoutine.java
   *
-  * TODO FILE PURPOSE
+  * Abstract parser routine for query based parsing
   *
   * @author Mike Reinhold
   * 
@@ -28,9 +28,6 @@
   */
 package io.coursescheduler.scheduler.parse.routines.query;
 
-import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.ELEMENT_ID_VARIABLE;
-import static io.coursescheduler.scheduler.parse.routines.xml.XMLParserConstants.PARSER_TOOL_PROPERTY;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,11 +47,12 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.routines.ParserRoutine;
-import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserTool;
-import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserToolMap;
 
 /**
- * TODO Describe this type
+ * Provide an interface for and default implementation of a query based parser routine. This is for 
+ * parsers that operate on documents or structures that can be queried against. Generally the parser 
+ * will query for a group of elements that are related based on some data element and then build
+ * background tasks for querying data out of those elements.
  *
  * @author Mike Reinhold
  *
@@ -75,8 +73,11 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	 * The {@link java.util.prefs.Preferences} node containing the configuration for this ParserRoutine
 	 */
 	private transient Preferences profile;
-	
-	private QueryBasedParserTool parser;
+
+	/**
+	 * The Parser Tool that will be used to assist with querying data out of the source data
+	 */
+	private QueryBasedParserTool<N> parser;
 
 	@AssistedInject
 	public QueryBasedParserRoutine(QueryBasedParserToolMap toolMap, @Assisted("profile") Preferences profile) {
@@ -84,14 +85,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		
 		this.profile = profile;
 		
-		this.parser = toolMap.getQueryBasedParserTool(profile.get(PARSER_TOOL_PROPERTY, null));
-	}
-
-	/**
-	 * @return the profile
-	 */
-	protected Preferences getProfile() {
-		return profile;
+		toolMap.getQueryBasedParserTool(profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */));
 	}
 	
 	/* (non-Javadoc)
@@ -105,10 +99,10 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		try {
 			N queryable = prepareInput();
 			
-			Set<String> groups = queryGroups(queryable);
+			Set<String> groups = queryGroups(queryable, profile);
 			log.info("Found {} groups of elements to process", groups.size());
 			
-			List<RecursiveAction> batches = buildBatches(groups);		
+			List<RecursiveAction> batches = buildBatches(profile, queryable, groups);		
 			waitForBatches(batches);
 		}catch(Exception e) {
 			log.error("Exception querying input for data elements", e);
@@ -118,7 +112,10 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("Retrieved data for {} elements in {} milliseconds", getDataSets().size(), (end - start));
 	}
 
-	protected List<RecursiveAction> buildBatches(Set<String> groups){
+
+	public abstract N prepareInput() throws Exception;
+	
+	protected List<RecursiveAction> buildBatches(Preferences settings, N queryable, Set<String> groups){
 		long start = System.currentTimeMillis();
 		log.info("Preparing to build background tasks for {} groups", groups.size());
 		
@@ -132,7 +129,8 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		for(String group: groups) {
 			RecursiveAction task;
 			try {
-				task = null;	//TODO create the background task for processing the groups
+				List<N> elements = queryGroup(queryable, settings, group);
+				task = createBackgroundTask(group, elements);
 				elementsBatch.add(task);
 				log.info("Finished creating background task for processing group {}", group);
 			} catch (Exception e) {
@@ -178,23 +176,23 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
 		getDataSets().put(group, data);
 		
-		RecursiveAction action = null; //TODO create the background task
+		RecursiveAction action = createBackgroundTaskImpl(group, elements, data);
 		
 		return action;
 	}
 	
-	protected abstract N prepareInput() throws Exception;
-	
-	protected Set<String> queryGroups(N queryable) {
+	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data);
+		
+	protected Set<String> queryGroups(N queryable, Preferences settings) {
 		long start = System.currentTimeMillis();
 		log.info("Retrieving element identifiers from source data set");
 		Set<String> elements = new TreeSet<String>();
 		
-		List<N> groupList = null; //TODO query the list of groups
+		List<N> groupList = parser.query(queryable, settings);
 		
 		for(N element: groupList) {
-			String groupName = asString(element);
-			groupName = executeScript(groupName, profile, "" /* TODO group list property script */ );
+			String groupName = parser.asString(element);
+			groupName = executeScript(groupName, settings, "" /* TODO group list property script */ );
 			elements.add(groupName);
 			log.debug("Found row belonging to {}", groupName);
 		}
@@ -208,7 +206,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put("" /* TODO variable name */, group);
 
-		List<N> groupElements = null;	//TODO query the group elements
+		List<N> groupElements = parser.query(queryable, settings, replacements);
 
 		log.info("Found {} elements for group {}", groupElements.size(), group);
 				
@@ -220,7 +218,4 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		//TODO if a script parser is defined, get and execute the script
 		return value;
 	}
-	
-	protected abstract String asString(N item);
-	
 }

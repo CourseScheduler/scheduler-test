@@ -33,8 +33,8 @@ package io.coursescheduler.scheduler.parse.tools.xml;
 
 import com.google.inject.ImplementedBy;
 
+import io.coursescheduler.scheduler.parse.routines.query.QueryBasedParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
-import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserToolMap;
 
 /**
  * Extended ParserTool mapping interface for retrieving registered ParserTool instances based on

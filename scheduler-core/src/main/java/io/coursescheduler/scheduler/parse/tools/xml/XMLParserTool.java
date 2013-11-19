@@ -38,7 +38,7 @@
 package io.coursescheduler.scheduler.parse.tools.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.tools.query.QueryBasedParserTool;
+import io.coursescheduler.scheduler.parse.routines.query.QueryBasedParserTool;
 
 import java.util.List;
 import java.util.Map;

@@ -1,5 +1,5 @@
 /**
-  * @(#)QueryBasedParserTool.java
+  * @(#)QueryBasedParserToolMap.java
   *
   * TODO FILE PURPOSE
   *
@@ -26,9 +26,9 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.query;
+package io.coursescheduler.scheduler.parse.routines.query;
 
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
 
 /**
  * TODO Describe this type
@@ -36,6 +36,7 @@ import io.coursescheduler.scheduler.parse.tools.ParserTool;
  * @author Mike Reinhold
  *
  */
-public interface QueryBasedParserTool extends ParserTool {
+public interface QueryBasedParserToolMap extends ParserToolMap {
 	
+	public abstract QueryBasedParserTool getQueryBasedParserTool(String key);
 }
