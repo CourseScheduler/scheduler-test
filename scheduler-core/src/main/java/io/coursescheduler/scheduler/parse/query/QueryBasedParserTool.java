@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
+import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.tools.ParserTool;
 
 /**
@@ -44,7 +45,7 @@ interface QueryBasedParserTool<N> extends ParserTool {
 	
 	public abstract String asString(N item);
 	
-	public abstract List<N> query(N queryable, Preferences settings);
+	public abstract List<N> query(N queryable, Preferences settings, String key) throws ParseException;
 	
-	public abstract List<N> query(N queryable, Preferences settings, Map<String, String> replacements);
+	public abstract List<N> query(N queryable, Preferences settings, String key, Map<String, String> replacements) throws ParseException;
 }

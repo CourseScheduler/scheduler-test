@@ -28,17 +28,23 @@
   */
 package io.coursescheduler.scheduler.parse.query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserRoutine;
+import static io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine.QUERY_PREFERENCES_NODE;
 
 /**
  * TODO Describe this type
@@ -85,10 +91,75 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 		
 	}
 	
-	protected abstract void retrieveDataRecursive(N top, Preferences settings, String attributePath, String nodePath, Map<String, String> replacements);
+	protected void retrieveDataRecursive(N top, Preferences settings, String attributePath, String nodePath, Map<String, String> replacements) throws ParseException {
+		Preferences codes = settings.node(QUERY_PREFERENCES_NODE);
+		try {
+			for(String key: codes.keys()){
+				String newPath = (attributePath == null || attributePath.compareTo("") == 0) ? key : attributePath + "." + key;
+				String newKey = (nodePath == null || nodePath.compareTo("") == 0) ? key : nodePath + "." + key;
+							
+				retrieveDataSingle(top, settings, newPath, newKey, key, data);
+			}
+		} catch (BackingStoreException e) {
+			log.error("Exception while reading profile entries for profile node {}: {}", codes, e);
+			throw new ParseException(e);
+		}
+	}
 	
-	protected abstract void retrieveDataSingle(N top, Preferences settings, String attributePath, String nodePath, String key, Map<String, String> replacements);
+	protected void retrieveDataSingle(N top, Preferences settings, String attributePath, String nodePath, String key, Map<String, String> replacements) throws ParseException {
+		try{
+			Preferences codes = settings.node(QUERY_PREFERENCES_NODE);
+			String query = codes.get(key, null);
+			List<N> children = parser.query(top, codes, key);
+			
+			//write the number of values
+			String count = Integer.toString(children.size());
+			data.put(nodePath, count);
+			log.trace("Element: {} ( \" {} \" ) = {}", new Object[] {nodePath, query, count});
+						
+			//process each item
+			for(int item = 0; item < children.size(); item++){
+				N child = children.get(item);
+				retrieveDataIndex(child, settings, attributePath, nodePath, key, item, data);
+			}
+		} catch(ParseException e){
+			log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, nodePath, e);
+			throw e;
+		}
+	}
 	
-	protected abstract void retrieveDataIndex(N top, Preferences settings, String attributePath, String nodePath, String key, int index, Map<String, String> replacements);
+	protected void retrieveDataIndex(N top, Preferences settings, String attributePath, String nodePath, String key, int index, Map<String, String> replacements)  throws ParseException {
+		log.debug("Getting code subnode: {}", key);
+		Preferences codes = settings.node(key); 
+		Preferences subCodes = codes.node(QUERY_PREFERENCES_NODE);
+		int subNodeCount = 0;
+		
+		try {
+			subNodeCount = subCodes.keys().length;
+			
+			if(subNodeCount == 0) {
+				log.debug("No sub code entries exist for node {}, removing", key);
+				subCodes.removeNode();
+				codes.removeNode();
+			}
+		} catch(IllegalStateException e) {
+			//node previously removed - ok for us since we have to load (or "create") a node 
+			//in order to check for sub keys.
+			log.trace("No sub code entries exist for node {}, previously removed", key);
+		}
+		
+		if(subNodeCount > 0){
+			log.debug("Sub codes exist for node {}, processing", key);
+			retrieveDataRecursive(top, codes, attributePath, nodePath + "." + index, data);
+		}else{					
+			String itemKey = nodePath + "." + index;
+			String value = parser.asString(top);
+			
+			value = executeScript(value, settings, key, data);	//TODO handle script
+		
+			data.put(itemKey, value);
+			log.trace("Element: {} ( \" text() \" ) = {}", itemKey, value);
+		}
+	}
 	
 }

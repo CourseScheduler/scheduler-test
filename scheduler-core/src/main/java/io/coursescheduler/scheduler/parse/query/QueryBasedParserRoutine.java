@@ -70,7 +70,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	 * 
 	 * Value: {@value}
 	 */
-	public static final String QUERY_NODE = "_query";
+	public static final String QUERY_PREFERENCES_NODE = "_query";
 
 	/**
 	 * Component based logger
@@ -201,7 +201,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("Retrieving element identifiers from source data set");
 		Set<String> elements = new TreeSet<String>();
 		
-		List<N> groupList = parser.query(queryable, settings);
+		List<N> groupList = parser.query(queryable, settings, "" /* TODO all groups query */);
 		
 		for(N element: groupList) {
 			String groupName = parser.asString(element);
@@ -219,16 +219,11 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put("" /* TODO variable name */, group);
 
-		List<N> groupElements = parser.query(queryable, settings, replacements);
+		List<N> groupElements = parser.query(queryable, settings, "" /* TODO group elements query */, replacements);
 
 		log.info("Found {} elements for group {}", groupElements.size(), group);
 				
 		return groupElements;
 		
-	}
-	
-	protected String executeScript(String value, Preferences settings, String key) {
-		//TODO if a script parser is defined, get and execute the script
-		return value;
 	}
 }
