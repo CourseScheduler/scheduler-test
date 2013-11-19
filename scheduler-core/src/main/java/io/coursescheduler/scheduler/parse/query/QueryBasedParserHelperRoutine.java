@@ -28,8 +28,15 @@
   */
 package io.coursescheduler.scheduler.parse.query;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.prefs.Preferences;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.ParserRoutine;
 
@@ -39,7 +46,7 @@ import io.coursescheduler.scheduler.parse.ParserRoutine;
  * @author Mike Reinhold
  *
  */
-public abstract class QueryBasedParserHelperRoutine extends ParserRoutine {
+public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 	
 	/**
 	 * Serial Version UID
@@ -51,6 +58,24 @@ public abstract class QueryBasedParserHelperRoutine extends ParserRoutine {
 	 */
 	private transient Logger log = LoggerFactory.getLogger(getClass().getName());
 
+	/**
+	 * Retrieved data Map, connecting the element key path to the element data value
+	 */
+	private ConcurrentMap<String, String> data;
+
+	/**
+	 * The Parser Tool that will be used to assist with querying data out of the source data
+	 */
+	private QueryBasedParserTool<N> parser;
+	
+	@AssistedInject
+	public QueryBasedParserHelperRoutine(QueryBasedParserToolMap toolMap, @Assisted("data") ConcurrentMap<String, String> data, @Assisted("key") String key) {
+		super();
+
+		this.data = data;
+		this.parser = toolMap.getQueryBasedParserTool(key);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.RecursiveAction#compute()
 	 */
@@ -59,5 +84,11 @@ public abstract class QueryBasedParserHelperRoutine extends ParserRoutine {
 		// TODO METHOD STUB
 		
 	}
+	
+	protected abstract void retrieveDataRecursive(N top, Preferences settings, String attributePath, String nodePath, Map<String, String> replacements);
+	
+	protected abstract void retrieveDataSingle(N top, Preferences settings, String attributePath, String nodePath, String key, Map<String, String> replacements);
+	
+	protected abstract void retrieveDataIndex(N top, Preferences settings, String attributePath, String nodePath, String key, int index, Map<String, String> replacements);
 	
 }

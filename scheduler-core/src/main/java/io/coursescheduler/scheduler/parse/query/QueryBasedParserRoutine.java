@@ -63,6 +63,14 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Preferences child node containing the query strings to use when retrieving data from the 
+	 * queryable document
+	 * 
+	 * Value: {@value}
+	 */
+	public static final String QUERY_NODE = "_query";
 
 	/**
 	 * Component based logger
@@ -78,14 +86,19 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	 * The Parser Tool that will be used to assist with querying data out of the source data
 	 */
 	private QueryBasedParserTool<N> parser;
+	
+	/**
+	 * Implementation key for this parser
+	 */
+	private String key;
 
 	@AssistedInject
 	public QueryBasedParserRoutine(QueryBasedParserToolMap toolMap, @Assisted("profile") Preferences profile) {
 		super();
 		
 		this.profile = profile;
-		
-		toolMap.getQueryBasedParserTool(profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */));
+		this.key = profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */);
+		this.parser = toolMap.getQueryBasedParserTool(key);
 	}
 	
 	/* (non-Javadoc)
@@ -130,7 +143,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 			RecursiveAction task;
 			try {
 				List<N> elements = queryGroup(queryable, settings, group);
-				task = createBackgroundTask(group, elements);
+				task = createBackgroundTask(group, elements, key);
 				elementsBatch.add(task);
 				log.info("Finished creating background task for processing group {}", group);
 			} catch (Exception e) {
@@ -172,16 +185,16 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("All batches finished processing in {} ms", end - start);
 	}
 	
-	protected RecursiveAction createBackgroundTask(String group, List<N> elements) {
+	protected RecursiveAction createBackgroundTask(String group, List<N> elements, String key) {
 		ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
 		getDataSets().put(group, data);
 		
-		RecursiveAction action = createBackgroundTaskImpl(group, elements, data);
+		RecursiveAction action = createBackgroundTaskImpl(group, elements, data, key);
 		
 		return action;
 	}
 	
-	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data);
+	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data, String key);
 		
 	protected Set<String> queryGroups(N queryable, Preferences settings) {
 		long start = System.currentTimeMillis();

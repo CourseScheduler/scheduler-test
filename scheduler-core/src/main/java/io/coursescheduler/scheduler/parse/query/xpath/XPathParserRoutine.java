@@ -1,5 +1,5 @@
 /**
-  * @(#)QueryBasedParserToolMap.java
+  * @(#)XPathParserRoutine.java
   *
   * TODO FILE PURPOSE
   *
@@ -26,9 +26,14 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.query;
+package io.coursescheduler.scheduler.parse.query.xpath;
 
-import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.AssistedInject;
+
+import io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine;
+import io.coursescheduler.scheduler.parse.query.QueryBasedParserToolMap;
 
 /**
  * TODO Describe this type
@@ -36,7 +41,12 @@ import io.coursescheduler.scheduler.parse.tools.ParserToolMap;
  * @author Mike Reinhold
  *
  */
-public interface QueryBasedParserToolMap extends ParserToolMap {
+public class XPathParserRoutine extends QueryBasedParserRoutine<N> {
+
+	@AssistedInject
+	public XPathParserRoutine(QueryBasedParserToolMap toolMap, @Assisted("profile") Preferences profile) {
+		super(toolMap, profile);
+		// TODO CONSTRUCTOR STUB
+	}
 	
-	public abstract <N> QueryBasedParserTool<N> getQueryBasedParserTool(String key);
 }
