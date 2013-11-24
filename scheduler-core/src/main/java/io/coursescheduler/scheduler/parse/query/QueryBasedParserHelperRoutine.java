@@ -43,6 +43,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserRoutine;
 import io.coursescheduler.util.script.engine.ScriptEngine;
+import io.coursescheduler.util.script.engine.ScriptEngineMap;
 import static io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine.QUERY_PREFERENCES_NODE;
 
 /**
@@ -73,14 +74,23 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 	 */
 	private QueryBasedParserTool<N> parser;
 	
+	/**
+	 * The Script Engine that will be used to post process retrieved data
+	 */
 	private ScriptEngine script;
 	
 	@AssistedInject
-	public QueryBasedParserHelperRoutine(QueryBasedParserToolMap toolMap, @Assisted("data") ConcurrentMap<String, String> data, @Assisted("key") String key) {
+	public QueryBasedParserHelperRoutine(QueryBasedParserToolMap toolMap, ScriptEngineMap scriptMap, @Assisted("data") ConcurrentMap<String, String> data, @Assisted("profile") Preferences profile) {
 		super();
 
 		this.data = data;
-		this.parser = toolMap.getQueryBasedParserTool(key);
+		
+		String parserKey = profile.get(key, def);	//TODO specific preferences properties
+		String scriptKey = profile.get(key, def);	//TODO specific preferences properties
+		
+		
+		this.parser = toolMap.getQueryBasedParserTool(parserKey);
+		this.script = scriptMap.getScriptEngine(scriptKey, profile);	//TODO change this to a sub-node
 	}
 	
 	/* (non-Javadoc)

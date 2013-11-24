@@ -28,12 +28,19 @@
   */
 package io.coursescheduler.scheduler.parse.query.xpath;
 
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.RecursiveAction;
 import java.util.prefs.Preferences;
 
+import org.w3c.dom.Node;
+
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine;
 import io.coursescheduler.scheduler.parse.query.QueryBasedParserToolMap;
+import io.coursescheduler.util.script.engine.ScriptEngineMap;
 
 /**
  * TODO Describe this type
@@ -41,12 +48,29 @@ import io.coursescheduler.scheduler.parse.query.QueryBasedParserToolMap;
  * @author Mike Reinhold
  *
  */
-public class XPathParserRoutine extends QueryBasedParserRoutine<N> {
+public class XPathParserRoutine extends QueryBasedParserRoutine<Node> {
+
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@AssistedInject
-	public XPathParserRoutine(QueryBasedParserToolMap toolMap, @Assisted("profile") Preferences profile) {
-		super(toolMap, profile);
+	public XPathParserRoutine(QueryBasedParserToolMap toolMap, ScriptEngineMap scriptMap, @Assisted("profile") Preferences profile) {
+		super(toolMap, scriptMap, profile);
 		// TODO CONSTRUCTOR STUB
+	}
+
+	@Override
+	public Node prepareInput() throws Exception {
+		// TODO METHOD STUB
+		return null;
+	}
+
+	@Override
+	protected RecursiveAction createBackgroundTaskImpl(String group, List<Node> elements, ConcurrentMap<String, String> data, Preferences profile) {
+		// TODO METHOD STUB
+		return null;
 	}
 	
 }

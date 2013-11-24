@@ -49,6 +49,8 @@ import com.google.inject.assistedinject.AssistedInject;
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserRoutine;
+import io.coursescheduler.util.script.engine.ScriptEngine;
+import io.coursescheduler.util.script.engine.ScriptEngineMap;
 
 /**
  * Provide an interface for and default implementation of a query based parser routine. This is for 
@@ -90,17 +92,21 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	private QueryBasedParserTool<N> parser;
 	
 	/**
-	 * Implementation key for this parser
+	 * Script engine that will perform post processing on data element
 	 */
-	private String key;
+	private ScriptEngine script;
 
 	@AssistedInject
-	public QueryBasedParserRoutine(QueryBasedParserToolMap toolMap, @Assisted("profile") Preferences profile) {
+	public QueryBasedParserRoutine(QueryBasedParserToolMap toolMap, ScriptEngineMap scriptMap, @Assisted("profile") Preferences profile) {
 		super();
 		
 		this.profile = profile;
-		this.key = profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */);
-		this.parser = toolMap.getQueryBasedParserTool(key);
+		
+		String parserKey = profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */);
+		String scriptKey = profile.get(key, def);
+		
+		this.parser = toolMap.getQueryBasedParserTool(parserKey);
+		this.script = scriptMap.getScriptEngine(scriptKey, settings); 
 	}
 	
 	/* (non-Javadoc)
@@ -145,7 +151,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 			RecursiveAction task;
 			try {
 				List<N> elements = queryGroup(queryable, settings, group);
-				task = createBackgroundTask(group, elements, key);
+				task = createBackgroundTask(group, elements, profile);
 				elementsBatch.add(task);
 				log.info("Finished creating background task for processing group {}", group);
 			} catch (Exception e) {
@@ -187,18 +193,18 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("All batches finished processing in {} ms", end - start);
 	}
 	
-	protected RecursiveAction createBackgroundTask(String group, List<N> elements, String key) {
+	protected RecursiveAction createBackgroundTask(String group, List<N> elements, Preferences profile) {
 		ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
 		getDataSets().put(group, data);
 		
-		RecursiveAction action = createBackgroundTaskImpl(group, elements, data, key);
+		RecursiveAction action = createBackgroundTaskImpl(group, elements, data, profile);
 		
 		return action;
 	}
 	
-	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data, String key);
+	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data, Preferences profile);
 		
-	protected Set<String> queryGroups(N queryable, Preferences settings) {
+	protected Set<String> queryGroups(N queryable, Preferences settings) throws ParseException {
 		long start = System.currentTimeMillis();
 		log.info("Retrieving element identifiers from source data set");
 		Set<String> elements = new TreeSet<String>();
@@ -207,7 +213,7 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		
 		for(N element: groupList) {
 			String groupName = parser.asString(element);
-			groupName = executeScript(groupName, settings, "" /* TODO group list property script */ );
+			groupName = script.executeScript(groupName, settings, "" /* TODO group list property script */ );
 			elements.add(groupName);
 			log.debug("Found row belonging to {}", groupName);
 		}
