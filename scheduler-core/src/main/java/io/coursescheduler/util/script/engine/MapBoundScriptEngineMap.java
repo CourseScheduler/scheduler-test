@@ -1,7 +1,7 @@
 /**
-  * @(#)MapBoundScriptParserToolMap.java
+  * @(#)MapBoundScriptEngineMap.java
   *
-  * Default ScriptParserTool mapping class for retrieving registered ParserTool instances based on
+  * Default ScriptEngine mapping class for retrieving registered ParserTool instances based on
   * the implementation key. This implementation uses the MapBinding characteristics of the ParserTools and  
   * their providers in order to provide the keyed retrieval methods.
   *
@@ -28,50 +28,61 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script;
+package io.coursescheduler.util.script.engine;
 
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import io.coursescheduler.scheduler.parse.tools.MapBoundParserToolMap;
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
 
 /**
- * Default ScriptParserTool mapping class for retrieving registered ParserTool instances based on
+ * Default ScriptEngine mapping class for retrieving registered ParserTool instances based on
  * the implementation key. This implementation uses the MapBinding characteristics of the ParserTools and  
  * their providers in order to provide the keyed retrieval methods.
  *
  * @author Mike Reinhold
  *
  */
-public class MapBoundScriptParserToolMap extends MapBoundParserToolMap implements ScriptParserToolMap {
+public class MapBoundScriptEngineMap implements ScriptEngineMap {
 
 	/**
-	 * Map of the Parser internal name to a Provider for the ScriptParserTool
+	 * Map of the Parser internal name to a Provider for the ScriptEngine
 	 */
-	private Map<String, Provider<ScriptParserTool>> scriptParserProviders;
+	private Map<String, Provider<ScriptEngineFactory>> scriptParserProviders;
 	
 	/**
-	 * Create a new MapBoundParserToolMap instance containing maps of the ParserTool internal names
+	 * Create a new MapBoundScriptEngineMap instance containing maps of the ScriptEngine internal names
 	 * to the Guice Providers that create those ParserTools
 	 *
 	 * @param parserProviders the map of ParserTool internal names to ParserTool Providers
-	 * @param scriptParserProviders the map of ScriptParserTool internal names to ScriptParserTool Providers
+	 * @param scriptParserProviders the map of ScriptEngine internal names to ScriptEngineFactory Providers
 	 */
 	@Inject
-	public MapBoundScriptParserToolMap(Map<String, Provider<ParserTool>> parserProviders, Map<String, Provider<ScriptParserTool>> scriptParserProviders) {
-		super(parserProviders);
+	public MapBoundScriptEngineMap(Map<String, Provider<ScriptEngineFactory>> scriptEngineProviders) {
+		super();
 		
-		this.scriptParserProviders = scriptParserProviders;
+		this.scriptParserProviders = scriptEngineProviders;
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap#getScriptParserTool(java.lang.String)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngineMap#getScriptEngine(java.lang.String, java.util.prefs.Preferences)
 	 */
 	@Override
-	public ScriptParserTool getScriptParserTool(String key) {
+	public ScriptEngine getScriptEngine(String key, Preferences settings) {
+		try {
+			return getScriptEngineFactory(key).getScriptEngine(settings);
+		}catch(NullPointerException e) {
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngineMap#getScriptEngineFactory(java.lang.String)
+	 */
+	@Override
+	public ScriptEngineFactory getScriptEngineFactory(String key) {
 		try {
 			return scriptParserProviders.get(key).get();
 		}catch(NullPointerException e) {

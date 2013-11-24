@@ -38,9 +38,9 @@
 package io.coursescheduler.scheduler.parse.tools.xml;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool;
-import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
 import io.coursescheduler.scheduler.retrieval.Retriever;
+import io.coursescheduler.util.script.engine.ScriptEngine;
+import io.coursescheduler.util.script.engine.ScriptEngineMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	/**
 	 * Map of the script parser tools that can be used
 	 */
-	private ScriptParserToolMap scriptToolMap;
+	private ScriptEngineMap scriptToolMap;
 	
 	/**
 	 * Create the XMLParserTool with the specified script tool map
@@ -88,7 +88,7 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	 * @param scriptToolMap the map of script parser tools
 	 */
 	@Inject
-	public AbstractXMLParserTool(ScriptParserToolMap scriptToolMap) {
+	public AbstractXMLParserTool(ScriptEngineMap scriptToolMap) {
 		super();
 		
 		this.scriptToolMap = scriptToolMap;
@@ -156,11 +156,11 @@ public abstract class AbstractXMLParserTool implements XMLParserTool {
 	@Override
 	public String executeScript(String value, Preferences settings, String key, Map<String, String> data) {
 		log.debug("Preparing to execute script");
-		Preferences scripts = settings.node(ScriptParserTool.SCRIPT_PREFERENCES_NODE);
+		Preferences scripts = settings.node(ScriptEngine.SCRIPT_PREFERENCES_NODE);
 		String scriptToolKey = scripts.get(Retriever.IMPLEMENTATION_KEY_PROPERTY, "");
 		log.debug("Found script implementation key: {}", key);
 		
-		ScriptParserTool scriptTool = scriptToolMap.getScriptParserTool(scriptToolKey);
+		ScriptEngine scriptTool = scriptToolMap.getScriptParserTool(scriptToolKey);
 		String script = scripts.get(key, null);
 		log.trace("Found script tool {} for script tool implementation key {} and element script {} for element id {}", new Object[] {
 				scriptTool, scriptToolKey, script, key

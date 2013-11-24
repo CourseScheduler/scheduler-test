@@ -1,9 +1,7 @@
 /**
-  * @(#)DefaultScriptParserToolModule.java
+  * @(#)GroovyScriptEngineFactory.java
   *
-  * Guice module for ensuring that the binding type is properly configured. This prevents the scenario
-  * where no implementations are bound, thus causing injector instantiation issues. Instead, the Set
-  * bound by Guice will be empty.
+  * Script Engine Factory for Groovy based script execution
   *
   * @author Mike Reinhold
   * 
@@ -28,29 +26,30 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script;
+package io.coursescheduler.util.script.groovy;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.MapBinder;
+import io.coursescheduler.util.script.engine.ScriptEngineFactory;
+
+import java.util.prefs.Preferences;
+
+import com.google.inject.assistedinject.Assisted;
 
 /**
- * Guice module for ensuring that the binding type is properly configured. This prevents the scenario
- * where no implementations are bound, thus causing injector instantiation issues. Instead, the Set
- * bound by Guice will be empty.
+ * Script Engine Factory for Groovy based script execution
  *
  * @author Mike Reinhold
  *
  */
-public class DefaultScriptParserToolModule extends AbstractModule {
+public interface GroovyScriptEngineFactory extends ScriptEngineFactory {
+
+	/**
+	 * Internal name for the script engine
+	 */
+	public static final String INTERNAL_NAME = "script-groovy";
 	
 	/* (non-Javadoc)
-	 * @see com.google.inject.AbstractModule#configure()
+	 * @see io.coursescheduler.util.script.engine.ScriptEngineFactory#getScriptEngine(java.util.prefs.Preferences)
 	 */
 	@Override
-	protected void configure() {
-		//Create the map binder for ScriptParserTool
-		@SuppressWarnings("unused")
-		MapBinder<String, ScriptParserTool> scriptParserBinder = MapBinder.newMapBinder(binder(), String.class, ScriptParserTool.class);
-	}
-	
+	public GroovyScriptEngine getScriptEngine(@Assisted("config") Preferences config);
 }

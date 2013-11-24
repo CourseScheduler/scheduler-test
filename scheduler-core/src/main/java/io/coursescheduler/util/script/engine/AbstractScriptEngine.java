@@ -1,5 +1,5 @@
 /**
-  * @(#)AbstractScriptParserTool.java
+  * @(#)AbstractScriptEngine.java
   *
   * Base class for script based parser tools that provides common functionality
   *
@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script;
+package io.coursescheduler.util.script.engine;
 
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
 
@@ -46,7 +46,7 @@ import com.google.inject.Inject;
  * @author Mike Reinhold
  *
  */
-public abstract class AbstractScriptParserTool implements ScriptParserTool {
+public abstract class AbstractScriptEngine implements ScriptEngine {
 	
 	/**
 	 * Component based logger
@@ -59,19 +59,19 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	private StrSubstitutorFactory substFactory;
 	
 	/**
-	 * Create a new AbstractScriptParserTool using the specified substitutor factory
+	 * Create a new AbstractScriptEngine using the specified substitutor factory
 	 *
 	 * @param substFactory factory for creating StrSubstitutor instances
 	 */
 	@Inject
-	public AbstractScriptParserTool(StrSubstitutorFactory substFactory) {
+	public AbstractScriptEngine(StrSubstitutorFactory substFactory) {
 		super();
 		
 		this.substFactory = substFactory;
 	}
 
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool#executeScript(java.util.prefs.Preferences, java.lang.String)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngine#executeScript(java.util.prefs.Preferences, java.lang.String)
 	 */
 	@Override
 	public String executeScript(Preferences settings, String key) {
@@ -84,7 +84,7 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool#executeScript(java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngine#executeScript(java.util.prefs.Preferences, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public String executeScript(Preferences settings, String key, Map<String, String> replacements) {
@@ -102,7 +102,7 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 		
 		long start = System.currentTimeMillis();
 		log.debug("Executing script {}", script);
-		Object result = executeScript(script, settings);
+		Object result = executeScript(script);
 		long end = System.currentTimeMillis();
 		log.debug("Finished executing script in {} ms. Found result {}", end - start, result);
 		
@@ -110,10 +110,10 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool#executeScriptOnString(java.lang.String, java.util.prefs.Preferences, java.lang.String)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngine#executeScriptOnString(java.lang.String, java.util.prefs.Preferences, java.lang.String)
 	 */
 	@Override
-	public String executeScriptOnString(String source, Preferences settings, String key) {
+	public String executeScript(String source, Preferences settings, String key) {
 		log.trace("Preparing to execute script for key {} from {} using source string {}", new Object[] {key, settings, source});
 		Map<String, String> replacements = new HashMap<>();
 		log.trace("Adding source string {} to replacements map at key {}", source, SOURCE_STRING_VARIABLE);
@@ -122,10 +122,10 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	}
 	
 	/* (non-Javadoc)
-	 * @see io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool#executeScriptOnString(java.lang.String, java.util.prefs.Preferences, java.lang.String, java.util.Map)
+	 * @see io.coursescheduler.util.script.engine.ScriptEngine#executeScriptOnString(java.lang.String, java.util.prefs.Preferences, java.lang.String, java.util.Map)
 	 */
 	@Override
-	public String executeScriptOnString(String source, Preferences settings, String key, Map<String, String> replacements) {
+	public String executeScript(String source, Preferences settings, String key, Map<String, String> replacements) {
 		log.trace("Preparing to execute script for key {} from {} using source string {} and replacements map {}", new Object[] {key, settings, source, replacements});
 		Map<String, String> values = new HashMap<>();
 		values.putAll(replacements);
@@ -138,10 +138,9 @@ public abstract class AbstractScriptParserTool implements ScriptParserTool {
 	 * Execute the script using the script specific functions
 	 *
 	 * @param script script string to execute
-	 * @param settings configuration for the script parser tool
 	 * @return the result of the script execution
 	 */
-	protected abstract Object executeScript(String script, Preferences settings);
+	protected abstract Object executeScript(String script);
 	
 	/**
 	 * Get the implementation specific default script

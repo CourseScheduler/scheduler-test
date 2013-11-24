@@ -29,6 +29,7 @@
 package io.coursescheduler.scheduler.parse.query;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.ParseActionBatch;
+import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserRoutine;
 
 /**
@@ -219,7 +221,16 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put("" /* TODO variable name */, group);
 
-		List<N> groupElements = parser.query(queryable, settings, "" /* TODO group elements query */, replacements);
+		List<N> groupElements;
+		
+		try{
+			groupElements = parser.query(queryable, settings, "" /* TODO group elements query */, replacements);
+		}catch(ParseException e) {
+			log.error("Erorr querying group elements for {} using configuration {}", group, settings);
+			log.error("Error during parser query",e);
+			groupElements = Collections.emptyList();
+			log.warn("Using empty list for group elements");
+		}
 
 		log.info("Found {} elements for group {}", groupElements.size(), group);
 				

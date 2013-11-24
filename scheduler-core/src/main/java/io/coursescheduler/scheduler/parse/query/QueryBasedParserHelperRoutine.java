@@ -36,14 +36,13 @@ import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import io.coursescheduler.scheduler.parse.ParseException;
 import io.coursescheduler.scheduler.parse.ParserRoutine;
+import io.coursescheduler.util.script.engine.ScriptEngine;
 import static io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine.QUERY_PREFERENCES_NODE;
 
 /**
@@ -73,6 +72,8 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 	 * The Parser Tool that will be used to assist with querying data out of the source data
 	 */
 	private QueryBasedParserTool<N> parser;
+	
+	private ScriptEngine script;
 	
 	@AssistedInject
 	public QueryBasedParserHelperRoutine(QueryBasedParserToolMap toolMap, @Assisted("data") ConcurrentMap<String, String> data, @Assisted("key") String key) {
@@ -125,10 +126,13 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 		} catch(ParseException e){
 			log.error("Exception retrieving data element for attribute {} at keypath {}", attributePath, nodePath, e);
 			throw e;
+		} catch(BackingStoreException e) {
+			log.error("Exception reading profile entries for profile node {}: {}", settings, e);
+			throw new ParseException(e);
 		}
 	}
 	
-	protected void retrieveDataIndex(N top, Preferences settings, String attributePath, String nodePath, String key, int index, Map<String, String> replacements)  throws ParseException {
+	protected void retrieveDataIndex(N top, Preferences settings, String attributePath, String nodePath, String key, int index, Map<String, String> replacements)  throws ParseException, BackingStoreException {
 		log.debug("Getting code subnode: {}", key);
 		Preferences codes = settings.node(key); 
 		Preferences subCodes = codes.node(QUERY_PREFERENCES_NODE);
@@ -155,7 +159,7 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 			String itemKey = nodePath + "." + index;
 			String value = parser.asString(top);
 			
-			value = executeScript(value, settings, key, data);	//TODO handle script
+			value = script.executeScript(value, settings, key, data);	//TODO handle script
 		
 			data.put(itemKey, value);
 			log.trace("Element: {} ( \" text() \" ) = {}", itemKey, value);

@@ -1,9 +1,9 @@
 /**
-  * @(#)ScriptParserTool.java
+  * @(#)ScriptEngine.java
   *
-  * A generic interface for parsing data using scripts. Most methods accept
+  * A generic interface for executing scripts. Most methods accept
   * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
-  * elements. Consult the documentation for the specific ScriptParserTool implementation for more
+  * elements. Consult the documentation for the specific ScriptEngine implementation for more
   * information on the content of the Preferences node. 
   *
   * @author Mike Reinhold
@@ -29,17 +29,16 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script;
+package io.coursescheduler.util.script.engine;
 
 import java.util.Map;
 import java.util.prefs.Preferences;
 
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
 
 /**
- * A generic interface for parsing data using scripts. Most methods accept
+ * A generic interface for executing scripts. Most methods accept
  * a {@link java.util.prefs.Preferences} node containing implementation specific configuration
- * elements. Consult the documentation for the specific ScriptParserTool implementation for more
+ * elements. Consult the documentation for the specific ScriptEngine implementation for more
  * information on the content of the Preferences node. 
  * 
  * Implementations are not required to be thread-safe and as such should not be shared between threads.
@@ -47,7 +46,7 @@ import io.coursescheduler.scheduler.parse.tools.ParserTool;
  * @author Mike Reinhold
  *
  */
-public interface ScriptParserTool extends ParserTool {
+public interface ScriptEngine{
 	
 	/**
 	 * The substitution variable that the supplied source string will be substituted into
@@ -92,7 +91,7 @@ public interface ScriptParserTool extends ParserTool {
 	 * @param key the preferences property indicating the script to execute
 	 * @return the result of the script execution as a string
 	 */
-	public String executeScriptOnString(String source, Preferences settings, String key);
+	public String executeScript(String source, Preferences settings, String key);
 
 	/**
 	 * Retrieve the script configured for the specified key from the Preferences node and execute it using the
@@ -104,5 +103,5 @@ public interface ScriptParserTool extends ParserTool {
 	 * @param replacements map of variable names to values that can also be substituted into the script
 	 * @return the result of the script execution as a string
 	 */
-	public String executeScriptOnString(String source, Preferences settings, String key, Map<String, String> replacements);
+	public String executeScript(String source, Preferences settings, String key, Map<String, String> replacements);
 }

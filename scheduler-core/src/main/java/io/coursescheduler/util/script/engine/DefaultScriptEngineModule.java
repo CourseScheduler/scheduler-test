@@ -1,7 +1,9 @@
 /**
-  * @(#)GroovyScriptBase.java
+  * @(#)DefaultScriptEngineModule.java
   *
-  * Base class for Groovy scripts used as part of ParserTool execution
+  * Guice module for ensuring that the binding type is properly configured. This prevents the scenario
+  * where no implementations are bound, thus causing injector instantiation issues. Instead, the Set
+  * bound by Guice will be empty.
   *
   * @author Mike Reinhold
   * 
@@ -26,24 +28,29 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script.groovy;
+package io.coursescheduler.util.script.engine;
 
-import groovy.lang.Script;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.MapBinder;
 
 /**
- * Base class for Groovy scripts used as part of ParserTool execution
+ * Guice module for ensuring that the binding type is properly configured. This prevents the scenario
+ * where no implementations are bound, thus causing injector instantiation issues. Instead, the Set
+ * bound by Guice will be empty.
  *
  * @author Mike Reinhold
  *
  */
-public abstract class GroovyScriptBase extends Script {
+public class DefaultScriptEngineModule extends AbstractModule {
 	
-	/**
-	 * Component based logger
+	/* (non-Javadoc)
+	 * @see com.google.inject.AbstractModule#configure()
 	 */
-	protected Logger log = LoggerFactory.getLogger(getClass().getName());
+	@Override
+	protected void configure() {
+		//Create the map binder for ScriptEngine
+		@SuppressWarnings("unused")
+		MapBinder<String, ScriptEngine> scriptParserBinder = MapBinder.newMapBinder(binder(), String.class, ScriptEngine.class);
+	}
 	
 }

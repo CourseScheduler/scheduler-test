@@ -42,8 +42,8 @@
 package io.coursescheduler.scheduler.parse.tools.xml.xpath;
 
 import io.coursescheduler.scheduler.parse.ParseException;
-import io.coursescheduler.scheduler.parse.tools.script.ScriptParserToolMap;
 import io.coursescheduler.scheduler.parse.tools.xml.AbstractXMLParserTool;
+import io.coursescheduler.util.script.engine.ScriptEngineMap;
 import io.coursescheduler.util.variable.StrSubstitutorFactory;
 import io.coursescheduler.util.variable.preferences.PreferencesBasedVariableFactory;
 
@@ -160,7 +160,7 @@ public class XPathParserTool extends AbstractXMLParserTool {
 	 * @param scriptToolMap map of the script parser tools
 	 */
 	@Inject
-	public XPathParserTool(StrSubstitutorFactory subsFactory, PreferencesBasedVariableFactory prefFactory, ScriptParserToolMap scriptToolMap) {
+	public XPathParserTool(StrSubstitutorFactory subsFactory, PreferencesBasedVariableFactory prefFactory, ScriptEngineMap scriptToolMap) {
 		super(scriptToolMap);
 		
 		this.xPath = XPathFactory.newInstance().newXPath();

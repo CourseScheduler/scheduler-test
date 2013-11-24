@@ -1,7 +1,7 @@
 /**
-  * @(#)GroovyParserModule.java
+  * @(#)GroovyEngineModule.java
   *
-  * Guice module for binding the GroovyParserTool as an option ParserTool plugin
+  * Guice module for binding the GroovyScriptEngine as an option ParserTool plugin
   *
   * @author Mike Reinhold
   * 
@@ -26,24 +26,25 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools.script.groovy;
+package io.coursescheduler.util.script.groovy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
-import io.coursescheduler.scheduler.parse.tools.script.ScriptParserTool;
+import io.coursescheduler.util.script.engine.ScriptEngine;
+import io.coursescheduler.util.script.engine.ScriptEngineFactory;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 
 /**
- * Guice module for binding the GroovyParserTool as an option ParserTool plugin
+ * Guice module for binding the GroovyScriptEngine as an option ParserTool plugin
  *
  * @author Mike Reinhold
  *
  */
-public class GroovyParserModule extends AbstractModule {
+public class GroovyEngineModule extends AbstractModule {
 	
 	/**
 	 * Component based logger
@@ -55,23 +56,24 @@ public class GroovyParserModule extends AbstractModule {
 	 */
 	@Override
 	protected void configure() {
-		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
+		//install a module indicating that ScriptEngines can be built from a factory with assisted inject
+		log.debug("Installing FactoryModuleBuilder for {} with implementations {}",
+				GroovyScriptEngineFactory.class,
+				GroovyScriptEngine.class + " for " + ScriptEngine.class
+		);
+		install(new FactoryModuleBuilder()
+			.implement(ScriptEngine.class, GroovyScriptEngine.class)
+			.build(GroovyScriptEngineFactory.class)
+		);
+		
+		//get a map binder from the internal name to the ScriptEngine class
 		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
-				ParserTool.class,
-				GroovyParserTool.class,
-				GroovyParserTool.PARSER_INTERNAL_NAME
+				ScriptEngine.class,
+				GroovyScriptEngineFactory.class,
+				GroovyScriptEngineFactory.INTERNAL_NAME
 		});
-		MapBinder<String, ParserTool> parserBinder = MapBinder.newMapBinder(binder(), String.class, ParserTool.class);
-		parserBinder.addBinding(GroovyParserTool.PARSER_INTERNAL_NAME).to(GroovyParserTool.class);
-
-		//get a map binder from the internal name to the ParserTool class, set the binding for the XPathParserTool
-		log.debug("Creating MapBinder entry for {} to {} at key {}", new Object[] {
-				ScriptParserTool.class,
-				GroovyParserTool.class,
-				GroovyParserTool.PARSER_INTERNAL_NAME
-		});
-		MapBinder<String, ScriptParserTool> xmlParserBinder = MapBinder.newMapBinder(binder(), String.class, ScriptParserTool.class);
-		xmlParserBinder.addBinding(GroovyParserTool.PARSER_INTERNAL_NAME).to(GroovyParserTool.class);
+		MapBinder<String, ScriptEngineFactory> scriptBinder = MapBinder.newMapBinder(binder(), String.class, ScriptEngineFactory.class);
+		scriptBinder.addBinding(GroovyScriptEngineFactory.INTERNAL_NAME).toProvider(getProvider(GroovyScriptEngineFactory.class));
 	}
 	
 }
