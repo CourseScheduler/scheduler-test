@@ -1,0 +1,7 @@
+<!-- Sample Loggly private configuration -->
+<!-- Copy this file to loggly.inc.prop and then make your changes -->
+
+<!-- DO NOT INCLUDE IN PUBLIC SCM AFTER ADDING YOUR INFORMATION -->
+
+<!-- Loggly API key for adding log entries -->
+loggly-input-key=YOUR LOGGLY INPUT KEY HERE

@@ -67,6 +67,7 @@ public class XMLParserModule extends AbstractModule {
 	 *
 	 */
 	private void configureXMLCourseParserMasterRoutine() {
+		/*
 		//install a module indicating that XMLParserMasterRoutine can be built from a factory with assisted inject
 		log.debug("Installing FactoryModuleBuilder for {} with implementations {}",
 				XMLParserMasterRoutineFactory.class,
@@ -103,6 +104,8 @@ public class XMLParserModule extends AbstractModule {
 		}); 
 		MapBinder<String, StreamParserRoutineFactory> streamParseRoutineBinder = MapBinder.newMapBinder(binder(), String.class, StreamParserRoutineFactory.class);
 		streamParseRoutineBinder.addBinding(XMLParserMasterRoutineFactory.PARSER_ROUTINE_INTERNAL_NAME).toProvider(getProvider(XMLParserMasterRoutineFactory.class));
+		
+		*/
 	}
 	
 	

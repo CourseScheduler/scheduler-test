@@ -1,6 +1,10 @@
 <!-- root Logging configuration -->
 <included>
 
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook">
+		<delay>1000</delay>
+	</shutdownHook>
+
 	<!-- Default console appender -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -9,7 +13,7 @@
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 	    	<level>ERROR</level>
 	    </filter>
-	</appender>
+	</appender>	
 
 	<!-- Root log file appender -->
 	<appender name="ROOT" class="ch.qos.logback.core.FileAppender">
@@ -36,12 +40,40 @@
             </appender>
         </sift>
     </appender>
+    
+    <!-- Loggly appender -->
+    <appender name="LOGGLY" class="ch.qos.logback.ext.loggly.LogglyBatchAppender">
+<!--     <appender name="LOGGLY" class="ch.qos.logback.ext.loggly.LogglyAppender"> -->
+        <inputKey>${loggly-input-key}</inputKey>
+        
+        <!-- Necessary to override the default URL until 0.1.2 is released -->
+        <!-- TODO add tags for environment, availability zone, region, component, etc -->
+<!--         <endpointUrl>https://logs-01.loggly.com/bulk/${loggly-input-key}</endpointUrl> -->
+<!--         <endpointUrl>https://logs-01.loggly.com/inputs/${loggly-input-key}</endpointUrl> -->
+              
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <!-- prettyPrint is probably ok in dev, but usually not ideal in production: -->
+                <prettyPrint>false</prettyPrint>
+            </jsonFormatter>
+            <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampFormat>
+            <timestampFormatTimezoneId>UTC</timestampFormatTimezoneId>
+        </layout>
+    </appender>
+	
+	<appender name="LOGGLY-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="LOGGLY" />
+		<queueSize>2048</queueSize>
+		<discardingThreshold>0</discardingThreshold>
+		<maxFlushTime>0</maxFlushTime>
+	</appender>
 	
 	<!-- Root Logger -->
 	<root level="info">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROOT" />
 		<appender-ref ref="THREADS" />
+		<appender-ref ref="LOGGLY-ASYNC"/>
 	</root>
 	
 </included>

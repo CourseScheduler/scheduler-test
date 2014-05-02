@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse;
 
 import java.util.Map;
 

@@ -31,7 +31,7 @@
   */
 package io.coursescheduler.scheduler.parse.tools.html;
 
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import io.coursescheduler.scheduler.parse.ParserTool;
 
 /**
  * A generic interface for HTML parsers that contains general HTML processing methods. Most methods accept

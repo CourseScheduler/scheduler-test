@@ -109,6 +109,8 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 	@Override
 	protected void configure() {
 		long outerStart = System.currentTimeMillis();
+		ForkJoinPool scanPool = new ForkJoinPool();
+		
 		log.debug("Processing package scanned Guice modules");
 		for(String pack: packages) {
 			long start = System.currentTimeMillis();
@@ -117,7 +119,7 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 				.filterInputsBy(new FilterBuilder().includePackage(pack))
 				.setUrls(ClasspathHelper.forPackage(pack))
 				.setScanners(new SubTypesScanner())
-				.setExecutorService(new ForkJoinPool())
+				.setExecutorService(scanPool)
 			);
 			
 			for(Class<? extends M> clazz: reflections.getSubTypesOf(parentType)) {
@@ -126,9 +128,10 @@ public class ScanningLoaderModule<M extends Module> extends ModuleLoaderModule {
 			}
 
 			long end = System.currentTimeMillis();
-			log.info("Finished processing package {} modules is {} milliseconds", pack, (end - start));
+			log.info("Finished processing package {} modules in {} milliseconds", pack, (end - start));
 		}
 		long end = System.currentTimeMillis();
-		log.info("Finished processing package scanned modules is {} milliseconds", (end - outerStart));
+		log.info("Finished processing package scanned modules in {} milliseconds", (end - outerStart));
+		scanPool.shutdown();
 	}
 }

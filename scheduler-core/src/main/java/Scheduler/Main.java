@@ -5,6 +5,8 @@ import io.coursescheduler.scheduler.datasource.DataSourceFactory;
 import io.coursescheduler.scheduler.datasource.DataSourceMap;
 import io.coursescheduler.scheduler.datasource.http.HttpDataSourceFactory;
 import io.coursescheduler.scheduler.parse.html.HtmlParserRoutine;
+import io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine;
+import io.coursescheduler.scheduler.parse.query.xpath.XPathParserRoutine;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetriever;
 import io.coursescheduler.scheduler.retrieval.EphemeralRetrieverFactory;
 import io.coursescheduler.scheduler.retrieval.Retriever;
@@ -32,8 +34,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.XTabComponent;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import ch.qos.logback.classic.LoggerContext;
 
 import com.google.common.base.Charsets;
 import com.google.inject.AbstractModule;
@@ -49,6 +55,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -177,6 +184,7 @@ public class Main {
 	private static Logger log = LoggerFactory.getLogger(Main.class.getName());
 	
 	public static void main(String[] args){
+		initializeLogging();		
 		initializeGuice();
 		
 		try {
@@ -268,38 +276,99 @@ public class Main {
 		
 		XTabComponent.setIcons(xIcon, xIconP, xIconR);
 		
-		master = new MainFrame();
+//		master = new MainFrame();
+//		
+//		Database database = terms.get(current);
+//		
+//		master.setVisible(true);
+//		master.createBufferStrategy(buffers);
+//		
+//		if (database == null){
+//			int hresult = JOptionPane.showConfirmDialog(Main.master,
+//					"You have not yet downloaded course information for " + 
+//					Term.getTermString(current) + ". Do you want to do so now?", "Download Course Information", 
+//					JOptionPane.YES_NO_OPTION);
+//			if (hresult == JOptionPane.YES_OPTION){
+//				updateDatabase(current);
+//			}
+//			else{
+//				master.mainMenu.newScheduleMenu.setEnabled(false);
+//			}
+//		}
+//		
+//		for(String item: args){
+//			if(item.endsWith(Main.scheduleExt)){
+//				ScheduleWrap found = ScheduleWrap.load(item);
+//				
+//				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
+//			}
+//		}
 		
-		Database database = terms.get(current);
+//		Runtime.getRuntime().addShutdownHook(new Thread() {
+//		
+//			public void run() {
+//				try {
+//					Thread.sleep(10000);
+//				} catch (InterruptedException e) {
+//					// TODO CATCH STUB
+//					e.printStackTrace();
+//				}
+//				
+//				ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+//				// Check for logback implementation of slf4j
+//				if (loggerFactory instanceof LoggerContext) {
+//				    LoggerContext context = (LoggerContext) loggerFactory;
+//				    context.stop();
+//				}
+//			}
+//
+//		});
 		
-		master.setVisible(true);
-		master.createBufferStrategy(buffers);
-		
-		if (database == null){
-			int hresult = JOptionPane.showConfirmDialog(Main.master,
-					"You have not yet downloaded course information for " + 
-					Term.getTermString(current) + ". Do you want to do so now?", "Download Course Information", 
-					JOptionPane.YES_NO_OPTION);
-			if (hresult == JOptionPane.YES_OPTION){
-				updateDatabase(current);
-			}
-			else{
-				master.mainMenu.newScheduleMenu.setEnabled(false);
-			}
+		try {
+			Class<?> clazz = Class.forName("java.lang.ApplicationShutdownHooks");
+		    Field field = clazz.getDeclaredField("hooks");
+		    field.setAccessible(true);
+		    
+		    @SuppressWarnings("unchecked")
+			final Map<Thread, Thread> hooks = (Map<Thread,Thread>)field.get(null);
+		    
+		    for(Thread hook: hooks.keySet()) {
+		    	System.out.println(hook);
+		    }
+		    
+
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					boolean otherHooksRunning = false;
+					
+					ThreadGroup group = Thread.currentThread().getThreadGroup();
+					
+					do {
+						otherHooksRunning = false;
+						for(Thread hook: hooks.keySet()) {
+							if(hook != Thread.currentThread()) {
+								otherHooksRunning |= hook.isAlive();
+							}
+						}
+					}while(otherHooksRunning);
+				}
+			});
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
-		
-		for(String item: args){
-			if(item.endsWith(Main.scheduleExt)){
-				ScheduleWrap found = ScheduleWrap.load(item);
-				
-				Main.master.mainMenu.addMadeSchedule(found, new File(item).getName());
-			}
-		}		
 	}
 	
 	private static void XMLTest(){
 		try{
-			ForkJoinPool threadPool = new ForkJoinPool();
+			final ForkJoinPool threadPool = new ForkJoinPool();
+			
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					threadPool.shutdown();
+				}
+			});
+			
 			PreferencesFactory prefFact = injector.getInstance(PreferencesFactory.class);
 			StrSubstitutorFactory subsFact = injector.getInstance(StrSubstitutorFactory.class);
 			
@@ -353,35 +422,67 @@ public class Main {
 		}
 	}
 	
+	
+	//TODO consider moving this into a Logging helper class instead of in main
+	/**
+	 * Prepare the Logging subsystem and contexts
+	 */
+	private static void initializeLogging() {
+		//Loggers are prepared statically as part of the class loading & initialization (for static loggers) or during instantiation (for instance specific loggers)
+		
+		//Add diagnostic context to the logging subsystem, such as the host, system type, etc
+		MDC.put("environment", "dev");	//TODO make these work dynamically... best mechanism TBD
+		//TODO others? which should be json data and which should be tags (specified in URL?)
+		
+		
+		logSystemDetails();
+	}
+	
+	//TODO move this with the above static logging initialization
+	/**
+	 * Log the system configuration and information
+	 *
+	 */
+	private static void logSystemDetails() {
+		//TODO make this show up better in JSON?
+		log.info("JVM system properties: {}", System.getProperties().toString());
+		
+		//TODO add system environment
+	}
+	
 	/**
 	 * Initialize the Guice injector
 	 *
 	 */
 	private static void initializeGuice(){
+		long start = System.currentTimeMillis();
 		log.info("Preparing to initialize Guice subsystem");
 						
 		injector = Guice.createInjector(
 				ComponentLoaderModule.of(configureDefaultModules()),
-				ScanningLoaderModule.of(AbstractModule.class, 
+				ScanningLoaderModule.of(AbstractModule.class,
 					"io.coursescheduler.scheduler.parse",
 					"io.coursescheduler.scheduler.datasource",
-					"io.coursescheduler.scheduler.retrieval",
-					"io.coursescheduler.util.variable"
+					"io.coursescheduler.scheduler.retrieval", "io.coursescheduler.util.variable"
 				)
 		);
-		log.info("Guice subsystem initialized");
+		long end = System.currentTimeMillis();
+		log.info("Guice subsystem initialized in {} ms", end - start);
 		
 		//runtime shutdown hook to output object graph
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    @Override
 		    public void run() {
 		    	String outputFileName = "tmp/model.dot";
+		    	long start = System.currentTimeMillis();
 				try (PrintWriter out = new PrintWriter(new File(outputFileName), Charsets.UTF_8.name())){
 			        Injector grapher = Guice.createInjector(new GrapherModule(), new GraphvizModule());
 			        GraphvizRenderer renderer = grapher.getInstance(GraphvizRenderer.class);
 			        renderer.setOut(out).setRankdir("TB");
 	
 			        grapher.getInstance(InjectorGrapher.class).of(injector).graph();
+			        long end = System.currentTimeMillis();
+			        log.info("Finished publishing Guice object graph to {} in {} ms", outputFileName, end - start);
 				} catch (IOException e) {
 					log.error("Unable to write object graph to file {}", outputFileName, e);
 				}
@@ -399,6 +500,7 @@ public class Main {
 		Map<String, String> modules = new HashMap<String, String>();
 		
 		//default component module definitions
+		//modules.put("preferences", "io.coursescheduler.util.preferences.properties.standard.StandardPropertiesFilePreferencesModule");
 		modules.put("preferences", "io.coursescheduler.util.preferences.properties.xml.XMLPropertiesFilePreferencesModule");
 		modules.put("directories", "io.coursescheduler.scheduler.directory.ApplicationDirectoryModule");
 		return modules;
@@ -432,12 +534,18 @@ public class Main {
 		    	String userFile = "tmp/user.xml";
 		    	
 		    	try {
+		    		long start = System.currentTimeMillis();
 		    		prefFact.getSystemNode("").exportSubtree(new FileOutputStream(systemFile));
+		    		long end = System.currentTimeMillis();
+		    		log.info("Published system configuration node to {} in {} ms", systemFile, end - start);
 		    	} catch (Exception e) {
 		    		log.error("Error encountered exporting system preferences to {}", systemFile, e);
 		    	}
 		    	try {
+		    		long start = System.currentTimeMillis();
 		    		prefFact.getUserNode("").exportSubtree(new FileOutputStream(userFile));
+		    		long end = System.currentTimeMillis();
+		    		log.info("Published user configuration node to {} in {} ms", userFile, end - start);
 				} catch (Exception e) {
 					log.error("Error encountered exporting user preferences to {}", userFile, e);
 				}

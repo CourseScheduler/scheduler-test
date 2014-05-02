@@ -59,4 +59,20 @@ public class ParseConstants {
 	 */
 	public static final String GROUP_SETTINGS_NODE = "group";
 	
+	/**
+	 * Preferences property name for the parser tool implementation key. Used to specify 
+	 * the parser tool for the parser module.
+	 * 
+	 *  Value: {@value}
+	 */
+	public static final String PARSER_IMPLEMENTATION_KEY = "parser-key";
+	
+	/**
+	 * Preferences property name for the script implementation key. Used to specify 
+	 * the script engine for the parser module.
+	 * 
+	 *  Value: {@value}
+	 */
+	public static final String SCRIPT_IMPLEMENTATION_KEY = "script-key";
+	
 }

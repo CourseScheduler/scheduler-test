@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
@@ -49,9 +49,15 @@ public class DefaultParserToolModule extends AbstractModule {
 	@Override
 	protected void configure() {
 
-		//Create the ParserTool map binder
+		/*
+		 * Create the ParserTool map binder - this prevents binding errors if no implementations are defined in other modules
+		 * 
+		 * We can safely suppress the "unused" warning because we know that the binder will not be used in this context. Though 
+		 * we don't use the binder, a side effect of having created the binder is that the binding is now valid (as an empty set)
+		 * if no implementations are bound (instead of missing a binding)
+		 */ 
 		@SuppressWarnings("unused")
-		MapBinder<String, ParserTool> parserBinder = MapBinder.newMapBinder(binder(), String.class, ParserTool.class);
+		MapBinder<String, ParserTool> toolBinder = MapBinder.newMapBinder(binder(), String.class, ParserTool.class);
 	}
 	
 }

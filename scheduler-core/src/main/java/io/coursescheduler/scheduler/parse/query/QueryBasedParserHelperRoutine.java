@@ -45,6 +45,8 @@ import io.coursescheduler.scheduler.parse.ParserRoutine;
 import io.coursescheduler.util.script.engine.ScriptEngine;
 import io.coursescheduler.util.script.engine.ScriptEngineMap;
 import static io.coursescheduler.scheduler.parse.query.QueryBasedParserRoutine.QUERY_PREFERENCES_NODE;
+import static io.coursescheduler.scheduler.parse.ParseConstants.PARSER_IMPLEMENTATION_KEY;
+import static io.coursescheduler.scheduler.parse.ParseConstants.SCRIPT_IMPLEMENTATION_KEY;
 
 /**
  * TODO Describe this type
@@ -85,8 +87,8 @@ public abstract class QueryBasedParserHelperRoutine<N> extends ParserRoutine {
 
 		this.data = data;
 		
-		String parserKey = profile.get(key, def);	//TODO specific preferences properties
-		String scriptKey = profile.get(key, def);	//TODO specific preferences properties
+		String parserKey = profile.get(PARSER_IMPLEMENTATION_KEY, "");	//TODO specific preferences properties
+		String scriptKey = profile.get(SCRIPT_IMPLEMENTATION_KEY, "");	//TODO specific preferences properties
 		
 		
 		this.parser = toolMap.getQueryBasedParserTool(parserKey);

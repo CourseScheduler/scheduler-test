@@ -28,7 +28,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse;
 
 import com.google.inject.ImplementedBy;
 
@@ -37,7 +37,7 @@ import com.google.inject.ImplementedBy;
  * the implementation key. This allows for other classes that need a ParserTool instance to be
  * decoupled from the specific binding organization of the ParserTools
  * 
- * Default implementation is {@link io.coursescheduler.scheduler.parse.tools.MapBoundParserToolMap} however
+ * Default implementation is {@link io.coursescheduler.scheduler.parse.MapBoundParserToolMap} however
  * this can be overridden in a module by binding an alternative implementation
  *
  * @author Mike Reinhold

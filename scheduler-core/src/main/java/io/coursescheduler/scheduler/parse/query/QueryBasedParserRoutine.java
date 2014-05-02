@@ -1,32 +1,35 @@
 /**
-  * @(#)QueryBasedParserRoutine.java
-  *
-  * Abstract parser routine for query based parsing
-  *
-  * @author Mike Reinhold
-  * 
-  * @license GNU General Public License version 3 (GPLv3)
-  *
-  * This file is part of Course Scheduler, an open source, cross platform
-  * course scheduling tool, configurable for most universities.
-  *
-  * Copyright (C) 2010-2013 Mike Reinhold
-  *
-  * This program is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation, either version 3 of the License, or
-  * (at your option) any later version.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  * 
-  */
+ * @(#)QueryBasedParserRoutine.java
+ *
+ * Abstract parser routine for query based parsing
+ *
+ * @author Mike Reinhold
+ * 
+ * @license GNU General Public License version 3 (GPLv3)
+ *
+ * This file is part of Course Scheduler, an open source, cross platform
+ * course scheduling tool, configurable for most universities.
+ *
+ * Copyright (C) 2010-2013 Mike Reinhold
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package io.coursescheduler.scheduler.parse.query;
+
+import static io.coursescheduler.scheduler.parse.ParseConstants.PARSER_IMPLEMENTATION_KEY;
+import static io.coursescheduler.scheduler.parse.ParseConstants.SCRIPT_IMPLEMENTATION_KEY;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,18 +99,26 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	 */
 	private ScriptEngine script;
 
+	/**
+	 * Create a new QueryBasedParserRoutine based on the configuration profile specified
+	 *
+	 * @param toolMap the map of query based tools which could be used for parsing
+	 * @param scriptMap the map of script engines which could be used for processing
+	 * @param profile the {@link java.util.prefs.Preferences} node containing the parser profile
+	 */
 	@AssistedInject
 	public QueryBasedParserRoutine(QueryBasedParserToolMap toolMap, ScriptEngineMap scriptMap, @Assisted("profile") Preferences profile) {
 		super();
 		
 		this.profile = profile;
 		
-		String parserKey = profile.get("" /* TODO parser key property retrieval */, "" /* TODO default parser tool? */);
-		String scriptKey = profile.get(key, def);
+		String parserKey = profile.get(PARSER_IMPLEMENTATION_KEY, "");	//TODO specific preferences properties
+		String scriptKey = profile.get(SCRIPT_IMPLEMENTATION_KEY, "");	//TODO specific preferences properties
 		
 		this.parser = toolMap.getQueryBasedParserTool(parserKey);
-		this.script = scriptMap.getScriptEngine(scriptKey, settings); 
+		this.script = scriptMap.getScriptEngine(scriptKey, profile); 
 	}
+	//ANALYZE alternate constructor/factory that allows the implementation to specify the parserKey and/or scriptKey directly
 	
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.RecursiveAction#compute()
@@ -134,8 +145,23 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 	}
 
 
+	/**
+	 * Prepare the input document for processing. QueryBasedParser implementations must define the input preparation
+	 * based on the needs of the implementation.
+	 * 
+	 * return the top level node or element representing the input that can be used to start querying the input for data
+	 * @throws Exception if there is an issue preparing the input. Many different types of errors could occur.
+	 */
 	public abstract N prepareInput() throws Exception;
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param settings
+	 * @param queryable
+	 * @param groups
+	 * @return
+	 */
 	protected List<RecursiveAction> buildBatches(Preferences settings, N queryable, Set<String> groups){
 		long start = System.currentTimeMillis();
 		log.info("Preparing to build background tasks for {} groups", groups.size());
@@ -179,6 +205,11 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		return batches;
 	}
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param batches
+	 */
 	protected void waitForBatches(List<RecursiveAction> batches) {
 		long start = System.currentTimeMillis();
 		long end;
@@ -193,6 +224,14 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("All batches finished processing in {} ms", end - start);
 	}
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param group
+	 * @param elements
+	 * @param profile
+	 * @return
+	 */
 	protected RecursiveAction createBackgroundTask(String group, List<N> elements, Preferences profile) {
 		ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
 		getDataSets().put(group, data);
@@ -202,8 +241,25 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		return action;
 	}
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param group
+	 * @param elements
+	 * @param data
+	 * @param profile
+	 * @return
+	 */
 	protected abstract RecursiveAction createBackgroundTaskImpl(String group, List<N> elements, ConcurrentMap<String, String> data, Preferences profile);
 		
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param queryable
+	 * @param settings
+	 * @return
+	 * @throws ParseException
+	 */
 	protected Set<String> queryGroups(N queryable, Preferences settings) throws ParseException {
 		long start = System.currentTimeMillis();
 		log.info("Retrieving element identifiers from source data set");
@@ -223,6 +279,14 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		return elements;
 	}
 	
+	/**
+	 * TODO Describe this method
+	 *
+	 * @param queryable
+	 * @param settings
+	 * @param group
+	 * @return
+	 */
 	protected List<N> queryGroup(N queryable, Preferences settings, String group){
 		Map<String, String> replacements = new HashMap<String, String>();
 		replacements.put("" /* TODO variable name */, group);
@@ -241,6 +305,5 @@ public abstract class QueryBasedParserRoutine<N> extends ParserRoutine {
 		log.info("Found {} elements for group {}", groupElements.size(), group);
 				
 		return groupElements;
-		
 	}
 }

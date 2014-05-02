@@ -131,6 +131,6 @@ public class ComponentLoaderModule extends ModuleLoaderModule {
 			}
 		}
 		long end = System.currentTimeMillis();
-		log.info("Finished processing standard modules is {} milliseconds", (end - start));
+		log.info("Finished processing standard modules in {} milliseconds", (end - start));
 	}	
 }

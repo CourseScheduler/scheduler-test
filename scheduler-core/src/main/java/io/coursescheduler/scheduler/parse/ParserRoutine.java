@@ -1,8 +1,7 @@
 /**
   * @(#)ParserRoutine.java
   *
-  * Interface for describing Parse routines and the methods tthat must be supported
-  * by said parse routines.
+  * Parser routines are the high level organization for retrieving data from a source or type of source.
   *
   * @author Mike Reinhold
   * 
@@ -34,8 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveAction;
 
 /**
- * Interface for describing Parser routines and the methods that must be supported
- * by said parse routines.
+ * Parser routines are the high level organization for retrieving data from a source or type of source.
  *
  * @author Mike Reinhold
  *

@@ -26,7 +26,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * 
   */
-package io.coursescheduler.scheduler.parse.tools;
+package io.coursescheduler.scheduler.parse;
 
 /**
  * Interface for all parser types and modules to provide common ancestor and functionality

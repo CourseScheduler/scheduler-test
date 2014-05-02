@@ -53,6 +53,8 @@ public class MapBoundParserRoutineMap implements ParserRoutineMap {
 	 */
 	private Map<String, Provider<ParserRoutineFactory>> parserFactories; 
 	
+	//ANALYZE shoulde the courseParserFactories and streamParserFactories be accessible here or via a sub class?
+	
 	/**
 	 * Map of the CourseParserRoutineFactories based on the ParserRoutine internal name
 	 */

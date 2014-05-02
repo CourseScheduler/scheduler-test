@@ -1,5 +1,5 @@
 /**
-  * @(#)StandardPropertiesPreferencesModule.java
+  * @(#)StandardPropertiesFilePreferencesModule.java
   *
   * Guice module for binding the Standard Properties File Preferences backend as the PreferencesFactory
   * implementation.
@@ -45,7 +45,7 @@ import io.coursescheduler.util.preferences.properties.PropertiesPreferencesFacto
  * @author Mike Reinhold
  *
  */
-public class StandardPropertiesPreferencesModule extends PreferencesModule {
+public class StandardPropertiesFilePreferencesModule extends PreferencesModule {
 	
 	/**
 	 * Component based logger

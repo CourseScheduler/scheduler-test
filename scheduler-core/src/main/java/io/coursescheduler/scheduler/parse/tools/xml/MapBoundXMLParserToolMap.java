@@ -35,8 +35,8 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import io.coursescheduler.scheduler.parse.tools.MapBoundParserToolMap;
-import io.coursescheduler.scheduler.parse.tools.ParserTool;
+import io.coursescheduler.scheduler.parse.MapBoundParserToolMap;
+import io.coursescheduler.scheduler.parse.ParserTool;
 
 /**
  * Default XMLParserTool mapping class for retrieving registered ParserTool instances based on

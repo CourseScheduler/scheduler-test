@@ -1,7 +1,8 @@
 /**
   * @(#)ParserRoutineFactory.java
   *
-  * Interface for ParserRoutineFactory classes that create ParserRoutine instances
+  * ParserRoutines often require additional parameters at time of construction. ParserRoutineFactory interfaces provide 
+  * the interface by which the ParserRoutines can be constructed with those parameters.
   *
   * @author Mike Reinhold
   * 
@@ -29,7 +30,8 @@
 package io.coursescheduler.scheduler.parse;
 
 /**
- * Interface for ParserRoutineFactory classes that create ParserRoutine instances
+ * ParserRoutines often require additional parameters at time of construction. ParserRoutineFactory interfaces provide 
+ * the interface by which the ParserRoutines can be constructed with those parameters.
  *
  * @author Mike Reinhold
  *
